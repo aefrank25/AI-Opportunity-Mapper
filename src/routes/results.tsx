@@ -51,7 +51,7 @@ export const Route = createFileRoute("/results")({
 });
 
 function Results() {
-  const search = Route.useSearch();
+  const search = Route.useSearch() as ResultsSearch;
 
   const result: AnalysisResult = search.demo
     ? DEMOS[search.demo]
