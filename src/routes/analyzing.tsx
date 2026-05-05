@@ -30,7 +30,7 @@ export const Route = createFileRoute("/analyzing")({
 });
 
 function Analyzing() {
-  const search = Route.useSearch();
+  const search = Route.useSearch() as AnalyzingSearch;
   const navigate = useNavigate();
 
   const subject = search.demo
