@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { analyze } from "@/lib/analyzer";
-import { DEMOS } from "@/lib/demos";
+import { DEMOS, type DemoId } from "@/lib/demos";
 import { PRIORITY_LABELS, type Priority, type AnalysisResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { SnapshotCard } from "@/components/snapshot-card";
@@ -22,13 +22,19 @@ const PRIORITY_VALUES: Priority[] = [
   "not_sure",
 ];
 
+interface ResultsSearch {
+  url?: string;
+  priority?: Priority;
+  demo?: DemoId;
+}
+
 const searchSchema = z
   .object({
     url: z.string().optional(),
     priority: z.enum(PRIORITY_VALUES as [Priority, ...Priority[]]).optional(),
     demo: z.enum(["clinic", "agency", "boutique"]).optional(),
   })
-  .refine((v) => v.url || v.demo, { message: "url or demo required" });
+  .refine((v) => v.url || v.demo, { message: "url or demo required" }) as unknown as z.ZodType<ResultsSearch>;
 
 export const Route = createFileRoute("/results")({
   head: () => ({

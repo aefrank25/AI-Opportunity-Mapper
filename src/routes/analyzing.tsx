@@ -2,7 +2,13 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { AnalysisChecklist } from "@/components/analysis-checklist";
 import { displayHost } from "@/lib/url";
-import { DEMO_META } from "@/lib/demos";
+import { DEMO_META, type DemoId } from "@/lib/demos";
+
+interface AnalyzingSearch {
+  url?: string;
+  priority?: string;
+  demo?: DemoId;
+}
 
 const searchSchema = z
   .object({
@@ -10,7 +16,7 @@ const searchSchema = z
     priority: z.string().optional(),
     demo: z.enum(["clinic", "agency", "boutique"]).optional(),
   })
-  .refine((v) => v.url || v.demo, { message: "url or demo required" });
+  .refine((v) => v.url || v.demo, { message: "url or demo required" }) as unknown as z.ZodType<AnalyzingSearch>;
 
 export const Route = createFileRoute("/analyzing")({
   head: () => ({
