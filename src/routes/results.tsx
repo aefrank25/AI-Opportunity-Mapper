@@ -89,6 +89,15 @@ function Results() {
           </Button>
         </div>
 
+        {result.safetyNote && (
+          <div className="rounded-2xl border border-border bg-surface-muted p-4 text-sm text-foreground sm:p-5">
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Safety note
+            </div>
+            <p className="mt-1">{result.safetyNote}</p>
+          </div>
+        )}
+
         <SnapshotCard snapshot={result.snapshot} />
 
         <TopOpportunityCard opportunity={result.topOpportunity} />

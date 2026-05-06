@@ -20,9 +20,9 @@ export function TopOpportunityCard({ opportunity }: { opportunity: Opportunity }
 
         <div className="mt-6 grid gap-5 sm:grid-cols-2">
           <Block label="Why this matters" value={o.whyItMatters} />
-          <Block label="Website or business signal" value={o.signal} />
-          <Block label="Likely business pain point" value={o.painPoint} />
-          <Block label="Suggested AI / automation improvement" value={o.improvement} />
+          <Block label="Signal" value={o.signal} />
+          <Block label="Pain point" value={o.painPoint} />
+          <Block label="Improvement" value={o.improvement} />
         </div>
 
         <div className="mt-6 flex items-start gap-3 rounded-xl border border-border bg-surface p-4">
