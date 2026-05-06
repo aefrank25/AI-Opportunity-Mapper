@@ -269,6 +269,7 @@ export const DEMOS: Record<DemoId, AnalysisResult> = {
     priority: "customer_experience",
     isDemo: true,
     demoLabel: DEMO_META.boutique.label,
+    roadmapKey: "support_reply",
     snapshot: {
       summary:
         "Lumen Goods is likely a small online boutique selling curated physical products, with recurring customer questions, order updates, shipping questions, seasonal launches, and product storytelling needs.",
