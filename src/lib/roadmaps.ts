@@ -27,8 +27,8 @@ export const ROADMAPS: Record<RoadmapKey, RoadmapWeek[]> = {
     { week: "Week 4", title: "Review quality and risks", desc: "Compare AI-assisted drafts against past proposals and decide what still needs human judgment." },
   ],
   recall_followup: [
-    { week: "Week 1", title: "Identify follow-up segments", desc: "Pull a small list of overdue, missed, post-purchase, or check-in follow-ups and group them by type." },
-    { week: "Week 2", title: "Approve message templates", desc: "Create approved templates for each follow-up type." },
+    { week: "Week 1", title: "Identify follow-up segments", desc: "Pull a small list of overdue recall patients, missed appointments, post-visit follow-ups, or routine scheduling reminders and group them by type." },
+    { week: "Week 2", title: "Approve message templates", desc: "Create approved templates for recall reminders, missed appointments, post-visit follow-up, and routine scheduling reminders." },
     { week: "Week 3", title: "Test staff-reviewed drafts", desc: "Generate draft messages for a small low-risk batch and have staff review before sending." },
     { week: "Week 4", title: "Review responses and handoff rules", desc: "Track responses, unclear cases, and situations that should always stay human-handled." },
   ],
