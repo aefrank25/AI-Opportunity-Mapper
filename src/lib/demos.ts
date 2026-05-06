@@ -148,6 +148,7 @@ export const DEMOS: Record<DemoId, AnalysisResult> = {
     priority: "reduce_admin",
     isDemo: true,
     demoLabel: DEMO_META.agency.label,
+    roadmapKey: "proposal_drafting",
     snapshot: {
       summary:
         "Northbeam Agency is likely a small full-service marketing agency with retainer clients, recurring reporting, custom strategy work, and bespoke proposals for new business.",
