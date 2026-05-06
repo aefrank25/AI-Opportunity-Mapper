@@ -120,7 +120,7 @@ export function UrlInputCard() {
             >
               <div className="min-w-0">
                 <div className="text-sm font-semibold text-foreground">{DEMO_META[id].label}</div>
-                <div className="truncate text-xs text-muted-foreground">
+                <div className="text-xs text-muted-foreground">
                   {DEMO_META[id].tagline}
                 </div>
               </div>

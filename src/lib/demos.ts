@@ -3,8 +3,8 @@ import type { AnalysisResult, Opportunity } from "./types";
 export type DemoId = "clinic" | "agency" | "boutique";
 
 export const DEMO_META: Record<DemoId, { label: string; url: string; tagline: string }> = {
-  clinic: { label: "Dental clinic", url: "brightsmile-dental.com", tagline: "Patient follow-up & prep" },
-  agency: { label: "Marketing agency", url: "northbeam-agency.com", tagline: "Proposals & reporting" },
+  clinic: { label: "Dental clinic", url: "brightsmile-dental.com", tagline: "Follow-up & prep" },
+  agency: { label: "Marketing agency", url: "northbeam-agency.com", tagline: "Proposals & reports" },
   boutique: { label: "Online boutique", url: "lumen-goods-shop.com", tagline: "Orders & support" },
 };
 
