@@ -51,8 +51,8 @@ export function UrlInputCard() {
 
   return (
     <div className="rounded-2xl border border-border bg-card p-6 shadow-card-lg sm:p-8">
-      <form onSubmit={submit} className="space-y-5">
-        <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+      <form onSubmit={submit} className="space-y-6">
+        <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="url" className="text-sm font-medium text-foreground">
               Business website
@@ -68,13 +68,13 @@ export function UrlInputCard() {
               className="h-11 text-base"
             />
           </div>
-          <div className="space-y-1.5 sm:min-w-[260px]">
+          <div className="space-y-1.5">
             <Label htmlFor="priority" className="text-sm font-medium text-foreground">
               Main priority{" "}
               <span className="font-normal text-muted-foreground">(optional)</span>
             </Label>
             <Select value={priority} onValueChange={(v) => setPriority(v as Priority)}>
-              <SelectTrigger id="priority" className="h-11">
+              <SelectTrigger id="priority" className="h-11 w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -94,7 +94,7 @@ export function UrlInputCard() {
           </div>
         )}
 
-        <Button type="submit" size="lg" className="w-full sm:w-auto">
+        <Button type="submit" size="lg" className="h-11 w-full">
           <Sparkles className="h-4 w-4" />
           Map opportunities
         </Button>
