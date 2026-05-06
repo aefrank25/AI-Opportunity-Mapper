@@ -7,6 +7,7 @@ import type {
   QuickWin,
   ScoreLevel,
 } from "./types";
+import { CATEGORY_TO_ROADMAP } from "./roadmaps";
 import { displayHost, normalizeUrl } from "./url";
 
 // --- Deterministic seeded RNG ----------------------------------------------
