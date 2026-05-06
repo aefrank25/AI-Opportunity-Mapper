@@ -173,11 +173,11 @@ export const DEMOS: Record<DemoId, AnalysisResult> = {
       category: "proposal_estimate",
       name: "Proposal & estimate drafting",
       description:
-        "AI-assisted first drafts created from intake answers, reusable proposal sections, and past successful examples.",
+        "AI-assisted first drafts created from intake answers, reusable proposal sections, and approved past proposals.",
       whyItMatters:
-        "Senior time spent re-writing proposals from scratch is the largest hidden cost in most small agencies.",
+        "Time spent rewriting proposals from scratch can be one of the largest hidden costs in small agencies.",
       signal:
-        "Custom service tiers suggest each engagement may require a tailored proposal or estimate.",
+        "Service tiers, case studies, or 'work with us' language suggest each engagement may require a tailored proposal or estimate.",
       painPoint:
         "Proposal drafts often start from copied prior work, which can slow turnaround and create inconsistent quality.",
       improvement:
