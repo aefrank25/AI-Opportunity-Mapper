@@ -1,20 +1,18 @@
-const WEEKS = [
-  { week: "Week 1", title: "Clarify the workflow", desc: "Pick one opportunity and gather concrete examples of how the work gets done today." },
-  { week: "Week 2", title: "Define the process", desc: "Write down the inputs, decisions, and outputs the workflow needs to function reliably." },
-  { week: "Week 3", title: "Test a prototype", desc: "Build a lightweight AI or automation prototype and try it on real (low-stakes) examples." },
-  { week: "Week 4", title: "Review & decide", desc: "Evaluate the results, capture what worked, and decide whether to expand or pivot." },
-];
+import type { RoadmapKey } from "@/lib/types";
+import { roadmapFor } from "@/lib/roadmaps";
 
-export function Roadmap() {
+export function Roadmap({ roadmapKey }: { roadmapKey?: RoadmapKey }) {
+  const weeks = roadmapFor(roadmapKey);
+
   return (
     <div>
       <h2 className="text-lg font-semibold tracking-tight text-foreground">30-day starter roadmap</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        A simple cadence to take one opportunity from idea to validated prototype.
+        A simple cadence to take the top opportunity from idea to validated prototype.
       </p>
 
       <ol className="mt-5 grid gap-3 md:grid-cols-4">
-        {WEEKS.map((w, i) => (
+        {weeks.map((w, i) => (
           <li
             key={w.week}
             className="relative rounded-2xl border border-border bg-card p-5 shadow-card"
