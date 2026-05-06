@@ -314,38 +314,45 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
 
 // --- Archetype → opportunity mix ------------------------------------------
 const ARCHETYPE_MIX: Record<Archetype, OpportunityCategory[]> = {
-  clinic: ["appointment_prep", "customer_followup", "faq_support", "internal_admin"],
-  agency: ["proposal_estimate", "reporting_kpi", "client_onboarding", "lead_intake"],
-  shop: ["order_management", "faq_support", "content_repurposing", "customer_followup"],
-  law: ["lead_intake", "appointment_prep", "internal_admin", "client_onboarding"],
-  consult: ["proposal_estimate", "client_onboarding", "reporting_kpi", "lead_intake"],
-  studio: ["proposal_estimate", "lead_intake", "client_onboarding", "content_repurposing"],
-  coach: ["lead_intake", "customer_followup", "content_repurposing", "appointment_prep"],
-  realestate: ["lead_intake", "customer_followup", "reporting_kpi", "faq_support"],
-  restaurant: ["faq_support", "order_management", "content_repurposing", "customer_followup"],
-  professional: ["lead_intake", "customer_followup", "internal_admin", "proposal_estimate"],
+  clinic: ["customer_followup", "appointment_prep", "faq_support", "internal_admin", "lead_intake", "reporting_kpi"],
+  agency: ["proposal_estimate", "reporting_kpi", "client_onboarding", "lead_intake", "content_repurposing", "customer_followup"],
+  shop: ["faq_support", "order_management", "customer_followup", "content_repurposing", "internal_admin", "reporting_kpi"],
+  law: ["lead_intake", "appointment_prep", "client_onboarding", "internal_admin", "customer_followup", "proposal_estimate"],
+  consult: ["proposal_estimate", "client_onboarding", "reporting_kpi", "lead_intake", "content_repurposing", "customer_followup"],
+  studio: ["proposal_estimate", "lead_intake", "client_onboarding", "content_repurposing", "customer_followup", "internal_admin"],
+  coach: ["lead_intake", "customer_followup", "content_repurposing", "appointment_prep", "client_onboarding", "faq_support"],
+  realestate: ["lead_intake", "customer_followup", "appointment_prep", "faq_support", "reporting_kpi", "content_repurposing"],
+  restaurant: ["faq_support", "order_management", "customer_followup", "content_repurposing", "reporting_kpi", "internal_admin"],
+  professional: ["lead_intake", "customer_followup", "internal_admin", "proposal_estimate", "client_onboarding", "reporting_kpi"],
 };
 
 const PRIORITY_BOOST: Record<Priority, OpportunityCategory[]> = {
-  save_time: ["internal_admin", "faq_support", "customer_followup"],
-  more_leads: ["lead_intake", "customer_followup", "content_repurposing"],
-  follow_up: ["customer_followup", "appointment_prep"],
-  reduce_admin: ["internal_admin", "reporting_kpi", "order_management"],
-  customer_experience: ["faq_support", "client_onboarding", "appointment_prep"],
-  reporting: ["reporting_kpi", "internal_admin"],
+  save_time: ["internal_admin", "faq_support", "customer_followup", "appointment_prep", "content_repurposing"],
+  more_leads: ["lead_intake", "customer_followup", "proposal_estimate", "appointment_prep", "content_repurposing"],
+  follow_up: ["customer_followup", "appointment_prep", "client_onboarding"],
+  reduce_admin: ["internal_admin", "reporting_kpi", "order_management", "proposal_estimate", "client_onboarding"],
+  customer_experience: ["faq_support", "client_onboarding", "appointment_prep", "customer_followup", "order_management"],
+  reporting: ["reporting_kpi", "internal_admin", "content_repurposing"],
   not_sure: [],
 };
+
+// Priorities where customer-facing or sensitive recommendations should down-weight automation risk.
+const SENSITIVE_PRIORITIES: Priority[] = ["follow_up", "customer_experience"];
 
 const SCORE_VALUE: Record<ScoreLevel, number> = { Low: 1, Medium: 2, High: 3 };
 
 function rankScore(o: Opportunity, priority: Priority): number {
-  const base =
+  let base =
     SCORE_VALUE[o.impact] * 3 +
     SCORE_VALUE[o.confidence] * 2 -
     SCORE_VALUE[o.effort] -
     SCORE_VALUE[o.automationRisk];
-  const boost = PRIORITY_BOOST[priority].includes(o.category) ? 4 : 0;
-  return base + boost;
+  if (PRIORITY_BOOST[priority].includes(o.category)) base += 4;
+  // Penalize high automation risk more strongly for sensitive priorities.
+  if (SENSITIVE_PRIORITIES.includes(priority)) {
+    base -= SCORE_VALUE[o.automationRisk];
+  }
+  return base;
 }
 
 const QUICK_WIN_POOL: QuickWin[] = [
@@ -355,7 +362,52 @@ const QUICK_WIN_POOL: QuickWin[] = [
   { title: "Pick one report to standardize", action: "Lock its structure so it stops being rewritten each time." },
   { title: "Find your 3 best past proposals", action: "Use them as the seed of a future AI-assisted draft." },
   { title: "Audit your booking flow", action: "Walk through it as a customer and note every friction point." },
+  { title: "Define a kickoff form", action: "Capture the same core inputs before each new engagement." },
+  { title: "Define an order triage rule", action: "Write down what makes a request routine, needs review, or urgent." },
 ];
+
+// Categories considered "marketing/content-related" — used to avoid over-weighting them.
+const CONTENT_CATEGORIES = new Set<OpportunityCategory>(["content_repurposing"]);
+
+function selectTop3(
+  candidates: Opportunity[],
+  priority: Priority,
+): Opportunity[] {
+  const ranked = [...candidates].sort(
+    (a, b) => rankScore(b, priority) - rankScore(a, priority),
+  );
+
+  const picked: Opportunity[] = [];
+  const usedCats = new Set<OpportunityCategory>();
+
+  // Pick top while keeping category diversity.
+  for (const o of ranked) {
+    if (picked.length >= 3) break;
+    if (usedCats.has(o.category)) continue;
+    picked.push(o);
+    usedCats.add(o.category);
+  }
+  // Fill remaining if we couldn't get 3 unique categories.
+  for (const o of ranked) {
+    if (picked.length >= 3) break;
+    if (picked.includes(o)) continue;
+    picked.push(o);
+  }
+
+  // Ensure not all 3 are content/marketing-related.
+  if (picked.every((o) => CONTENT_CATEGORIES.has(o.category))) {
+    const swap = ranked.find((o) => !CONTENT_CATEGORIES.has(o.category) && !picked.includes(o));
+    if (swap) picked[2] = swap;
+  }
+
+  // Ensure at least one low-effort quick win is included.
+  if (!picked.some((o) => o.effort === "Low")) {
+    const lowEffort = ranked.find((o) => o.effort === "Low" && !picked.includes(o));
+    if (lowEffort) picked[picked.length - 1] = lowEffort;
+  }
+
+  return picked;
+}
 
 // --- Public API ------------------------------------------------------------
 export function analyze(rawUrl: string, priority: Priority): AnalysisResult {
@@ -366,25 +418,25 @@ export function analyze(rawUrl: string, priority: Priority): AnalysisResult {
   const copy = ARCHETYPE_COPY[archetype];
 
   const mix = [...ARCHETYPE_MIX[archetype]];
-  // Light shuffle
+  // Light shuffle for variety across URLs while staying deterministic per URL.
   for (let i = mix.length - 1; i > 0; i--) {
     const j = Math.floor(rand() * (i + 1));
     [mix[i], mix[j]] = [mix[j], mix[i]];
   }
 
-  const opportunities: Opportunity[] = mix.slice(0, 4).map((cat, i) => ({
+  // Build 5-6 candidate opportunities for this archetype.
+  const candidates: Opportunity[] = mix.slice(0, 6).map((cat, i) => ({
     ...TEMPLATES[cat],
     id: `${url}-${cat}-${i}`,
   }));
 
-  // Apply mild deterministic variation to scores
-  for (const o of opportunities) {
-    if (rand() > 0.7) o.impact = bumpDown(o.impact);
-    if (rand() > 0.7) o.effort = bumpUp(o.effort);
+  // Apply mild deterministic variation to scores so different URLs feel distinct.
+  for (const o of candidates) {
+    if (rand() > 0.75) o.impact = bumpDown(o.impact);
+    if (rand() > 0.75) o.effort = bumpUp(o.effort);
   }
 
-  opportunities.sort((a, b) => rankScore(b, priority) - rankScore(a, priority));
-  const top3 = opportunities.slice(0, 3);
+  const top3 = selectTop3(candidates, priority);
 
   const wins: QuickWin[] = [];
   const usedWinIdx = new Set<number>();
@@ -411,12 +463,6 @@ export function analyze(rawUrl: string, priority: Priority): AnalysisResult {
     topOpportunity: top3[0],
     opportunities: top3,
     quickWins: wins,
+    roadmapKey: CATEGORY_TO_ROADMAP[top3[0].category],
   };
-}
-
-function bumpDown(s: ScoreLevel): ScoreLevel {
-  return s === "High" ? "Medium" : s === "Medium" ? "Low" : "Low";
-}
-function bumpUp(s: ScoreLevel): ScoreLevel {
-  return s === "Low" ? "Medium" : s === "Medium" ? "High" : "High";
 }
