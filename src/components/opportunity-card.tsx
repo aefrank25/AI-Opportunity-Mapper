@@ -16,15 +16,15 @@ export function OpportunityCard({ opportunity, index }: { opportunity: Opportuni
 
       <dl className="mt-5 space-y-3 text-sm">
         <Row label="Signal" value={o.signal} />
-        <Row label="Likely pain point" value={o.painPoint} />
-        <Row label="Suggested improvement" value={o.improvement} />
+        <Row label="Pain point" value={o.painPoint} />
+        <Row label="Improvement" value={o.improvement} />
       </dl>
 
       <div className="mt-5 grid grid-cols-2 gap-2">
         <ScoreChip label="Impact" level={o.impact} />
         <ScoreChip label="Effort" level={o.effort} />
         <ScoreChip label="Confidence" level={o.confidence} />
-        <ScoreChip label="Auto. Risk" level={o.automationRisk} inverted />
+        <ScoreChip label="Automation Risk" level={o.automationRisk} inverted />
       </div>
 
       <div className="mt-5 rounded-xl bg-surface-muted p-3">
