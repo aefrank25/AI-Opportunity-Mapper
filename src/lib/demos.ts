@@ -20,6 +20,7 @@ export const DEMOS: Record<DemoId, AnalysisResult> = {
     priority: "follow_up",
     isDemo: true,
     demoLabel: DEMO_META.clinic.label,
+    roadmapKey: "recall_followup",
     safetyNote:
       "Keep AI limited to scheduling, reminders, admin prep, and staff-approved communication. Do not automate diagnosis, treatment advice, or clinical decisions.",
     snapshot: {
