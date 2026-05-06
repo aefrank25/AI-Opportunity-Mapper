@@ -466,3 +466,11 @@ export function analyze(rawUrl: string, priority: Priority): AnalysisResult {
     roadmapKey: CATEGORY_TO_ROADMAP[top3[0].category],
   };
 }
+
+function bumpDown(s: ScoreLevel): ScoreLevel {
+  return s === "High" ? "Medium" : "Low";
+}
+function bumpUp(s: ScoreLevel): ScoreLevel {
+  return s === "Low" ? "Medium" : "High";
+}
+
