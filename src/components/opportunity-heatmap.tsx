@@ -1,0 +1,386 @@
+import { useMemo } from "react";
+import type { Opportunity, ScoreLevel } from "@/lib/types";
+import { Sparkles, Rocket, Compass, Clock, PauseCircle } from "lucide-react";
+
+// ---- helpers -------------------------------------------------------------
+
+const LEVEL_NUM: Record<ScoreLevel, number> = { Low: 1, Medium: 2, High: 3 };
+
+type Bucket =
+  | "start_here"
+  | "quick_wins"
+  | "high_impact_next"
+  | "longer_term"
+  | "not_yet";
+
+interface Scored {
+  op: Opportunity;
+  impact: number;
+  effort: number;
+  confidence: number;
+  risk: number;
+  // Derived inferred dimensions (1-3 scale)
+  opImpact: ScoreLevel;
+  ease: ScoreLevel;
+  timeToValue: ScoreLevel; // High = fast
+  bucket: Bucket;
+  // 0-100 plotting positions (effort = x, impact = y)
+  x: number;
+  y: number;
+}
+
+function easeFromEffort(effort: number): ScoreLevel {
+  // Low effort = High ease
+  return effort === 1 ? "High" : effort === 2 ? "Medium" : "Low";
+}
+
+function timeToValue(effort: number, confidence: number): ScoreLevel {
+  const score = (4 - effort) + (confidence - 1); // 1..5
+  if (score >= 4) return "High";
+  if (score >= 3) return "Medium";
+  return "Low";
+}
+
+function bucketFor(s: {
+  impact: number;
+  effort: number;
+  confidence: number;
+  risk: number;
+}): Bucket {
+  // Not yet: low confidence + high risk OR low impact + high effort
+  if (s.confidence === 1 && s.risk === 3) return "not_yet";
+  if (s.impact === 1 && s.effort === 3) return "not_yet";
+
+  if (s.impact >= 2 && s.effort === 1) return "quick_wins";
+  if (s.impact === 3 && s.effort === 2 && s.confidence >= 2) return "high_impact_next";
+  if (s.impact === 3 && s.effort >= 2) return "longer_term";
+  if (s.impact === 2 && s.effort >= 2) return "longer_term";
+  return "quick_wins";
+}
+
+function scoreOpportunity(op: Opportunity): Scored {
+  const impact = LEVEL_NUM[op.impact];
+  const effort = LEVEL_NUM[op.effort];
+  const confidence = LEVEL_NUM[op.confidence];
+  const risk = LEVEL_NUM[op.automationRisk];
+  const ease = easeFromEffort(effort);
+  // Plot: x = effort (low effort -> left), y = impact (high -> top)
+  // jitter slightly using id hash for visual separation
+  let h = 0;
+  for (let i = 0; i < op.id.length; i++) h = (h * 31 + op.id.charCodeAt(i)) >>> 0;
+  const jx = ((h % 17) - 8) / 2; // -4..+4
+  const jy = (((h >> 5) % 17) - 8) / 2;
+  const x = Math.min(92, Math.max(8, (effort - 1) * 42 + 12 + jx));
+  const y = Math.min(92, Math.max(8, (3 - impact) * 42 + 12 + jy));
+  return {
+    op,
+    impact,
+    effort,
+    confidence,
+    risk,
+    opImpact: op.impact,
+    ease,
+    timeToValue: timeToValue(effort, confidence),
+    bucket: bucketFor({ impact, effort, confidence, risk }),
+    x,
+    y,
+  };
+}
+
+// "Start here" is a recommendation surfaced from the highest-scoring quick win
+function pickStartHere(scored: Scored[]): string | null {
+  const candidates = scored
+    .filter((s) => s.bucket === "quick_wins" || s.bucket === "high_impact_next")
+    .sort((a, b) => {
+      const aScore = a.impact * 2 + a.confidence - a.effort - (a.risk - 1);
+      const bScore = b.impact * 2 + b.confidence - b.effort - (b.risk - 1);
+      return bScore - aScore;
+    });
+  return candidates[0]?.op.id ?? null;
+}
+
+// ---- bucket meta ---------------------------------------------------------
+
+const BUCKET_META: Record<
+  Bucket,
+  { label: string; blurb: string; Icon: typeof Sparkles; tone: string }
+> = {
+  start_here: {
+    label: "Start here",
+    blurb: "The opportunity that likely offers the best balance of impact, ease, and confidence based on the website signals.",
+    Icon: Compass,
+    tone: "bg-primary/10 text-primary border-primary/30",
+  },
+  quick_wins: {
+    label: "Likely quick wins",
+    blurb: "Lower-effort moves that may deliver visible operational relief within a few weeks.",
+    Icon: Sparkles,
+    tone: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30 dark:text-emerald-400",
+  },
+  high_impact_next: {
+    label: "High-impact next steps",
+    blurb: "Higher-effort opportunities that likely create meaningful operational lift once the quick wins are in place.",
+    Icon: Rocket,
+    tone: "bg-blue-500/10 text-blue-700 border-blue-500/30 dark:text-blue-400",
+  },
+  longer_term: {
+    label: "Longer-term opportunities",
+    blurb: "Strategic improvements that may pay off but typically need staff time, process design, or sequencing first.",
+    Icon: Clock,
+    tone: "bg-amber-500/10 text-amber-700 border-amber-500/30 dark:text-amber-400",
+  },
+  not_yet: {
+    label: "Probably not worth prioritizing yet",
+    blurb: "Based on the website signals alone, the case for these is weaker — revisit once foundational workflows are in place.",
+    Icon: PauseCircle,
+    tone: "bg-muted text-muted-foreground border-border",
+  },
+};
+
+const BUCKET_ORDER: Bucket[] = [
+  "start_here",
+  "quick_wins",
+  "high_impact_next",
+  "longer_term",
+  "not_yet",
+];
+
+// ---- component -----------------------------------------------------------
+
+export function OpportunityHeatmap({ opportunities }: { opportunities: Opportunity[] }) {
+  const { scored, startHereId, grouped } = useMemo(() => {
+    const scored = opportunities.map(scoreOpportunity);
+    const startHereId = pickStartHere(scored);
+    const grouped: Record<Bucket, Scored[]> = {
+      start_here: [],
+      quick_wins: [],
+      high_impact_next: [],
+      longer_term: [],
+      not_yet: [],
+    };
+    for (const s of scored) {
+      if (s.op.id === startHereId) grouped.start_here.push(s);
+      else grouped[s.bucket].push(s);
+    }
+    return { scored, startHereId, grouped };
+  }, [opportunities]);
+
+  return (
+    <section aria-labelledby="heatmap-heading" className="space-y-5">
+      <div>
+        <h2 id="heatmap-heading" className="text-lg font-semibold tracking-tight text-foreground">
+          AI Opportunity Heatmap
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          A visual read on what likely matters most based on the website experience. Inferred from
+          public signals — internal data may shift these positions.
+        </p>
+      </div>
+
+      {/* Matrix */}
+      <div className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
+        <div className="flex items-center justify-between gap-3">
+          <div className="text-sm font-semibold text-foreground">Impact vs. ease of implementation</div>
+          <div className="hidden sm:flex items-center gap-3 text-[11px] text-muted-foreground">
+            <LegendDot className="bg-emerald-500" /> Quick win
+            <LegendDot className="bg-blue-500" /> High-impact
+            <LegendDot className="bg-amber-500" /> Longer-term
+            <LegendDot className="bg-muted-foreground/60" /> Not yet
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-[auto_1fr] gap-2">
+          {/* Y axis label */}
+          <div className="flex items-center">
+            <div className="rotate-180 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground [writing-mode:vertical-rl]">
+              Higher impact →
+            </div>
+          </div>
+
+          {/* Plot area */}
+          <div className="relative aspect-[5/4] w-full overflow-hidden rounded-xl border border-border bg-surface-muted">
+            {/* Quadrant grid */}
+            <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
+              <QuadrantLabel label="Quick wins" sub="High impact · Low effort" align="tl" />
+              <QuadrantLabel label="High-impact next" sub="High impact · Higher effort" align="tr" />
+              <QuadrantLabel label="Easy extras" sub="Lower impact · Low effort" align="bl" />
+              <QuadrantLabel label="Lower priority" sub="Lower impact · Higher effort" align="br" />
+            </div>
+            <div className="absolute inset-0 border-l border-t border-border/60" />
+            <div className="absolute left-1/2 top-0 h-full w-px bg-border/60" />
+            <div className="absolute left-0 top-1/2 h-px w-full bg-border/60" />
+
+            {/* Dots */}
+            {scored.map((s, i) => (
+              <Dot key={s.op.id} s={s} index={i + 1} highlighted={s.op.id === startHereId} />
+            ))}
+          </div>
+        </div>
+
+        {/* X axis label */}
+        <div className="mt-2 grid grid-cols-[auto_1fr] gap-2">
+          <div className="w-4" />
+          <div className="text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Easier to implement → harder to implement
+          </div>
+        </div>
+
+        {/* Numbered key under the matrix */}
+        <ol className="mt-4 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+          {scored.map((s, i) => (
+            <li key={s.op.id} className="flex items-start gap-2 text-xs text-muted-foreground">
+              <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
+                {i + 1}
+              </span>
+              <span className="text-foreground">{s.op.name}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* Buckets */}
+      <div className="space-y-4">
+        <div className="text-sm font-semibold text-foreground">Suggested sequencing</div>
+        {BUCKET_ORDER.map((b) => {
+          const items = grouped[b];
+          if (items.length === 0 && b !== "start_here") return null;
+          if (b === "start_here" && items.length === 0) return null;
+          const meta = BUCKET_META[b];
+          const { Icon } = meta;
+          return (
+            <div key={b} className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-5">
+              <div className="flex items-start gap-3">
+                <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${meta.tone}`}>
+                  <Icon className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-foreground">{meta.label}</div>
+                  <p className="mt-0.5 text-sm text-muted-foreground">{meta.blurb}</p>
+                </div>
+              </div>
+              <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                {items.map((s) => (
+                  <BucketItem key={s.op.id} s={s} />
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="text-[11px] leading-relaxed text-muted-foreground">
+        Heatmap positions are inferred from website signals only. They do not account for internal
+        operations, staffing, tools, or budget. Treat sequencing as a starting point for
+        conversation, not a fixed plan.
+      </p>
+    </section>
+  );
+}
+
+// ---- subcomponents -------------------------------------------------------
+
+function LegendDot({ className }: { className: string }) {
+  return <span className={`inline-block h-2 w-2 rounded-full ${className}`} />;
+}
+
+function QuadrantLabel({
+  label,
+  sub,
+  align,
+}: {
+  label: string;
+  sub: string;
+  align: "tl" | "tr" | "bl" | "br";
+}) {
+  const pos = {
+    tl: "items-start justify-start text-left p-2",
+    tr: "items-start justify-end text-right p-2",
+    bl: "items-end justify-start text-left p-2",
+    br: "items-end justify-end text-right p-2",
+  }[align];
+  return (
+    <div className={`flex ${pos}`}>
+      <div>
+        <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+          {label}
+        </div>
+        <div className="text-[10px] text-muted-foreground/80">{sub}</div>
+      </div>
+    </div>
+  );
+}
+
+function dotColor(bucket: Bucket): string {
+  switch (bucket) {
+    case "quick_wins":
+      return "bg-emerald-500";
+    case "high_impact_next":
+      return "bg-blue-500";
+    case "longer_term":
+      return "bg-amber-500";
+    case "not_yet":
+      return "bg-muted-foreground/60";
+    default:
+      return "bg-primary";
+  }
+}
+
+function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted: boolean }) {
+  const color = dotColor(s.bucket);
+  return (
+    <div
+      className="absolute -translate-x-1/2 -translate-y-1/2"
+      style={{ left: `${s.x}%`, top: `${s.y}%` }}
+    >
+      <div
+        className={`relative flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold text-white shadow-sm ring-2 ring-background ${color} ${
+          highlighted ? "outline outline-2 outline-offset-2 outline-primary" : ""
+        }`}
+        title={s.op.name}
+      >
+        {index}
+      </div>
+    </div>
+  );
+}
+
+function BucketItem({ s }: { s: Scored }) {
+  return (
+    <li className="rounded-xl border border-border bg-surface-muted p-3">
+      <div className="text-sm font-semibold text-foreground">{s.op.name}</div>
+      <p className="mt-1 text-xs text-muted-foreground">{s.op.whyItMatters}</p>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        <Chip label="Op. impact" value={s.opImpact} />
+        <Chip label="Ease" value={s.ease} />
+        <Chip label="Time to value" value={s.timeToValue} fastIsGood />
+        <Chip label="Confidence" value={s.op.confidence} />
+      </div>
+    </li>
+  );
+}
+
+function Chip({
+  label,
+  value,
+  fastIsGood,
+}: {
+  label: string;
+  value: ScoreLevel;
+  fastIsGood?: boolean;
+}) {
+  // For most chips, High is good. For chips where High = good (impact, ease, confidence, time-to-value), tone the same.
+  const tone =
+    value === "High"
+      ? fastIsGood
+        ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+        : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+      : value === "Medium"
+        ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
+        : "bg-muted text-muted-foreground";
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${tone}`}>
+      <span className="text-muted-foreground">{label}:</span>
+      <span className="font-semibold">{value}</span>
+    </span>
+  );
+}
