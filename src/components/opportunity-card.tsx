@@ -27,6 +27,17 @@ export function OpportunityCard({ opportunity, index }: { opportunity: Opportuni
         <ScoreChip label="Automation Risk" level={o.automationRisk} inverted />
       </div>
 
+      <dl className="mt-3 space-y-1 text-[11px] leading-snug text-muted-foreground">
+        <div>
+          <dt className="inline font-semibold text-foreground">Confidence:</dt>{" "}
+          <dd className="inline">how sure we are this opportunity fits the business.</dd>
+        </div>
+        <div>
+          <dt className="inline font-semibold text-foreground">Automation Risk:</dt>{" "}
+          <dd className="inline">how risky to fully automate without human review — lower is better.</dd>
+        </div>
+      </dl>
+
       <div className="mt-5 rounded-xl bg-surface-muted p-3">
         <div className="flex items-start gap-2 text-sm">
           <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
