@@ -20,14 +20,14 @@ function Index() {
   return (
     <>
       <section className="px-4 sm:px-6">
-        <div className="mx-auto max-w-3xl pt-12 pb-6 text-center sm:pt-20">
+        <div className="mx-auto max-w-3xl pt-6 pb-6 text-center sm:pt-16 lg:pt-20">
           <span className="inline-flex items-center rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
             For founders, operators & consultants
           </span>
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+          <h1 className="mt-4 text-[1.75rem] leading-tight font-semibold tracking-tight text-foreground sm:mt-5 sm:text-4xl lg:text-5xl">
             Find the best AI opportunities hiding in your business website.
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg">
             Paste a business website and get a prioritized map of practical AI and automation
             opportunities to explore first.
           </p>
