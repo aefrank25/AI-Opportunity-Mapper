@@ -9,6 +9,7 @@ import { TopOpportunityCard } from "@/components/top-opportunity-card";
 import { OpportunityCard } from "@/components/opportunity-card";
 import { QuickWins } from "@/components/quick-wins";
 import { Roadmap } from "@/components/roadmap";
+import { OpportunityHeatmap } from "@/components/opportunity-heatmap";
 import { NextStepCta } from "@/components/next-step-cta";
 import { Globe, RotateCcw } from "lucide-react";
 
@@ -101,6 +102,8 @@ function Results() {
         <SnapshotCard snapshot={result.snapshot} />
 
         <TopOpportunityCard opportunity={result.topOpportunity} />
+
+        <OpportunityHeatmap opportunities={result.opportunities} />
 
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-foreground">All opportunities</h2>
