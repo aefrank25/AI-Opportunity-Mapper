@@ -69,4 +69,5 @@ export interface AnalysisResult {
   topOpportunity: Opportunity;
   opportunities: Opportunity[]; // 3 total, includes top
   quickWins: QuickWin[];
+  safetyNote?: string;
 }
