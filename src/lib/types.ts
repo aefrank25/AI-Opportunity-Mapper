@@ -70,4 +70,15 @@ export interface AnalysisResult {
   opportunities: Opportunity[]; // 3 total, includes top
   quickWins: QuickWin[];
   safetyNote?: string;
+  roadmapKey?: RoadmapKey;
 }
+
+export type RoadmapKey =
+  | "support_reply"
+  | "proposal_drafting"
+  | "recall_followup"
+  | "reporting_drafts"
+  | "onboarding_kits"
+  | "order_triage"
+  | "content_repurposing"
+  | "generic";

@@ -20,6 +20,7 @@ export const DEMOS: Record<DemoId, AnalysisResult> = {
     priority: "follow_up",
     isDemo: true,
     demoLabel: DEMO_META.clinic.label,
+    roadmapKey: "recall_followup",
     safetyNote:
       "Keep AI limited to scheduling, reminders, admin prep, and staff-approved communication. Do not automate diagnosis, treatment advice, or clinical decisions.",
     snapshot: {
@@ -147,6 +148,7 @@ export const DEMOS: Record<DemoId, AnalysisResult> = {
     priority: "reduce_admin",
     isDemo: true,
     demoLabel: DEMO_META.agency.label,
+    roadmapKey: "proposal_drafting",
     snapshot: {
       summary:
         "Northbeam Agency is likely a small full-service marketing agency with retainer clients, recurring reporting, custom strategy work, and bespoke proposals for new business.",
@@ -267,6 +269,7 @@ export const DEMOS: Record<DemoId, AnalysisResult> = {
     priority: "customer_experience",
     isDemo: true,
     demoLabel: DEMO_META.boutique.label,
+    roadmapKey: "support_reply",
     snapshot: {
       summary:
         "Lumen Goods is likely a small online boutique selling curated physical products, with recurring customer questions, order updates, shipping questions, seasonal launches, and product storytelling needs.",
