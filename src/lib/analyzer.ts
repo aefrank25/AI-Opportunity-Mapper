@@ -45,15 +45,15 @@ type Archetype =
   | "professional";
 
 const ARCHETYPE_KEYWORDS: Array<[Archetype, RegExp]> = [
-  ["clinic", /(clinic|dental|health|medical|wellness|therapy|chiro|vet)/i],
-  ["agency", /(agency|marketing|studio-?digital|creative|growth|seo|brand)/i],
-  ["shop", /(shop|store|boutique|goods|market|outfitters|apparel|wear)/i],
-  ["law", /(law|legal|attorney|advocate|counsel)/i],
-  ["consult", /(consult|advisor|strategy|partners|capital)/i],
-  ["studio", /(studio|design|architects|interiors|photo)/i],
-  ["coach", /(coach|coaching|mentor|fitness|trainer)/i],
-  ["realestate", /(realty|realestate|homes|properties|estate)/i],
-  ["restaurant", /(restaurant|bistro|cafe|kitchen|eatery|pizzeria)/i],
+  ["clinic", /(clinic|dental|dentist|orthodont|health|medical|medspa|med-spa|wellness|therapy|chiro|vet|derma|aesthetic|spa)/i],
+  ["law", /(law|legal|attorney|advocate|counsel|solicitor|barrister)/i],
+  ["agency", /(agency|marketing|seo|growth|brand|creative|digital|ads|advertis)/i],
+  ["shop", /(shop|store|boutique|goods|market|outfitters|apparel|wear|cosmetic|beauty|jewelr|gifts)/i],
+  ["consult", /(consult|advisor|advisory|strategy|partners|capital)/i],
+  ["studio", /(studio|design|architects|interiors|photo|film)/i],
+  ["coach", /(coach|coaching|mentor|fitness|trainer|academy|courses|learn|edu|tutor)/i],
+  ["realestate", /(realty|realestate|real-estate|homes|properties|estate|broker)/i],
+  ["restaurant", /(restaurant|bistro|cafe|kitchen|eatery|pizzeria|bakery|hotel|hospitality|inn|resort)/i],
 ];
 
 function classify(url: string): Archetype {
