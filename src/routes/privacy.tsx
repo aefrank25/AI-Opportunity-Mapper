@@ -112,9 +112,9 @@ function PrivacyPage() {
               Questions, deletion requests, or concerns? Email{" "}
               <a
                 className="font-medium text-primary underline-offset-4 hover:underline"
-                href="mailto:hello@aiopportunitymapper.com?subject=Privacy%20question"
+                href="mailto:SonoranDataStrategy@gmail.com?subject=Privacy%20question"
               >
-                hello@aiopportunitymapper.com
+                SonoranDataStrategy@gmail.com
               </a>
               .
             </p>
