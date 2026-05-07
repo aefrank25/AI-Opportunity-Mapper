@@ -94,6 +94,54 @@ function PrivacyPage() {
             </p>
           </Section>
 
+          <Section title="Feedback ratings and notes">
+            <p>
+              When you use the feedback widget on a results page, we store:
+            </p>
+            <ul className="mt-2 list-disc space-y-1.5 pl-5 text-muted-foreground">
+              <li>
+                The 1–5 rating you select.
+              </li>
+              <li>
+                Any optional notes you write (capped at 2,000 characters).
+              </li>
+              <li>
+                The website URL the recommendations were generated for, the
+                top opportunity name, whether the result was a demo, and the
+                submission timestamp.
+              </li>
+            </ul>
+            <p className="mt-2">
+              We do <span className="font-medium text-foreground">not</span>{" "}
+              attach your name, email, IP address, or any account identifier
+              to feedback submissions — they are stored without
+              user-identifying fields. Do not include personal or sensitive
+              information in the notes field.
+            </p>
+            <p className="mt-2">
+              Feedback is used to improve recommendation quality and
+              prioritize product changes. Aggregated ratings may be reviewed
+              internally, but individual notes are not shared publicly without
+              your permission.
+            </p>
+            <p className="mt-2">
+              <span className="font-medium text-foreground">Retention:</span>{" "}
+              feedback entries are retained for up to 24 months, after which
+              we periodically delete or anonymize older entries. You can
+              request earlier deletion at any time — see Contact below.
+            </p>
+          </Section>
+
+          <Section title="Cookies">
+            <p>
+              We use a small number of essential cookies to keep the app
+              working (session, preferences). Optional analytics cookies are
+              off by default and only activated if you accept them in the
+              cookie banner. You can change your choice anytime by clearing
+              site data in your browser.
+            </p>
+          </Section>
+
           <Section title="Your choices">
             <ul className="list-disc space-y-1.5 pl-5 text-muted-foreground">
               <li>

@@ -1,13 +1,13 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { checkIsAdmin } from "@/lib/admin-waitlist.functions";
 import {
-  checkIsAdmin,
-  getWaitlistStats,
-  listWaitlistEntries,
-} from "@/lib/admin-waitlist.functions";
+  getFeedbackStats,
+  listRecommendationFeedback,
+} from "@/lib/admin-feedback.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,35 +18,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Download, LogOut, RefreshCcw } from "lucide-react";
+import { Loader2, Download, LogOut, RefreshCcw, Star, ArrowLeft } from "lucide-react";
 
-export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Waitlist" }, { name: "robots", content: "noindex" }] }),
-  component: AdminPage,
+export const Route = createFileRoute("/admin/feedback")({
+  head: () => ({
+    meta: [
+      { title: "Admin — Feedback" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
+  component: AdminFeedbackPage,
 });
 
 type AuthState = "loading" | "no-session" | "not-admin" | "ok";
 
-function AdminPage() {
+function AdminFeedbackPage() {
   const navigate = useNavigate();
   const [authState, setAuthState] = useState<AuthState>("loading");
   const [email, setEmail] = useState<string | null>(null);
 
   const checkAdminFn = useServerFn(checkIsAdmin);
-  const statsFn = useServerFn(getWaitlistStats);
-  const listFn = useServerFn(listWaitlistEntries);
+  const statsFn = useServerFn(getFeedbackStats);
+  const listFn = useServerFn(listRecommendationFeedback);
 
-  // Filters
-  const [search, setSearch] = useState("");
-  const [isDemo, setIsDemo] = useState<"all" | "demo" | "real">("all");
-  const [range, setRange] = useState<"all" | "7d" | "30d" | "90d">("all");
+  const [sourceUrl, setSourceUrl] = useState("");
+  const [rating, setRating] = useState<"all" | "1" | "2" | "3" | "4" | "5">("all");
 
   useEffect(() => {
     let mounted = true;
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (!session) {
-        navigate({ to: "/login" });
-      }
+      if (!session) navigate({ to: "/login" });
     });
 
     (async () => {
@@ -73,25 +74,25 @@ function AdminPage() {
   }, [navigate, checkAdminFn]);
 
   const stats = useQuery({
-    queryKey: ["admin-waitlist-stats"],
+    queryKey: ["admin-feedback-stats"],
     queryFn: () => statsFn(),
     enabled: authState === "ok",
   });
 
   const entries = useQuery({
-    queryKey: ["admin-waitlist", search, isDemo, range],
-    queryFn: () => listFn({ data: { search, isDemo, range } }),
+    queryKey: ["admin-feedback", sourceUrl, rating],
+    queryFn: () => listFn({ data: { sourceUrl, rating } }),
     enabled: authState === "ok",
   });
 
   const rows = entries.data?.rows ?? [];
 
   const handleExport = () => {
-    const headers = ["created_at", "email", "is_demo", "source_url", "top_opportunity"];
+    const headers = ["created_at", "rating", "source_url", "top_opportunity", "is_demo", "notes"];
     const csv = [
       headers.join(","),
       ...rows.map((r) =>
-        [r.created_at, r.email, r.is_demo, r.source_url ?? "", r.top_opportunity ?? ""]
+        [r.created_at, r.rating, r.source_url ?? "", r.top_opportunity ?? "", r.is_demo, r.notes ?? ""]
           .map(csvEscape)
           .join(","),
       ),
@@ -100,7 +101,7 @@ function AdminPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `waitlist-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `feedback-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -137,23 +138,25 @@ function AdminPage() {
     );
   }
 
+  const s = stats.data;
+
   return (
     <section className="px-4 sm:px-6">
       <div className="mx-auto max-w-6xl py-8 space-y-6 sm:py-12">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            <Link to="/admin" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-3 w-3" /> Waitlist admin
+            </Link>
+            <div className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               Admin
             </div>
             <h1 className="mt-0.5 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Implementation Brief — Waitlist
+              Recommendation Feedback
             </h1>
             {email && <p className="mt-1 text-xs text-muted-foreground">Signed in as {email}</p>}
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link to="/admin/feedback">View feedback →</Link>
-            </Button>
             <Button variant="outline" size="sm" onClick={() => { stats.refetch(); entries.refetch(); }}>
               <RefreshCcw className="h-3.5 w-3.5" /> Refresh
             </Button>
@@ -164,40 +167,72 @@ function AdminPage() {
         </div>
 
         {/* Stats */}
-        <StatsBlock stats={stats.data} loading={stats.isLoading} />
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
+          <StatTile label="Total submissions" value={stats.isLoading ? "…" : s?.total ?? 0} />
+          <StatTile label="Average rating" value={stats.isLoading ? "…" : (s?.avg ?? 0).toString()} />
+          <StatTile label="With notes" value={stats.isLoading ? "…" : s?.withNotes ?? 0} />
+          <StatTile
+            label="Most common"
+            value={
+              stats.isLoading || !s
+                ? "…"
+                : (() => {
+                    const top = [...s.distribution].sort((a, b) => b.count - a.count)[0];
+                    return top && top.count > 0 ? `${top.rating}★` : "—";
+                  })()
+            }
+          />
+        </div>
 
-        {/* Filters + Export */}
+        {/* Distribution */}
         <div className="rounded-2xl border border-border bg-surface p-4 shadow-card sm:p-5">
-          <div className="grid gap-3 sm:grid-cols-[1fr_180px_180px_auto] sm:items-end">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Rating distribution
+          </div>
+          {stats.isLoading || !s ? (
+            <p className="mt-2 text-sm text-muted-foreground">Loading…</p>
+          ) : (
+            <ul className="mt-3 space-y-2">
+              {[...s.distribution].reverse().map((d) => {
+                const max = Math.max(1, ...s.distribution.map((x) => x.count));
+                const pct = Math.round((d.count / max) * 100);
+                return (
+                  <li key={d.rating} className="flex items-center gap-3">
+                    <div className="w-12 text-sm text-foreground tabular-nums">{d.rating}★</div>
+                    <div className="flex-1 h-2 rounded-full bg-surface-muted overflow-hidden">
+                      <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
+                    </div>
+                    <div className="w-10 text-right text-sm text-muted-foreground tabular-nums">{d.count}</div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
+        {/* Filters */}
+        <div className="rounded-2xl border border-border bg-surface p-4 shadow-card sm:p-5">
+          <div className="grid gap-3 sm:grid-cols-[1fr_180px_auto] sm:items-end">
             <div className="space-y-1.5">
-              <Label htmlFor="search">Search</Label>
+              <Label htmlFor="source-url">Source URL</Label>
               <Input
-                id="search"
-                placeholder="email, URL, or opportunity"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                id="source-url"
+                placeholder="filter by URL"
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Source</Label>
-              <Select value={isDemo} onValueChange={(v) => setIsDemo(v as typeof isDemo)}>
+              <Label>Rating</Label>
+              <Select value={rating} onValueChange={(v) => setRating(v as typeof rating)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="real">Real URLs</SelectItem>
-                  <SelectItem value="demo">Demo only</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Time range</Label>
-              <Select value={range} onValueChange={(v) => setRange(v as typeof range)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All time</SelectItem>
-                  <SelectItem value="7d">Last 7 days</SelectItem>
-                  <SelectItem value="30d">Last 30 days</SelectItem>
-                  <SelectItem value="90d">Last 90 days</SelectItem>
+                  <SelectItem value="all">All ratings</SelectItem>
+                  <SelectItem value="5">5 stars</SelectItem>
+                  <SelectItem value="4">4 stars</SelectItem>
+                  <SelectItem value="3">3 stars</SelectItem>
+                  <SelectItem value="2">2 stars</SelectItem>
+                  <SelectItem value="1">1 star</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -219,29 +254,35 @@ function AdminPage() {
               <thead className="bg-surface-muted text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 <tr>
                   <th className="px-4 py-2.5">Date</th>
-                  <th className="px-4 py-2.5">Email</th>
+                  <th className="px-4 py-2.5">Rating</th>
                   <th className="px-4 py-2.5">Source URL</th>
                   <th className="px-4 py-2.5">Top opportunity</th>
+                  <th className="px-4 py-2.5">Notes</th>
                   <th className="px-4 py-2.5">Demo</th>
                 </tr>
               </thead>
               <tbody>
                 {entries.isLoading && (
-                  <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">Loading…</td></tr>
+                  <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">Loading…</td></tr>
                 )}
                 {!entries.isLoading && rows.length === 0 && (
-                  <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">No entries match these filters.</td></tr>
+                  <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">No feedback matches these filters.</td></tr>
                 )}
                 {rows.map((r) => (
-                  <tr key={r.id} className="border-t border-border">
+                  <tr key={r.id} className="border-t border-border align-top">
                     <td className="px-4 py-2.5 whitespace-nowrap text-muted-foreground">
                       {new Date(r.created_at).toLocaleString()}
                     </td>
-                    <td className="px-4 py-2.5 font-medium text-foreground">{r.email}</td>
-                    <td className="px-4 py-2.5 text-muted-foreground max-w-[260px] truncate" title={r.source_url ?? ""}>
+                    <td className="px-4 py-2.5">
+                      <Stars n={r.rating} />
+                    </td>
+                    <td className="px-4 py-2.5 text-muted-foreground max-w-[220px] truncate" title={r.source_url ?? ""}>
                       {r.source_url || "—"}
                     </td>
                     <td className="px-4 py-2.5 text-muted-foreground">{r.top_opportunity || "—"}</td>
+                    <td className="px-4 py-2.5 text-foreground max-w-[360px]">
+                      {r.notes ? <p className="whitespace-pre-wrap">{r.notes}</p> : <span className="text-muted-foreground">—</span>}
+                    </td>
                     <td className="px-4 py-2.5">
                       {r.is_demo ? (
                         <span className="inline-flex items-center rounded-full bg-accent px-2 py-0.5 text-[11px] font-semibold text-accent-foreground">Demo</span>
@@ -260,66 +301,29 @@ function AdminPage() {
   );
 }
 
-function StatsBlock({
-  stats,
-  loading,
-}: {
-  stats: Awaited<ReturnType<typeof getWaitlistStats>> | undefined;
-  loading: boolean;
-}) {
-  const tiles = useMemo(
-    () => [
-      { label: "Total signups", value: stats?.total ?? 0 },
-      { label: "Unique emails", value: stats?.uniqueEmails ?? 0 },
-      { label: "Duplicate attempts", value: stats?.duplicates ?? 0 },
-      { label: "Last 7 days", value: stats?.last7d ?? 0 },
-      { label: "Last 30 days", value: stats?.last30d ?? 0 },
-      { label: "Real / Demo", value: `${stats?.realCount ?? 0} / ${stats?.demoCount ?? 0}` },
-    ],
-    [stats],
-  );
-
+function StatTile({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-        {tiles.map((t) => (
-          <div key={t.label} className="rounded-2xl border border-border bg-surface p-4 shadow-card">
-            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              {t.label}
-            </div>
-            <div className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
-              {loading ? "…" : t.value}
-            </div>
-          </div>
-        ))}
+    <div className="rounded-2xl border border-border bg-surface p-4 shadow-card">
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        {label}
       </div>
+      <div className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+        {value}
+      </div>
+    </div>
+  );
+}
 
-      <div className="rounded-2xl border border-border bg-surface p-4 shadow-card sm:p-5">
-        <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Top opportunities requested
-        </div>
-        {loading ? (
-          <p className="mt-2 text-sm text-muted-foreground">Loading…</p>
-        ) : !stats?.topOpportunities.length ? (
-          <p className="mt-2 text-sm text-muted-foreground">No data yet.</p>
-        ) : (
-          <ul className="mt-3 space-y-2">
-            {stats.topOpportunities.map((o) => {
-              const max = stats.topOpportunities[0].count;
-              const pct = Math.max(4, Math.round((o.count / max) * 100));
-              return (
-                <li key={o.name} className="flex items-center gap-3">
-                  <div className="w-48 truncate text-sm text-foreground" title={o.name}>{o.name}</div>
-                  <div className="flex-1 h-2 rounded-full bg-surface-muted overflow-hidden">
-                    <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
-                  </div>
-                  <div className="w-10 text-right text-sm text-muted-foreground tabular-nums">{o.count}</div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
+function Stars({ n }: { n: number }) {
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Star
+          key={i}
+          className={`h-3.5 w-3.5 ${i <= n ? "fill-primary text-primary" : "text-muted-foreground/40"}`}
+        />
+      ))}
+      <span className="ml-1.5 text-xs text-muted-foreground tabular-nums">{n}</span>
     </div>
   );
 }
