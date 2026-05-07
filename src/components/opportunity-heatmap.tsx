@@ -250,15 +250,22 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
         {/* Numbered key under the matrix */}
         <ol className="mt-4 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
           {scored.map((s, i) => (
-            <li key={s.op.id} className="flex items-start gap-2 text-xs text-muted-foreground">
-              <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
-                {i + 1}
-              </span>
-              <span className="text-foreground">{s.op.name}</span>
+            <li key={s.op.id}>
+              <button
+                type="button"
+                onClick={() => focusOpportunity(s.op.id)}
+                className="flex w-full items-start gap-2 rounded-md px-1 py-0.5 text-left text-xs text-muted-foreground transition-colors hover:bg-surface-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
+                  {i + 1}
+                </span>
+                <span className="text-foreground">{s.op.name}</span>
+              </button>
             </li>
           ))}
         </ol>
       </div>
+      </TooltipProvider>
 
       {/* Buckets */}
       <div className="space-y-4">
