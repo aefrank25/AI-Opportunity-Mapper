@@ -101,8 +101,9 @@ export function UrlInputCard() {
 
         <p className="flex items-start gap-2 text-xs text-muted-foreground">
           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          This prototype uses URL patterns, selected priority, and sample business logic to suggest
-          opportunities for exploration. Recommendations should be validated before implementation.
+          This prototype uses publicly visible website patterns, business context, and inferred
+          workflow signals to suggest operational and AI opportunities for exploration.
+          Recommendations should be validated before implementation.
         </p>
       </form>
 
