@@ -1,36 +1,35 @@
-# Footer + Trust Copy Refinement
+## 1. Fix the "No QueryClient set" error on /admin
 
-Tighten the footer and a few supporting lines so the product reads as a polished, real tool — not a prototype demo.
+The router context is currently empty (`context: {}`) and `__root.tsx` never mounts a `QueryClientProvider`. Any route using `useQuery` (e.g. `/admin`, `/admin/feedback`) crashes.
 
-## 1. Rebuild `src/components/site-footer.tsx`
+Changes:
+- `src/router.tsx`: create a fresh `QueryClient` per request inside `getRouter`, pass it as `context: { queryClient }`, and update the router type via `createRootRouteWithContext`.
+- `src/routes/__root.tsx`: switch from `createRootRoute` to `createRootRouteWithContext<{ queryClient: QueryClient }>()`, and wrap the app shell in `<QueryClientProvider client={queryClient}>` (read `queryClient` via `Route.useRouteContext()`).
 
-Replace the current two-line prototype footer with a clean two-column layout:
+This is the canonical TanStack Start + Query setup and resolves the admin crash plus any future `useQuery` usage.
 
-- **Left**: "AI Opportunity Mapper" (small, semibold) + subtitle "Practical operational and AI opportunity insights for SMBs."
-- **Right**: muted text links — How it works, Example analysis, Privacy, Feedback, Contact.
-- **Below, separated by a thin divider**: a single muted disclaimer line — "Recommendations are generated from publicly visible website patterns and inferred workflow signals. Insights should be validated before implementation."
+## 2. Gate analytics on cookie consent
 
-Styling: keep `text-muted-foreground`, `text-xs` / `text-[11px]`, `border-border/60`, lightweight padding (`py-8`). No oversized type, no boxed sections, no corporate feel. Hover state shifts links to `text-foreground`.
+Today there is no analytics tool wired up — the cookie banner stores a preference but nothing reads it. Add a small consent-aware analytics layer so events only fire when the user accepts.
 
-Link targets:
-- How it works → home anchor `#how-it-works`
-- Example analysis → `/analyzing?demo=agency`
-- Privacy / Feedback / Contact → `mailto:` links (subject prefilled where useful) so they work today without new pages
+New file `src/lib/analytics.ts`:
+- `getConsent()` — reads `aiom.cookieConsent.v1` from `localStorage`, returns `{ analytics: boolean }` (SSR-safe; defaults to `false`).
+- `setConsent(analytics: boolean)` — writes the same key and dispatches a `aiom:consent-changed` window event.
+- `trackEvent(name, props?)` — no-op unless `analytics === true`. When enabled, sends a `navigator.sendBeacon` / `fetch` POST to a lightweight first-party endpoint (`/api/public/analytics`) with `{ name, props, path, ts }`. Also pushes to `window.dataLayer` if present so it's ready for any future GA/GTM hookup.
+- `useAnalytics()` hook — subscribes to the consent event so components re-render when the user changes preferences.
+- Auto page-view tracking: a `usePageviewTracking()` hook called once in `RootComponent` that listens to `useRouterState({ select: s => s.location.pathname })` and calls `trackEvent("pageview", { path })` on change — still gated by consent.
 
-Removed lines:
-- "Prototype mode: pattern-based recommendations. Real website analysis planned."
-- "AI Opportunity Mapper — a diagnostic prototype."
+New server route `src/routes/api/public/analytics.ts`:
+- `POST` handler that validates the payload with Zod and inserts into a new `analytics_events` table (id, name, props jsonb, path, created_at). RLS: insert allowed for anon, no select for anon; admins can select via `has_role`.
+- Migration adds the table + policies.
 
-## 2. Anchor + copy update in `src/routes/index.tsx`
+Wire-up in `src/components/cookie-banner.tsx`:
+- Replace the inline `savePrefs` write with `setConsent(...)` from `analytics.ts` (keeps the same storage key/shape) so toggling preferences immediately enables/disables tracking without a reload.
 
-- Add `id="how-it-works"` and `scroll-mt-20` to the existing How it works card so the footer link scrolls to it.
-- Replace the second step's `desc`:
-  - From: "The prototype maps URL patterns and selected priority to common business workflows."
-  - To: "The system interprets website structure, business context, and customer workflow signals to identify likely operational opportunities."
+Wire-up in `src/routes/__root.tsx`:
+- Call `usePageviewTracking()` inside `RootComponent`.
 
-No other section copy is changed in this pass.
+## 3. Notes / non-goals
 
-## Out of scope
-
-- No new routes (Privacy / Feedback / Contact remain mailto links for now). If you want dedicated pages later, that's a follow-up.
-- No header changes.
+- No third-party analytics SDK is added — we keep it first-party so nothing loads before consent. If you later want GA4/Plausible/PostHog, the `trackEvent` function is the single place to add the SDK call (still gated by `getConsent().analytics`).
+- The existing localStorage key (`aiom.cookieConsent.v1`) and shape are preserved, so users who already chose preferences are unaffected.

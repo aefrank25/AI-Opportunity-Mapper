@@ -53,7 +53,7 @@ function Analyzing() {
                   to: "/results",
                   search: search.demo
                     ? { demo: search.demo }
-                    : { url: search.url!, priority: search.priority ?? "not_sure" },
+                    : { url: search.url!, priority: (search.priority ?? "not_sure") as never },
                 })
               }
             />
