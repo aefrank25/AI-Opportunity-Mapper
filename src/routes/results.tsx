@@ -114,7 +114,13 @@ function Results() {
           </p>
           <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {result.opportunities.map((o, i) => (
-              <OpportunityCard key={o.id} opportunity={o} index={i} />
+              <OpportunityCard
+                key={o.id}
+                opportunity={o}
+                index={i}
+                contextSignals={result.snapshot.signals}
+                priorityLabel={PRIORITY_LABELS[result.priority]}
+              />
             ))}
           </div>
         </div>
