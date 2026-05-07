@@ -39,7 +39,7 @@ function Index() {
       </section>
 
       <section className="px-4 sm:px-6">
-        <div className="mx-auto max-w-5xl rounded-2xl border border-border bg-surface p-6 sm:p-8">
+        <div id="how-it-works" className="mx-auto max-w-5xl scroll-mt-20 rounded-2xl border border-border bg-surface p-6 sm:p-8">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               How it works
@@ -61,7 +61,7 @@ function Index() {
             <Step
               icon={<Layers className="h-4 w-4" />}
               title="We interpret the context"
-              desc="The prototype maps URL patterns and selected priority to common business workflows."
+              desc="The system interprets website structure, business context, and customer workflow signals to identify likely operational opportunities."
             />
             <Step
               icon={<ListChecks className="h-4 w-4" />}
