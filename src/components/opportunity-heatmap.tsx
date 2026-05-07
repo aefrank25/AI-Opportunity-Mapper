@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { Opportunity, ScoreLevel } from "@/lib/types";
-import { Sparkles, Rocket, Compass, Clock, PauseCircle } from "lucide-react";
+import { Sparkles, Rocket, Compass, Clock, PauseCircle, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // ---- helpers -------------------------------------------------------------
 
