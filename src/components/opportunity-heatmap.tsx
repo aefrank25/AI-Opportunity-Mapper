@@ -275,7 +275,7 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
         <ol
           aria-label="Numbered key of opportunities plotted on the matrix. Use arrow keys to move between items, Enter to jump to the matching opportunity card."
           className="mt-4 grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3"
-          onKeyDown={(e) => handleListArrowKeys(e)}
+          {...keyRoving.containerProps}
         >
           {scored.map((s, i) => (
             <li key={s.op.id}>
