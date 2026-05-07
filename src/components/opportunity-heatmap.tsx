@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { Opportunity, ScoreLevel } from "@/lib/types";
-import { Sparkles, Rocket, Compass, Clock, PauseCircle } from "lucide-react";
+import { Sparkles, Rocket, Compass, Clock, PauseCircle, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // ---- helpers -------------------------------------------------------------
 
@@ -178,9 +179,30 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
       </div>
 
       {/* Matrix */}
+      <TooltipProvider delayDuration={150}>
       <div className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
         <div className="flex items-center justify-between gap-3">
-          <div className="text-sm font-semibold text-foreground">Impact vs. ease of implementation</div>
+          <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+            Impact vs. ease of implementation
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" aria-label="How impact and ease are inferred" className="text-muted-foreground hover:text-foreground">
+                  <Info className="h-3.5 w-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs bg-popover text-popover-foreground border border-border">
+                <p className="text-xs leading-relaxed">
+                  <span className="font-semibold">Impact</span> is inferred from website signals like the visibility of a service, repeated calls-to-action, or how central a workflow appears to the business.
+                </p>
+                <p className="mt-1.5 text-xs leading-relaxed">
+                  <span className="font-semibold">Ease</span> is inferred from how standardized the task looks on the site — clear forms, repeating patterns, and templated copy suggest it's easier to automate.
+                </p>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                  Internal tools, staffing, and budget aren't visible — these are starting estimates.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <div className="hidden sm:flex items-center gap-3 text-[11px] text-muted-foreground">
             <LegendDot className="bg-emerald-500" /> Quick win
             <LegendDot className="bg-blue-500" /> High-impact
@@ -228,15 +250,22 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
         {/* Numbered key under the matrix */}
         <ol className="mt-4 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
           {scored.map((s, i) => (
-            <li key={s.op.id} className="flex items-start gap-2 text-xs text-muted-foreground">
-              <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
-                {i + 1}
-              </span>
-              <span className="text-foreground">{s.op.name}</span>
+            <li key={s.op.id}>
+              <button
+                type="button"
+                onClick={() => focusOpportunity(s.op.id)}
+                className="flex w-full items-start gap-2 rounded-md px-1 py-0.5 text-left text-xs text-muted-foreground transition-colors hover:bg-surface-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
+                  {i + 1}
+                </span>
+                <span className="text-foreground">{s.op.name}</span>
+              </button>
             </li>
           ))}
         </ol>
       </div>
+      </TooltipProvider>
 
       {/* Buckets */}
       <div className="space-y-4">
@@ -325,6 +354,11 @@ function dotColor(bucket: Bucket): string {
   }
 }
 
+function focusOpportunity(id: string) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent("opportunity:focus", { detail: id }));
+}
+
 function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted: boolean }) {
   const color = dotColor(s.bucket);
   return (
@@ -332,14 +366,17 @@ function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted:
       className="absolute -translate-x-1/2 -translate-y-1/2"
       style={{ left: `${s.x}%`, top: `${s.y}%` }}
     >
-      <div
-        className={`relative flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold text-white shadow-sm ring-2 ring-background ${color} ${
+      <button
+        type="button"
+        onClick={() => focusOpportunity(s.op.id)}
+        aria-label={`Jump to ${s.op.name}`}
+        className={`relative flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold text-white shadow-sm ring-2 ring-background transition-transform hover:scale-110 focus:outline-none focus-visible:ring-primary ${color} ${
           highlighted ? "outline outline-2 outline-offset-2 outline-primary" : ""
         }`}
         title={s.op.name}
       >
         {index}
-      </div>
+      </button>
     </div>
   );
 }

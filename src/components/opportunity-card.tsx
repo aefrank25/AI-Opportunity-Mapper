@@ -1,11 +1,33 @@
+import { useEffect, useRef, useState } from "react";
 import { ScoreChip } from "./score-chip";
 import type { Opportunity } from "@/lib/types";
 import { ArrowRight } from "lucide-react";
 
 export function OpportunityCard({ opportunity, index }: { opportunity: Opportunity; index: number }) {
   const o = opportunity;
+  const ref = useRef<HTMLDivElement>(null);
+  const [highlighted, setHighlighted] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail;
+      if (id !== o.id) return;
+      ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setHighlighted(true);
+      window.setTimeout(() => setHighlighted(false), 2000);
+    };
+    window.addEventListener("opportunity:focus", handler as EventListener);
+    return () => window.removeEventListener("opportunity:focus", handler as EventListener);
+  }, [o.id]);
+
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
+    <div
+      ref={ref}
+      id={`opportunity-${o.id}`}
+      className={`flex h-full flex-col rounded-2xl border bg-card p-6 shadow-card transition-all duration-500 ${
+        highlighted ? "border-primary ring-2 ring-primary/40" : "border-border"
+      }`}
+    >
       <div className="flex items-start justify-between gap-3">
         <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           Opportunity {index + 1}
