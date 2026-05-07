@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { Opportunity, ScoreLevel } from "@/lib/types";
 import { Sparkles, Rocket, Compass, Clock, PauseCircle, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -180,7 +180,7 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
 
       {/* Matrix */}
       <TooltipProvider delayDuration={150}>
-      <div className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-6">
+      <div role="group" aria-label="Impact vs. ease of implementation matrix" className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
             Impact vs. ease of implementation
@@ -220,17 +220,21 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
           </div>
 
           {/* Plot area */}
-          <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-surface-muted sm:aspect-[5/4]">
+          <div
+            role="figure"
+            aria-label={`Scatter plot of ${scored.length} opportunities. Horizontal axis: easier to harder to implement. Vertical axis: lower to higher impact.`}
+            className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-surface-muted sm:aspect-[5/4]"
+          >
             {/* Quadrant grid */}
-            <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
+            <div className="absolute inset-0 grid grid-cols-2 grid-rows-2" aria-hidden="true">
               <QuadrantLabel label="Quick wins" sub="High impact · Low effort" align="tl" />
               <QuadrantLabel label="High-impact next" sub="High impact · Higher effort" align="tr" />
               <QuadrantLabel label="Easy extras" sub="Lower impact · Low effort" align="bl" />
               <QuadrantLabel label="Lower priority" sub="Lower impact · Higher effort" align="br" />
             </div>
-            <div className="absolute inset-0 border-l border-t border-border/60" />
-            <div className="absolute left-1/2 top-0 h-full w-px bg-border/60" />
-            <div className="absolute left-0 top-1/2 h-px w-full bg-border/60" />
+            <div className="absolute inset-0 border-l border-t border-border/60" aria-hidden="true" />
+            <div className="absolute left-1/2 top-0 h-full w-px bg-border/60" aria-hidden="true" />
+            <div className="absolute left-0 top-1/2 h-px w-full bg-border/60" aria-hidden="true" />
 
             {/* Dots */}
             {scored.map((s, i) => (
@@ -248,15 +252,21 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
         </div>
 
         {/* Numbered key under the matrix */}
-        <ol className="mt-4 grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+        <ol
+          aria-label="Numbered key of opportunities plotted on the matrix. Use arrow keys to move between items, Enter to jump to the matching opportunity card."
+          className="mt-4 grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3"
+          onKeyDown={(e) => handleListArrowKeys(e)}
+        >
           {scored.map((s, i) => (
             <li key={s.op.id}>
               <button
                 type="button"
+                data-heatmap-key-item
                 onClick={() => focusOpportunity(s.op.id)}
+                aria-label={`Opportunity ${i + 1} of ${scored.length}: ${s.op.name}. ${BUCKET_META[s.bucket].label}. Press Enter to jump to its card.`}
                 className="flex w-full items-start gap-2 rounded-md px-1 py-0.5 text-left text-xs text-muted-foreground transition-colors hover:bg-surface-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
-                <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
+                <span aria-hidden="true" className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
                   {i + 1}
                 </span>
                 <span className="min-w-0 break-words text-foreground">{s.op.name}</span>
@@ -268,31 +278,42 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
       </TooltipProvider>
 
       {/* Buckets */}
-      <div className="space-y-4">
-        <div className="text-sm font-semibold text-foreground">Suggested sequencing</div>
+      <div className="space-y-4" role="region" aria-labelledby="heatmap-sequencing-heading">
+        <div id="heatmap-sequencing-heading" className="text-sm font-semibold text-foreground">Suggested sequencing</div>
         {BUCKET_ORDER.map((b) => {
           const items = grouped[b];
           if (items.length === 0 && b !== "start_here") return null;
           if (b === "start_here" && items.length === 0) return null;
           const meta = BUCKET_META[b];
           const { Icon } = meta;
+          const headingId = `bucket-${b}-heading`;
+          const blurbId = `bucket-${b}-blurb`;
           return (
-            <div key={b} className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-5">
+            <section
+              key={b}
+              aria-labelledby={headingId}
+              aria-describedby={blurbId}
+              className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-5"
+            >
               <div className="flex items-start gap-2.5 sm:gap-3">
-                <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${meta.tone}`}>
+                <span aria-hidden="true" className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${meta.tone}`}>
                   <Icon className="h-4 w-4" />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-sm font-semibold text-foreground">{meta.label}</div>
-                  <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground sm:text-sm">{meta.blurb}</p>
+                  <h3 id={headingId} className="text-sm font-semibold text-foreground">{meta.label}</h3>
+                  <p id={blurbId} className="mt-0.5 text-xs leading-relaxed text-muted-foreground sm:text-sm">{meta.blurb}</p>
                 </div>
               </div>
-              <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <ul
+                aria-label={`${meta.label}: ${items.length} ${items.length === 1 ? "opportunity" : "opportunities"}`}
+                onKeyDown={(e) => handleListArrowKeys(e)}
+                className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
+              >
                 {items.map((s) => (
                   <BucketItem key={s.op.id} s={s} />
                 ))}
               </ul>
-            </div>
+            </section>
           );
         })}
       </div>
@@ -359,8 +380,35 @@ function focusOpportunity(id: string) {
   window.dispatchEvent(new CustomEvent("opportunity:focus", { detail: id }));
 }
 
+// Roving keyboard navigation across focusable buttons within a list.
+function handleListArrowKeys(e: ReactKeyboardEvent<HTMLElement>) {
+  const keys = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"];
+  if (!keys.includes(e.key)) return;
+  const container = e.currentTarget;
+  const focusables = Array.from(
+    container.querySelectorAll<HTMLButtonElement>("button:not([disabled])"),
+  );
+  if (focusables.length === 0) return;
+  const active = document.activeElement as HTMLElement | null;
+  const idx = active ? focusables.indexOf(active as HTMLButtonElement) : -1;
+  let next = idx;
+  if (e.key === "ArrowDown" || e.key === "ArrowRight") next = idx < 0 ? 0 : (idx + 1) % focusables.length;
+  else if (e.key === "ArrowUp" || e.key === "ArrowLeft") next = idx <= 0 ? focusables.length - 1 : idx - 1;
+  else if (e.key === "Home") next = 0;
+  else if (e.key === "End") next = focusables.length - 1;
+  e.preventDefault();
+  focusables[next]?.focus();
+}
+
+function bucketLabel(b: Bucket) {
+  return BUCKET_META[b].label;
+}
+
 function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted: boolean }) {
   const color = dotColor(s.bucket);
+  const aria = `Opportunity ${index}: ${s.op.name}. ${bucketLabel(s.bucket)}. Impact ${s.opImpact}, ease ${s.ease}, confidence ${s.op.confidence}.${
+    highlighted ? " Recommended starting point." : ""
+  } Press Enter to jump to its card.`;
   return (
     <div
       className="absolute -translate-x-1/2 -translate-y-1/2"
@@ -369,29 +417,38 @@ function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted:
       <button
         type="button"
         onClick={() => focusOpportunity(s.op.id)}
-        aria-label={`Jump to ${s.op.name}`}
+        aria-label={aria}
+        aria-describedby={highlighted ? undefined : undefined}
         className={`relative flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-semibold text-white shadow-sm ring-2 ring-background transition-transform hover:scale-110 focus:outline-none focus-visible:ring-primary sm:h-7 sm:w-7 sm:text-[11px] ${color} ${
           highlighted ? "outline outline-2 outline-offset-2 outline-primary" : ""
         }`}
         title={s.op.name}
       >
-        {index}
+        <span aria-hidden="true">{index}</span>
       </button>
     </div>
   );
 }
 
 function BucketItem({ s }: { s: Scored }) {
+  const aria = `${s.op.name}. ${s.op.whyItMatters} Operational impact ${s.opImpact}, ease ${s.ease}, time to value ${s.timeToValue}, confidence ${s.op.confidence}. Press Enter to jump to its card.`;
   return (
-    <li className="rounded-xl border border-border bg-surface-muted p-3">
-      <div className="text-sm font-semibold text-foreground">{s.op.name}</div>
-      <p className="mt-1 text-xs text-muted-foreground">{s.op.whyItMatters}</p>
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        <Chip label="Op. impact" value={s.opImpact} />
-        <Chip label="Ease" value={s.ease} />
-        <Chip label="Time to value" value={s.timeToValue} fastIsGood />
-        <Chip label="Confidence" value={s.op.confidence} />
-      </div>
+    <li>
+      <button
+        type="button"
+        onClick={() => focusOpportunity(s.op.id)}
+        aria-label={aria}
+        className="flex w-full flex-col items-start rounded-xl border border-border bg-surface-muted p-3 text-left transition-colors hover:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        <div className="text-sm font-semibold text-foreground">{s.op.name}</div>
+        <p className="mt-1 text-xs text-muted-foreground">{s.op.whyItMatters}</p>
+        <div className="mt-2 flex flex-wrap gap-1.5" aria-hidden="true">
+          <Chip label="Op. impact" value={s.opImpact} />
+          <Chip label="Ease" value={s.ease} />
+          <Chip label="Time to value" value={s.timeToValue} fastIsGood />
+          <Chip label="Confidence" value={s.op.confidence} />
+        </div>
+      </button>
     </li>
   );
 }
