@@ -354,6 +354,11 @@ function dotColor(bucket: Bucket): string {
   }
 }
 
+function focusOpportunity(id: string) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent("opportunity:focus", { detail: id }));
+}
+
 function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted: boolean }) {
   const color = dotColor(s.bucket);
   return (
@@ -361,14 +366,17 @@ function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted:
       className="absolute -translate-x-1/2 -translate-y-1/2"
       style={{ left: `${s.x}%`, top: `${s.y}%` }}
     >
-      <div
-        className={`relative flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold text-white shadow-sm ring-2 ring-background ${color} ${
+      <button
+        type="button"
+        onClick={() => focusOpportunity(s.op.id)}
+        aria-label={`Jump to ${s.op.name}`}
+        className={`relative flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold text-white shadow-sm ring-2 ring-background transition-transform hover:scale-110 focus:outline-none focus-visible:ring-primary ${color} ${
           highlighted ? "outline outline-2 outline-offset-2 outline-primary" : ""
         }`}
         title={s.op.name}
       >
         {index}
-      </div>
+      </button>
     </div>
   );
 }
