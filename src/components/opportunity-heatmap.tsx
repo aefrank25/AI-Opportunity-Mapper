@@ -180,8 +180,8 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
 
       {/* Matrix */}
       <TooltipProvider delayDuration={150}>
-      <div className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
-        <div className="flex items-center justify-between gap-3">
+      <div className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
             Impact vs. ease of implementation
             <Tooltip>
@@ -203,24 +203,24 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
               </TooltipContent>
             </Tooltip>
           </div>
-          <div className="hidden sm:flex items-center gap-3 text-[11px] text-muted-foreground">
-            <LegendDot className="bg-emerald-500" /> Quick win
-            <LegendDot className="bg-blue-500" /> High-impact
-            <LegendDot className="bg-amber-500" /> Longer-term
-            <LegendDot className="bg-muted-foreground/60" /> Not yet
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-emerald-500" /> Quick win</span>
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-blue-500" /> High-impact</span>
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-amber-500" /> Longer-term</span>
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-muted-foreground/60" /> Not yet</span>
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-[auto_1fr] gap-2">
+        <div className="mt-4 grid grid-cols-[14px_1fr] gap-1.5 sm:grid-cols-[auto_1fr] sm:gap-2">
           {/* Y axis label */}
           <div className="flex items-center">
-            <div className="rotate-180 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground [writing-mode:vertical-rl]">
+            <div className="rotate-180 text-[9px] font-semibold uppercase tracking-wide text-muted-foreground [writing-mode:vertical-rl] sm:text-[10px]">
               Higher impact →
             </div>
           </div>
 
           {/* Plot area */}
-          <div className="relative aspect-[5/4] w-full overflow-hidden rounded-xl border border-border bg-surface-muted">
+          <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-surface-muted sm:aspect-[5/4]">
             {/* Quadrant grid */}
             <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
               <QuadrantLabel label="Quick wins" sub="High impact · Low effort" align="tl" />
@@ -240,10 +240,10 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
         </div>
 
         {/* X axis label */}
-        <div className="mt-2 grid grid-cols-[auto_1fr] gap-2">
-          <div className="w-4" />
-          <div className="text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Easier to implement → harder to implement
+        <div className="mt-2 grid grid-cols-[14px_1fr] gap-1.5 sm:grid-cols-[auto_1fr] sm:gap-2">
+          <div />
+          <div className="text-center text-[9px] font-semibold uppercase tracking-wide text-muted-foreground sm:text-[10px]">
+            Easier → harder to implement
           </div>
         </div>
 
