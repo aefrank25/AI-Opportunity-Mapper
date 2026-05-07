@@ -35,6 +35,12 @@ export function SiteFooter() {
             >
               Privacy
             </Link>
+            <Link
+              to="/terms"
+              className="hover:text-foreground transition-colors"
+            >
+              Terms
+            </Link>
             <a
               href="mailto:SonoranDataStrategy@gmail.com"
               className="hover:text-foreground transition-colors"
