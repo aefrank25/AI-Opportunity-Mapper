@@ -123,7 +123,11 @@ function Results() {
 
         <Roadmap roadmapKey={result.roadmapKey} />
 
-        <NextStepCta isDemo={result.isDemo} />
+        <NextStepCta
+          isDemo={result.isDemo}
+          sourceUrl={result.displayUrl}
+          topOpportunity={result.topOpportunity?.name}
+        />
       </div>
     </section>
   );
