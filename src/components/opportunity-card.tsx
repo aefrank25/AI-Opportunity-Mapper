@@ -1,18 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { ScoreChip } from "./score-chip";
 import type { Opportunity } from "@/lib/types";
-import { ArrowRight, ChevronDown, Radar } from "lucide-react";
+import { ArrowRight, ChevronDown, Lock, Radar } from "lucide-react";
+
+const LOCKED_SECTIONS = [
+  "Full operational analysis",
+  "Prioritization reasoning",
+  "Recommended implementation path",
+];
 
 export function OpportunityCard({
   opportunity,
   index,
   contextSignals = [],
   priorityLabel,
+  locked = false,
 }: {
   opportunity: Opportunity;
   index: number;
   contextSignals?: string[];
   priorityLabel?: string;
+  locked?: boolean;
 }) {
   const o = opportunity;
   const ref = useRef<HTMLDivElement>(null);
