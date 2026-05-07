@@ -307,26 +307,57 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
               key={b}
               aria-labelledby={headingId}
               aria-describedby={blurbId}
-              className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-5"
+              className="rounded-2xl border border-border bg-card shadow-card"
             >
-              <div className="flex items-start gap-2.5 sm:gap-3">
-                <span aria-hidden="true" className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${meta.tone}`}>
-                  <Icon className="h-4 w-4" />
-                </span>
-                <div className="min-w-0">
-                  <h3 id={headingId} className="text-sm font-semibold text-foreground">{meta.label}</h3>
-                  <p id={blurbId} className="mt-0.5 text-xs leading-relaxed text-muted-foreground sm:text-sm">{meta.blurb}</p>
+              {/* Mobile: collapsible */}
+              <details className="group sm:hidden" open={b === "start_here"}>
+                <summary className="flex cursor-pointer list-none items-center gap-2.5 p-3">
+                  <span aria-hidden="true" className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${meta.tone}`}>
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h3 id={`${headingId}-m`} className="text-sm font-semibold text-foreground">
+                      {meta.label}
+                      <span className="ml-1.5 text-[11px] font-normal text-muted-foreground">({items.length})</span>
+                    </h3>
+                  </div>
+                  <span aria-hidden="true" className="text-muted-foreground transition-transform group-open:rotate-180">▾</span>
+                </summary>
+                <div className="px-3 pb-3">
+                  <p className="text-xs leading-relaxed text-muted-foreground">{meta.blurb}</p>
+                  <ul
+                    aria-label={`${meta.label}: ${items.length} ${items.length === 1 ? "opportunity" : "opportunities"}`}
+                    onKeyDown={(e) => handleListArrowKeys(e)}
+                    className="mt-3 grid grid-cols-1 gap-2"
+                  >
+                    {items.map((s) => (
+                      <BucketItem key={s.op.id} s={s} />
+                    ))}
+                  </ul>
                 </div>
+              </details>
+
+              {/* Desktop: always expanded */}
+              <div className="hidden p-5 sm:block">
+                <div className="flex items-start gap-3">
+                  <span aria-hidden="true" className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${meta.tone}`}>
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 id={headingId} className="text-sm font-semibold text-foreground">{meta.label}</h3>
+                    <p id={blurbId} className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{meta.blurb}</p>
+                  </div>
+                </div>
+                <ul
+                  aria-label={`${meta.label}: ${items.length} ${items.length === 1 ? "opportunity" : "opportunities"}`}
+                  onKeyDown={(e) => handleListArrowKeys(e)}
+                  className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
+                >
+                  {items.map((s) => (
+                    <BucketItem key={s.op.id} s={s} />
+                  ))}
+                </ul>
               </div>
-              <ul
-                aria-label={`${meta.label}: ${items.length} ${items.length === 1 ? "opportunity" : "opportunities"}`}
-                onKeyDown={(e) => handleListArrowKeys(e)}
-                className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
-              >
-                {items.map((s) => (
-                  <BucketItem key={s.op.id} s={s} />
-                ))}
-              </ul>
             </section>
           );
         })}
