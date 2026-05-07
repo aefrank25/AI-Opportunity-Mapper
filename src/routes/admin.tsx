@@ -151,6 +151,9 @@ function AdminPage() {
             {email && <p className="mt-1 text-xs text-muted-foreground">Signed in as {email}</p>}
           </div>
           <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link to="/admin/feedback">View feedback →</Link>
+            </Button>
             <Button variant="outline" size="sm" onClick={() => { stats.refetch(); entries.refetch(); }}>
               <RefreshCcw className="h-3.5 w-3.5" /> Refresh
             </Button>
