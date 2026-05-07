@@ -14,7 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      implementation_brief_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_demo: boolean
+          source_url: string | null
+          top_opportunity: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_demo?: boolean
+          source_url?: string | null
+          top_opportunity?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_demo?: boolean
+          source_url?: string | null
+          top_opportunity?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
