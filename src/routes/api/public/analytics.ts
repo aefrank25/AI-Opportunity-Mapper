@@ -25,7 +25,7 @@ export const Route = createFileRoute("/api/public/analytics")({
           const { name, props, path } = parsed.data;
           await supabaseAdmin.from("analytics_events").insert({
             name,
-            props: props ?? {},
+            props: (props ?? {}) as never,
             path: path ?? null,
           });
           return new Response("ok", { status: 204 });
