@@ -46,7 +46,7 @@ export function useRovingTabindex<T extends HTMLElement = HTMLElement>(options?:
   }, [setActive]);
 
   const onFocus = useCallback(
-    (e: React.FocusEvent<HTMLElement>) => {
+    (e: ReactFocusEvent<HTMLElement>) => {
       const target = e.target as HTMLElement;
       if (target.matches(selector)) setActive(target);
     },
