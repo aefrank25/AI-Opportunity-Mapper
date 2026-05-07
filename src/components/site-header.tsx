@@ -18,9 +18,6 @@ export function SiteHeader() {
             </span>
           </span>
         </Link>
-        <span className="hidden sm:inline-flex items-center rounded-full border border-border bg-surface px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
-          Prototype
-        </span>
       </div>
     </header>
   );
