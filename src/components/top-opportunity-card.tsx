@@ -6,26 +6,26 @@ export function TopOpportunityCard({ opportunity }: { opportunity: Opportunity }
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-card-lg">
       <div className="absolute inset-y-0 left-0 w-1.5 bg-primary" />
-      <div className="p-6 sm:p-8 pl-7 sm:pl-9">
+      <div className="p-4 pl-5 sm:p-8 sm:pl-9">
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-accent-foreground">
             <Sparkles className="h-3 w-3" />
             Top recommendation
           </span>
         </div>
-        <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+        <h2 className="mt-3 text-xl font-semibold tracking-tight text-foreground sm:text-3xl">
           {o.name}
         </h2>
-        <p className="mt-2 text-base text-muted-foreground">{o.description}</p>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">{o.description}</p>
 
-        <div className="mt-6 grid gap-5 sm:grid-cols-2">
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:mt-6 sm:grid-cols-2 sm:gap-5">
           <Block label="Why this matters" value={o.whyItMatters} />
           <Block label="Signal" value={o.signal} />
           <Block label="Pain point" value={o.painPoint} />
           <Block label="Improvement" value={o.improvement} />
         </div>
 
-        <div className="mt-6 flex items-start gap-3 rounded-xl border border-border bg-surface p-4">
+        <div className="mt-5 flex items-start gap-3 rounded-xl border border-border bg-surface p-3 sm:mt-6 sm:p-4">
           <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">

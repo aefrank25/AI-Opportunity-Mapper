@@ -24,7 +24,7 @@ export function OpportunityCard({ opportunity, index }: { opportunity: Opportuni
     <div
       ref={ref}
       id={`opportunity-${o.id}`}
-      className={`flex h-full flex-col rounded-2xl border bg-card p-6 shadow-card transition-all duration-500 ${
+      className={`flex h-full flex-col rounded-2xl border bg-card p-4 shadow-card transition-all duration-500 sm:p-6 ${
         highlighted ? "border-primary ring-2 ring-primary/40" : "border-border"
       }`}
     >
@@ -42,14 +42,14 @@ export function OpportunityCard({ opportunity, index }: { opportunity: Opportuni
         <Row label="Improvement" value={o.improvement} />
       </dl>
 
-      <div className="mt-5 grid grid-cols-2 gap-2">
+      <div className="mt-5 grid grid-cols-2 gap-1.5 sm:gap-2">
         <ScoreChip label="Impact" level={o.impact} />
         <ScoreChip label="Effort" level={o.effort} />
         <ScoreChip label="Confidence" level={o.confidence} />
         <ScoreChip label="Automation Risk" level={o.automationRisk} inverted />
       </div>
 
-      <dl className="mt-3 space-y-1 text-[11px] leading-snug text-muted-foreground">
+      <dl className="mt-3 hidden space-y-1 text-[11px] leading-snug text-muted-foreground sm:block">
         <div>
           <dt className="inline font-semibold text-foreground">Confidence:</dt>{" "}
           <dd className="inline">how sure we are this opportunity fits the business.</dd>
@@ -60,7 +60,7 @@ export function OpportunityCard({ opportunity, index }: { opportunity: Opportuni
         </div>
       </dl>
 
-      <div className="mt-5 rounded-xl bg-surface-muted p-3">
+      <div className="mt-5 rounded-xl bg-surface-muted p-2.5 sm:p-3">
         <div className="flex items-start gap-2 text-sm">
           <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
           <div>
