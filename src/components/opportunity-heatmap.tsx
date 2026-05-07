@@ -167,6 +167,10 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
     return { scored, startHereId, grouped };
   }, [opportunities]);
 
+  // Roving tabindex groups
+  const dotsRoving = useRovingTabindex<HTMLDivElement>({ orientation: "both" });
+  const keyRoving = useRovingTabindex<HTMLOListElement>({ orientation: "both" });
+
   return (
     <section aria-labelledby="heatmap-heading" className="space-y-5">
       <div>
