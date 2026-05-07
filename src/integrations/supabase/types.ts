@@ -41,6 +41,36 @@ export type Database = {
         }
         Relationships: []
       }
+      recommendation_feedback: {
+        Row: {
+          created_at: string
+          id: string
+          is_demo: boolean
+          notes: string | null
+          rating: number
+          source_url: string | null
+          top_opportunity: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_demo?: boolean
+          notes?: string | null
+          rating: number
+          source_url?: string | null
+          top_opportunity?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_demo?: boolean
+          notes?: string | null
+          rating?: number
+          source_url?: string | null
+          top_opportunity?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
