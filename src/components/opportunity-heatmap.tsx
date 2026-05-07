@@ -381,7 +381,7 @@ function focusOpportunity(id: string) {
 }
 
 // Roving keyboard navigation across focusable buttons within a list.
-function handleListArrowKeys(e: React.KeyboardEvent<HTMLElement>) {
+function handleListArrowKeys(e: ReactKeyboardEvent<HTMLElement>) {
   const keys = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"];
   if (!keys.includes(e.key)) return;
   const container = e.currentTarget;
