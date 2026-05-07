@@ -12,6 +12,12 @@ const PayloadSchema = z.object({
 export const Route = createFileRoute("/api/public/analytics")({
   server: {
     handlers: {
+      GET: async () => {
+        return new Response(
+          JSON.stringify({ ok: true, endpoint: "analytics", method: "POST" }),
+          { status: 200, headers: { "Content-Type": "application/json" } },
+        );
+      },
       POST: async ({ request }) => {
         try {
           const raw = await request.text();
