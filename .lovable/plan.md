@@ -1,50 +1,36 @@
-## Goal
-Replace the "Create Implementation Brief" toast with an email capture dialog so interested users are added to a waitlist for when the feature launches.
+# Footer + Trust Copy Refinement
 
-## Approach
-Use a modal dialog (existing `@/components/ui/dialog`) triggered by the CTA. Form has one field (email) + submit. On submit, store the lead and show a success state.
+Tighten the footer and a few supporting lines so the product reads as a polished, real tool — not a prototype demo.
 
-## Storage — recommend Lovable Cloud
-Stand up a tiny `implementation_brief_waitlist` table:
-- `id` uuid PK
-- `email` text not null
-- `source_url` text (the analyzed URL from results, if present)
-- `top_opportunity` text (name of opportunity #1, for context on what they wanted briefed)
-- `is_demo` boolean
-- `created_at` timestamptz default now()
-- unique index on `email` (case-insensitive) so duplicates don't pile up
+## 1. Rebuild `src/components/site-footer.tsx`
 
-RLS: enable. Policy: allow `INSERT` for `anon` + `authenticated` (public waitlist). No `SELECT` policy — only the project owner reads via the dashboard.
+Replace the current two-line prototype footer with a clean two-column layout:
 
-A server function `joinBriefWaitlist({ email, sourceUrl, topOpportunity, isDemo })` validates with zod and inserts (idempotent on email — `onConflict: 'email'` do nothing).
+- **Left**: "AI Opportunity Mapper" (small, semibold) + subtitle "Practical operational and AI opportunity insights for SMBs."
+- **Right**: muted text links — How it works, Example analysis, Privacy, Feedback, Contact.
+- **Below, separated by a thin divider**: a single muted disclaimer line — "Recommendations are generated from publicly visible website patterns and inferred workflow signals. Insights should be validated before implementation."
 
-## Files
+Styling: keep `text-muted-foreground`, `text-xs` / `text-[11px]`, `border-border/60`, lightweight padding (`py-8`). No oversized type, no boxed sections, no corporate feel. Hover state shifts links to `text-foreground`.
 
-**New: `src/lib/brief-waitlist.functions.ts`**
-- `createServerFn({ method: "POST" })` with zod input validator
-- Inserts into `implementation_brief_waitlist`, swallows duplicate-key as success
-- Returns `{ ok: true }`
+Link targets:
+- How it works → home anchor `#how-it-works`
+- Example analysis → `/analyzing?demo=agency`
+- Privacy / Feedback / Contact → `mailto:` links (subject prefilled where useful) so they work today without new pages
 
-**New: `src/components/implementation-brief-dialog.tsx`**
-- Controlled `Dialog` with `DialogContent`, `DialogHeader` ("Get the Implementation Brief"), short blurb ("We're building this. Drop your email and we'll send it as soon as it's ready — no spam."), an `Input type="email"`, submit `Button`.
-- Uses `useServerFn` + `useMutation` (TanStack Query is already in the project via TanStack Start).
-- Success state: replaces form with a check + "You're on the list. We'll email you the moment briefs go live." and a Close button.
-- Props: `open`, `onOpenChange`, `sourceUrl?`, `topOpportunity?`, `isDemo`.
+Removed lines:
+- "Prototype mode: pattern-based recommendations. Real website analysis planned."
+- "AI Opportunity Mapper — a diagnostic prototype."
 
-**Edit: `src/components/next-step-cta.tsx`**
-- Accept new props: `sourceUrl?: string`, `topOpportunity?: string`.
-- Local `useState` for dialog open.
-- Replace the `toast(...)` `onClick` with `setOpen(true)`.
-- Render `<ImplementationBriefDialog ... />` at the bottom.
-- Remove the `toast` import if no longer used.
+## 2. Anchor + copy update in `src/routes/index.tsx`
 
-**Edit: `src/routes/results.tsx`**
-- Pass `sourceUrl` (the analyzed URL displayed in the header) and `topOpportunity` (name of opportunity rank 1) into `<NextStepCta />`.
+- Add `id="how-it-works"` and `scroll-mt-20` to the existing How it works card so the footer link scrolls to it.
+- Replace the second step's `desc`:
+  - From: "The prototype maps URL patterns and selected priority to common business workflows."
+  - To: "The system interprets website structure, business context, and customer workflow signals to identify likely operational opportunities."
+
+No other section copy is changed in this pass.
 
 ## Out of scope
-- No auth required to join the waitlist.
-- No admin UI to view leads (owner reads in Cloud dashboard).
-- No actual email sending yet — that's for when the feature ships.
 
-## If you'd rather skip a database
-Alternative: post to a simple webhook (e.g. a form service) instead of Cloud. Less ideal — leads end up outside your project. Recommend the Cloud route above.
+- No new routes (Privacy / Feedback / Contact remain mailto links for now). If you want dedicated pages later, that's a follow-up.
+- No header changes.
