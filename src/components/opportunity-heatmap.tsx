@@ -350,15 +350,11 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
                     <p id={blurbId} className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{meta.blurb}</p>
                   </div>
                 </div>
-                <ul
-                  aria-label={`${meta.label}: ${items.length} ${items.length === 1 ? "opportunity" : "opportunities"}`}
-                  onKeyDown={(e) => handleListArrowKeys(e)}
+                <BucketList
+                  items={items}
+                  ariaLabel={`${meta.label}: ${items.length} ${items.length === 1 ? "opportunity" : "opportunities"}`}
                   className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
-                >
-                  {items.map((s) => (
-                    <BucketItem key={s.op.id} s={s} />
-                  ))}
-                </ul>
+                />
               </div>
             </section>
           );
