@@ -243,6 +243,7 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
             role="figure"
             aria-label={`Scatter plot of ${scored.length} opportunities. Horizontal axis: easier to harder to implement. Vertical axis: lower to higher impact.`}
             className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-surface-muted sm:aspect-[5/4]"
+            {...dotsRoving.containerProps}
           >
             {/* Quadrant grid */}
             <div className="absolute inset-0 grid grid-cols-2 grid-rows-2" aria-hidden="true">
