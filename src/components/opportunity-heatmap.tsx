@@ -248,7 +248,7 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
         </div>
 
         {/* Numbered key under the matrix */}
-        <ol className="mt-4 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+        <ol className="mt-4 grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
           {scored.map((s, i) => (
             <li key={s.op.id}>
               <button
@@ -259,7 +259,7 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
                 <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
                   {i + 1}
                 </span>
-                <span className="text-foreground">{s.op.name}</span>
+                <span className="min-w-0 break-words text-foreground">{s.op.name}</span>
               </button>
             </li>
           ))}
@@ -277,17 +277,17 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
           const meta = BUCKET_META[b];
           const { Icon } = meta;
           return (
-            <div key={b} className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-5">
-              <div className="flex items-start gap-3">
+            <div key={b} className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-5">
+              <div className="flex items-start gap-2.5 sm:gap-3">
                 <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${meta.tone}`}>
                   <Icon className="h-4 w-4" />
                 </span>
                 <div className="min-w-0">
                   <div className="text-sm font-semibold text-foreground">{meta.label}</div>
-                  <p className="mt-0.5 text-sm text-muted-foreground">{meta.blurb}</p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground sm:text-sm">{meta.blurb}</p>
                 </div>
               </div>
-              <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+              <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {items.map((s) => (
                   <BucketItem key={s.op.id} s={s} />
                 ))}
