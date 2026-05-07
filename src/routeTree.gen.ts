@@ -17,6 +17,7 @@ import { Route as AnalyzingRouteImport } from './routes/analyzing'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
+import { Route as ApiPublicAnalyticsRouteImport } from './routes/api/public/analytics'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -58,6 +59,11 @@ const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
   path: '/feedback',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicAnalyticsRoute = ApiPublicAnalyticsRouteImport.update({
+  id: '/api/public/analytics',
+  path: '/api/public/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/results': typeof ResultsRoute
   '/terms': typeof TermsRoute
   '/admin/feedback': typeof AdminFeedbackRoute
+  '/api/public/analytics': typeof ApiPublicAnalyticsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/results': typeof ResultsRoute
   '/terms': typeof TermsRoute
   '/admin/feedback': typeof AdminFeedbackRoute
+  '/api/public/analytics': typeof ApiPublicAnalyticsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/results': typeof ResultsRoute
   '/terms': typeof TermsRoute
   '/admin/feedback': typeof AdminFeedbackRoute
+  '/api/public/analytics': typeof ApiPublicAnalyticsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/terms'
     | '/admin/feedback'
+    | '/api/public/analytics'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/terms'
     | '/admin/feedback'
+    | '/api/public/analytics'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/terms'
     | '/admin/feedback'
+    | '/api/public/analytics'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResultsRoute: typeof ResultsRoute
   TermsRoute: typeof TermsRoute
+  ApiPublicAnalyticsRoute: typeof ApiPublicAnalyticsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -191,6 +204,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFeedbackRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/analytics': {
+      id: '/api/public/analytics'
+      path: '/api/public/analytics'
+      fullPath: '/api/public/analytics'
+      preLoaderRoute: typeof ApiPublicAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -212,6 +232,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResultsRoute: ResultsRoute,
   TermsRoute: TermsRoute,
+  ApiPublicAnalyticsRoute: ApiPublicAnalyticsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

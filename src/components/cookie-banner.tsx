@@ -11,33 +11,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Cookie } from "lucide-react";
-
-const STORAGE_KEY = "aiom.cookieConsent.v1";
-
-type Prefs = {
-  essential: true; // always on
-  analytics: boolean;
-  decidedAt: string;
-};
-
-function readPrefs(): Prefs | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as Prefs;
-  } catch {
-    return null;
-  }
-}
-
-function savePrefs(prefs: Prefs) {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-  } catch {
-    // ignore
-  }
-}
+import { getConsent, setConsent } from "@/lib/analytics";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -45,8 +19,8 @@ export function CookieBanner() {
   const [analytics, setAnalytics] = useState(false);
 
   useEffect(() => {
-    const existing = readPrefs();
-    if (!existing) {
+    const existing = getConsent();
+    if (!existing.decided) {
       setVisible(true);
     } else {
       setAnalytics(existing.analytics);
@@ -54,11 +28,7 @@ export function CookieBanner() {
   }, []);
 
   const persist = (analyticsOn: boolean) => {
-    savePrefs({
-      essential: true,
-      analytics: analyticsOn,
-      decidedAt: new Date().toISOString(),
-    });
+    setConsent(analyticsOn);
     setAnalytics(analyticsOn);
     setVisible(false);
     setManageOpen(false);
