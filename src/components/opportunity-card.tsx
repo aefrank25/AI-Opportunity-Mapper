@@ -1,12 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { ScoreChip } from "./score-chip";
 import type { Opportunity } from "@/lib/types";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown, Radar } from "lucide-react";
 
-export function OpportunityCard({ opportunity, index }: { opportunity: Opportunity; index: number }) {
+export function OpportunityCard({
+  opportunity,
+  index,
+  contextSignals = [],
+  priorityLabel,
+}: {
+  opportunity: Opportunity;
+  index: number;
+  contextSignals?: string[];
+  priorityLabel?: string;
+}) {
   const o = opportunity;
   const ref = useRef<HTMLDivElement>(null);
   const [highlighted, setHighlighted] = useState(false);
+  const [signalsOpen, setSignalsOpen] = useState(false);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -19,6 +30,11 @@ export function OpportunityCard({ opportunity, index }: { opportunity: Opportuni
     window.addEventListener("opportunity:focus", handler as EventListener);
     return () => window.removeEventListener("opportunity:focus", handler as EventListener);
   }, [o.id]);
+
+  // De-duplicate signals: opportunity signal first, then context signals.
+  const signalList = Array.from(
+    new Set([o.signal, ...contextSignals].map((s) => s.trim()).filter(Boolean)),
+  );
 
   return (
     <div
@@ -60,6 +76,46 @@ export function OpportunityCard({ opportunity, index }: { opportunity: Opportuni
         </div>
       </dl>
 
+      {/* Expandable signals section */}
+      <div className="mt-4 rounded-xl border border-border bg-surface-muted/60">
+        <button
+          type="button"
+          onClick={() => setSignalsOpen((v) => !v)}
+          aria-expanded={signalsOpen}
+          className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-[12px] font-medium text-foreground hover:bg-surface-muted"
+        >
+          <span className="inline-flex items-center gap-1.5">
+            <Radar className="h-3.5 w-3.5 text-muted-foreground" />
+            Why we surfaced this
+            <span className="text-muted-foreground">· {signalList.length} signal{signalList.length === 1 ? "" : "s"}</span>
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 text-muted-foreground transition-transform ${signalsOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+        {signalsOpen && (
+          <div className="border-t border-border px-3 pb-3 pt-2">
+            <ul className="space-y-1.5 text-[12px] leading-snug text-foreground">
+              {signalList.map((s, i) => (
+                <li key={i} className="flex gap-2">
+                  <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                  <span>{s}</span>
+                </li>
+              ))}
+            </ul>
+            {priorityLabel && (
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                Weighted toward your priority:{" "}
+                <span className="font-medium text-foreground">{priorityLabel}</span>.
+              </p>
+            )}
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Signals are inferred from publicly visible website patterns and business context — validate before acting.
+            </p>
+          </div>
+        )}
+      </div>
+
       <div className="mt-5 rounded-xl bg-surface-muted p-2.5 sm:p-3">
         <div className="flex items-start gap-2 text-sm">
           <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -85,3 +141,4 @@ function Row({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
