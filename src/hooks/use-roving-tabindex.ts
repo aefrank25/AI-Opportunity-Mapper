@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, type FocusEvent as ReactFocusEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 type Orientation = "horizontal" | "vertical" | "both";
 
