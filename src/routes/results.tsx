@@ -11,6 +11,7 @@ import { QuickWins } from "@/components/quick-wins";
 import { Roadmap } from "@/components/roadmap";
 import { OpportunityHeatmap } from "@/components/opportunity-heatmap";
 import { NextStepCta } from "@/components/next-step-cta";
+import { FeedbackWidget } from "@/components/feedback-widget";
 import { Globe, RotateCcw } from "lucide-react";
 
 const PRIORITY_VALUES: Priority[] = [
@@ -130,6 +131,12 @@ function Results() {
         <Roadmap roadmapKey={result.roadmapKey} />
 
         <NextStepCta
+          isDemo={result.isDemo}
+          sourceUrl={result.displayUrl}
+          topOpportunity={result.topOpportunity?.name}
+        />
+
+        <FeedbackWidget
           isDemo={result.isDemo}
           sourceUrl={result.displayUrl}
           topOpportunity={result.topOpportunity?.name}
