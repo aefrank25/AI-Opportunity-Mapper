@@ -1,7 +1,8 @@
-import { useMemo, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useMemo } from "react";
 import type { Opportunity, ScoreLevel } from "@/lib/types";
 import { Sparkles, Rocket, Compass, Clock, PauseCircle, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRovingTabindex } from "@/hooks/use-roving-tabindex";
 
 // ---- helpers -------------------------------------------------------------
 
@@ -166,6 +167,10 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
     return { scored, startHereId, grouped };
   }, [opportunities]);
 
+  // Roving tabindex groups
+  const dotsRoving = useRovingTabindex<HTMLDivElement>({ orientation: "both" });
+  const keyRoving = useRovingTabindex<HTMLOListElement>({ orientation: "both" });
+
   return (
     <section aria-labelledby="heatmap-heading" className="space-y-5">
       <div>
@@ -238,6 +243,7 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
             role="figure"
             aria-label={`Scatter plot of ${scored.length} opportunities. Horizontal axis: easier to harder to implement. Vertical axis: lower to higher impact.`}
             className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-surface-muted sm:aspect-[5/4]"
+            {...dotsRoving.containerProps}
           >
             {/* Quadrant grid */}
             <div className="absolute inset-0 grid grid-cols-2 grid-rows-2" aria-hidden="true">
@@ -269,7 +275,7 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
         <ol
           aria-label="Numbered key of opportunities plotted on the matrix. Use arrow keys to move between items, Enter to jump to the matching opportunity card."
           className="mt-4 grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3"
-          onKeyDown={(e) => handleListArrowKeys(e)}
+          {...keyRoving.containerProps}
         >
           {scored.map((s, i) => (
             <li key={s.op.id}>
@@ -325,15 +331,11 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
                 </summary>
                 <div className="px-3 pb-3">
                   <p className="text-xs leading-relaxed text-muted-foreground">{meta.blurb}</p>
-                  <ul
-                    aria-label={`${meta.label}: ${items.length} ${items.length === 1 ? "opportunity" : "opportunities"}`}
-                    onKeyDown={(e) => handleListArrowKeys(e)}
+                  <BucketList
+                    items={items}
+                    ariaLabel={`${meta.label}: ${items.length} ${items.length === 1 ? "opportunity" : "opportunities"}`}
                     className="mt-3 grid grid-cols-1 gap-2"
-                  >
-                    {items.map((s) => (
-                      <BucketItem key={s.op.id} s={s} />
-                    ))}
-                  </ul>
+                  />
                 </div>
               </details>
 
@@ -348,15 +350,11 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
                     <p id={blurbId} className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{meta.blurb}</p>
                   </div>
                 </div>
-                <ul
-                  aria-label={`${meta.label}: ${items.length} ${items.length === 1 ? "opportunity" : "opportunities"}`}
-                  onKeyDown={(e) => handleListArrowKeys(e)}
+                <BucketList
+                  items={items}
+                  ariaLabel={`${meta.label}: ${items.length} ${items.length === 1 ? "opportunity" : "opportunities"}`}
                   className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
-                >
-                  {items.map((s) => (
-                    <BucketItem key={s.op.id} s={s} />
-                  ))}
-                </ul>
+                />
               </div>
             </section>
           );
@@ -425,24 +423,23 @@ function focusOpportunity(id: string) {
   window.dispatchEvent(new CustomEvent("opportunity:focus", { detail: id }));
 }
 
-// Roving keyboard navigation across focusable buttons within a list.
-function handleListArrowKeys(e: ReactKeyboardEvent<HTMLElement>) {
-  const keys = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"];
-  if (!keys.includes(e.key)) return;
-  const container = e.currentTarget;
-  const focusables = Array.from(
-    container.querySelectorAll<HTMLButtonElement>("button:not([disabled])"),
+function BucketList({
+  items,
+  ariaLabel,
+  className,
+}: {
+  items: Scored[];
+  ariaLabel: string;
+  className?: string;
+}) {
+  const roving = useRovingTabindex<HTMLUListElement>({ orientation: "both" });
+  return (
+    <ul aria-label={ariaLabel} className={className} {...roving.containerProps}>
+      {items.map((s) => (
+        <BucketItem key={s.op.id} s={s} />
+      ))}
+    </ul>
   );
-  if (focusables.length === 0) return;
-  const active = document.activeElement as HTMLElement | null;
-  const idx = active ? focusables.indexOf(active as HTMLButtonElement) : -1;
-  let next = idx;
-  if (e.key === "ArrowDown" || e.key === "ArrowRight") next = idx < 0 ? 0 : (idx + 1) % focusables.length;
-  else if (e.key === "ArrowUp" || e.key === "ArrowLeft") next = idx <= 0 ? focusables.length - 1 : idx - 1;
-  else if (e.key === "Home") next = 0;
-  else if (e.key === "End") next = focusables.length - 1;
-  e.preventDefault();
-  focusables[next]?.focus();
 }
 
 function bucketLabel(b: Bucket) {
