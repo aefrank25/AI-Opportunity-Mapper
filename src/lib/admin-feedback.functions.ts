@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { attachSupabaseAuth } from "@/integrations/supabase/attach-auth";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 async function ensureAdmin(userId: string) {
@@ -20,7 +21,7 @@ const filtersSchema = z.object({
 });
 
 export const listRecommendationFeedback = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .inputValidator((input) => filtersSchema.parse(input))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context.userId);
@@ -45,7 +46,7 @@ export const listRecommendationFeedback = createServerFn({ method: "POST" })
   });
 
 export const getFeedbackStats = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .handler(async ({ context }) => {
     await ensureAdmin(context.userId);
 
