@@ -16,7 +16,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AnalyzingRouteImport } from './routes/analyzing'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
+import { Route as AdminFeedbackRouteImport } from './routes/admin_.feedback'
 import { Route as ApiPublicAnalyticsRouteImport } from './routes/api/public/analytics'
 
 const TermsRoute = TermsRouteImport.update({
@@ -55,9 +55,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
-  id: '/feedback',
-  path: '/feedback',
-  getParentRoute: () => AdminRoute,
+  id: '/admin_/feedback',
+  path: '/admin/feedback',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicAnalyticsRoute = ApiPublicAnalyticsRouteImport.update({
   id: '/api/public/analytics',
@@ -67,7 +67,7 @@ const ApiPublicAnalyticsRoute = ApiPublicAnalyticsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/admin': typeof AdminRoute
   '/analyzing': typeof AnalyzingRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -78,7 +78,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/admin': typeof AdminRoute
   '/analyzing': typeof AnalyzingRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -90,13 +90,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/admin': typeof AdminRoute
   '/analyzing': typeof AnalyzingRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/results': typeof ResultsRoute
   '/terms': typeof TermsRoute
-  '/admin/feedback': typeof AdminFeedbackRoute
+  '/admin_/feedback': typeof AdminFeedbackRoute
   '/api/public/analytics': typeof ApiPublicAnalyticsRoute
 }
 export interface FileRouteTypes {
@@ -131,18 +131,19 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/results'
     | '/terms'
-    | '/admin/feedback'
+    | '/admin_/feedback'
     | '/api/public/analytics'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRouteWithChildren
+  AdminRoute: typeof AdminRoute
   AnalyzingRoute: typeof AnalyzingRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
   ResultsRoute: typeof ResultsRoute
   TermsRoute: typeof TermsRoute
+  AdminFeedbackRoute: typeof AdminFeedbackRoute
   ApiPublicAnalyticsRoute: typeof ApiPublicAnalyticsRoute
 }
 
@@ -197,12 +198,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/feedback': {
-      id: '/admin/feedback'
-      path: '/feedback'
+    '/admin_/feedback': {
+      id: '/admin_/feedback'
+      path: '/admin/feedback'
       fullPath: '/admin/feedback'
       preLoaderRoute: typeof AdminFeedbackRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/analytics': {
       id: '/api/public/analytics'
@@ -214,26 +215,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AdminRouteChildren {
-  AdminFeedbackRoute: typeof AdminFeedbackRoute
-}
-
-const AdminRouteChildren: AdminRouteChildren = {
-  AdminFeedbackRoute: AdminFeedbackRoute,
-}
-
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRouteWithChildren,
+  AdminRoute: AdminRoute,
   AnalyzingRoute: AnalyzingRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
   ResultsRoute: ResultsRoute,
   TermsRoute: TermsRoute,
+  AdminFeedbackRoute: AdminFeedbackRoute,
   ApiPublicAnalyticsRoute: ApiPublicAnalyticsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Loader2, Download, LogOut, RefreshCcw, Star, ArrowLeft } from "lucide-react";
 
-export const Route = createFileRoute("/admin/feedback")({
+export const Route = createFileRoute("/admin_/feedback")({
   head: () => ({
     meta: [
       { title: "Admin — Feedback" },
