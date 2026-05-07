@@ -30,16 +30,22 @@ export function ScoreChip({ label, level, inverted = false, hint }: ScoreChipPro
       <span className="inline-flex min-w-0 items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground sm:text-[11px]">
         <span className="truncate">{label}</span>
         {explanation && (
-          <Popover open={open} onOpenChange={setOpen}>
+          <Popover open={open} onOpenChange={setOpen} modal={false}>
             <PopoverTrigger asChild>
               <button
                 type="button"
                 aria-label={`${label} explanation`}
-                onPointerDown={(e) => e.stopPropagation()}
+                aria-expanded={open}
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  if (e.pointerType === "touch" || e.pointerType === "pen") {
+                    e.preventDefault();
+                    setOpen((v) => !v);
+                  }
+                }}
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-                  setOpen((v) => !v);
                 }}
                 onMouseEnter={() => setOpen(true)}
                 onMouseLeave={() => setOpen(false)}
@@ -56,6 +62,9 @@ export function ScoreChip({ label, level, inverted = false, hint }: ScoreChipPro
               collisionPadding={12}
               onOpenAutoFocus={(e) => e.preventDefault()}
               onCloseAutoFocus={(e) => e.preventDefault()}
+              onPointerDownOutside={() => setOpen(false)}
+              onInteractOutside={() => setOpen(false)}
+              onEscapeKeyDown={() => setOpen(false)}
               className="w-auto max-w-[14rem] rounded-md p-2.5 text-xs leading-snug normal-case tracking-normal"
             >
               {explanation}
