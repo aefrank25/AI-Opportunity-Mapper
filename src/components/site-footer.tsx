@@ -51,8 +51,8 @@ export function SiteFooter() {
         </div>
 
         <p className="mt-6 border-t border-border/60 pt-4 text-[11px] leading-relaxed text-muted-foreground">
-          Recommendations are generated from publicly visible website patterns
-          and inferred workflow signals. Insights should be validated before
+          Insights are generated from publicly visible website patterns
+          and inferred workflow signals. Recommendations should be validated before
           implementation.
         </p>
       </div>
