@@ -322,18 +322,18 @@ function QuadrantLabel({
   align: "tl" | "tr" | "bl" | "br";
 }) {
   const pos = {
-    tl: "items-start justify-start text-left p-2",
-    tr: "items-start justify-end text-right p-2",
-    bl: "items-end justify-start text-left p-2",
-    br: "items-end justify-end text-right p-2",
+    tl: "items-start justify-start text-left p-1.5 sm:p-2",
+    tr: "items-start justify-end text-right p-1.5 sm:p-2",
+    bl: "items-end justify-start text-left p-1.5 sm:p-2",
+    br: "items-end justify-end text-right p-1.5 sm:p-2",
   }[align];
   return (
     <div className={`flex ${pos}`}>
       <div>
-        <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <div className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground sm:text-[10px]">
           {label}
         </div>
-        <div className="text-[10px] text-muted-foreground/80">{sub}</div>
+        <div className="hidden text-[10px] text-muted-foreground/80 sm:block">{sub}</div>
       </div>
     </div>
   );
