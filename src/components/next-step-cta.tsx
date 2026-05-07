@@ -1,8 +1,17 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { toast } from "sonner";
+import { ImplementationBriefDialog } from "@/components/implementation-brief-dialog";
 
-export function NextStepCta({ isDemo }: { isDemo: boolean }) {
+interface Props {
+  isDemo: boolean;
+  sourceUrl?: string;
+  topOpportunity?: string;
+}
+
+export function NextStepCta({ isDemo, sourceUrl, topOpportunity }: Props) {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="rounded-2xl border border-border bg-primary p-4 shadow-card-lg sm:p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -19,11 +28,7 @@ export function NextStepCta({ isDemo }: { isDemo: boolean }) {
             variant="secondary"
             size="default"
             className="w-full sm:w-auto sm:h-11 sm:rounded-md sm:px-8"
-            onClick={() =>
-              toast("Implementation Brief is planned for the next version.", {
-                description: "It will turn the chosen opportunity into a concrete brief you can share.",
-              })
-            }
+            onClick={() => setOpen(true)}
           >
             Create Implementation Brief
           </Button>
@@ -47,6 +52,14 @@ export function NextStepCta({ isDemo }: { isDemo: boolean }) {
           </Link>
         </div>
       )}
+
+      <ImplementationBriefDialog
+        open={open}
+        onOpenChange={setOpen}
+        sourceUrl={sourceUrl}
+        topOpportunity={topOpportunity}
+        isDemo={isDemo}
+      />
     </div>
   );
 }
