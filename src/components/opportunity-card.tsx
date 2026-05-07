@@ -60,11 +60,6 @@ export function OpportunityCard({
       <h3 className="mt-2 text-lg font-semibold tracking-tight text-foreground">{o.name}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{o.description}</p>
 
-      <dl className="mt-5 space-y-3 text-sm">
-        <Row label="Signal" value={o.signal} />
-        <Row label="Pain point" value={o.painPoint} />
-        <Row label="Improvement" value={o.improvement} />
-      </dl>
 
       <div className="mt-5 grid grid-cols-2 gap-1.5 sm:gap-2">
         <ScoreChip label="Impact" level={o.impact} />
