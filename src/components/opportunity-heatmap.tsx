@@ -252,15 +252,21 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
         </div>
 
         {/* Numbered key under the matrix */}
-        <ol className="mt-4 grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+        <ol
+          aria-label="Numbered key of opportunities plotted on the matrix. Use arrow keys to move between items, Enter to jump to the matching opportunity card."
+          className="mt-4 grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3"
+          onKeyDown={(e) => handleListArrowKeys(e)}
+        >
           {scored.map((s, i) => (
             <li key={s.op.id}>
               <button
                 type="button"
+                data-heatmap-key-item
                 onClick={() => focusOpportunity(s.op.id)}
+                aria-label={`Opportunity ${i + 1} of ${scored.length}: ${s.op.name}. ${BUCKET_META[s.bucket].label}. Press Enter to jump to its card.`}
                 className="flex w-full items-start gap-2 rounded-md px-1 py-0.5 text-left text-xs text-muted-foreground transition-colors hover:bg-surface-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
-                <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
+                <span aria-hidden="true" className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
                   {i + 1}
                 </span>
                 <span className="min-w-0 break-words text-foreground">{s.op.name}</span>
