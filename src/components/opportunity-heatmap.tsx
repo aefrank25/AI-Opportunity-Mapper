@@ -370,7 +370,7 @@ function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted:
         type="button"
         onClick={() => focusOpportunity(s.op.id)}
         aria-label={`Jump to ${s.op.name}`}
-        className={`relative flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold text-white shadow-sm ring-2 ring-background transition-transform hover:scale-110 focus:outline-none focus-visible:ring-primary ${color} ${
+        className={`relative flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-semibold text-white shadow-sm ring-2 ring-background transition-transform hover:scale-110 focus:outline-none focus-visible:ring-primary sm:h-7 sm:w-7 sm:text-[11px] ${color} ${
           highlighted ? "outline outline-2 outline-offset-2 outline-primary" : ""
         }`}
         title={s.op.name}
