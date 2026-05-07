@@ -23,9 +23,9 @@ export function ScoreChip({ label, level, inverted = false, hint }: ScoreChipPro
   const styles = getStyles(level, inverted);
   const explanation = hint ?? DEFAULT_HINTS[label];
   return (
-    <div className="flex items-center justify-between gap-2 rounded-lg bg-surface px-2.5 py-1.5">
-      <span className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-        {label}
+    <div className="flex flex-col gap-1 rounded-lg bg-surface px-2.5 py-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+      <span className="inline-flex min-w-0 items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground sm:text-[11px]">
+        <span className="truncate">{label}</span>
         {explanation && (
           <TooltipProvider delayDuration={150}>
             <Tooltip>
@@ -33,7 +33,7 @@ export function ScoreChip({ label, level, inverted = false, hint }: ScoreChipPro
                 <button
                   type="button"
                   aria-label={`${label} explanation`}
-                  className="-m-1.5 inline-flex items-center justify-center p-1.5 text-muted-foreground/70 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                  className="-m-1.5 inline-flex shrink-0 items-center justify-center p-1.5 text-muted-foreground/70 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
                 >
                   <Info className="h-3 w-3" />
                 </button>
@@ -47,7 +47,7 @@ export function ScoreChip({ label, level, inverted = false, hint }: ScoreChipPro
       </span>
       <span
         className={cn(
-          "inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-semibold",
+          "inline-flex w-fit items-center rounded-md px-1.5 py-0.5 text-[11px] font-semibold",
           styles,
         )}
       >
