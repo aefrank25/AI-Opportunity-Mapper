@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { attachSupabaseAuth } from "@/integrations/supabase/attach-auth";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 async function ensureAdmin(userId: string) {
@@ -16,7 +17,7 @@ async function ensureAdmin(userId: string) {
 }
 
 export const checkIsAdmin = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data } = await supabaseAdmin
       .from("user_roles")
@@ -40,7 +41,7 @@ function rangeStart(range: "all" | "7d" | "30d" | "90d"): string | null {
 }
 
 export const listWaitlistEntries = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .inputValidator((input) => filtersSchema.parse(input))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context.userId);
@@ -66,7 +67,7 @@ export const listWaitlistEntries = createServerFn({ method: "POST" })
   });
 
 export const getWaitlistStats = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .handler(async ({ context }) => {
     await ensureAdmin(context.userId);
 
