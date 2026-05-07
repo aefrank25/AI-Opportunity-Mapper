@@ -179,9 +179,30 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
       </div>
 
       {/* Matrix */}
+      <TooltipProvider delayDuration={150}>
       <div className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
         <div className="flex items-center justify-between gap-3">
-          <div className="text-sm font-semibold text-foreground">Impact vs. ease of implementation</div>
+          <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+            Impact vs. ease of implementation
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" aria-label="How impact and ease are inferred" className="text-muted-foreground hover:text-foreground">
+                  <Info className="h-3.5 w-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs bg-popover text-popover-foreground border border-border">
+                <p className="text-xs leading-relaxed">
+                  <span className="font-semibold">Impact</span> is inferred from website signals like the visibility of a service, repeated calls-to-action, or how central a workflow appears to the business.
+                </p>
+                <p className="mt-1.5 text-xs leading-relaxed">
+                  <span className="font-semibold">Ease</span> is inferred from how standardized the task looks on the site — clear forms, repeating patterns, and templated copy suggest it's easier to automate.
+                </p>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                  Internal tools, staffing, and budget aren't visible — these are starting estimates.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <div className="hidden sm:flex items-center gap-3 text-[11px] text-muted-foreground">
             <LegendDot className="bg-emerald-500" /> Quick win
             <LegendDot className="bg-blue-500" /> High-impact
