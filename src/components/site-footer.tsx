@@ -36,13 +36,7 @@ export function SiteFooter() {
               Privacy
             </Link>
             <a
-              href="mailto:hello@aiopportunitymapper.com?subject=Product%20feedback"
-              className="hover:text-foreground transition-colors"
-            >
-              Feedback
-            </a>
-            <a
-              href="mailto:hello@aiopportunitymapper.com"
+              href="mailto:SonoranDataStrategy@gmail.com"
               className="hover:text-foreground transition-colors"
             >
               Contact
