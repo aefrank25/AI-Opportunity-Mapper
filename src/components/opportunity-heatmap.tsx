@@ -423,24 +423,23 @@ function focusOpportunity(id: string) {
   window.dispatchEvent(new CustomEvent("opportunity:focus", { detail: id }));
 }
 
-// Roving keyboard navigation across focusable buttons within a list.
-function handleListArrowKeys(e: ReactKeyboardEvent<HTMLElement>) {
-  const keys = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"];
-  if (!keys.includes(e.key)) return;
-  const container = e.currentTarget;
-  const focusables = Array.from(
-    container.querySelectorAll<HTMLButtonElement>("button:not([disabled])"),
+function BucketList({
+  items,
+  ariaLabel,
+  className,
+}: {
+  items: Scored[];
+  ariaLabel: string;
+  className?: string;
+}) {
+  const roving = useRovingTabindex<HTMLUListElement>({ orientation: "both" });
+  return (
+    <ul aria-label={ariaLabel} className={className} {...roving.containerProps}>
+      {items.map((s) => (
+        <BucketItem key={s.op.id} s={s} />
+      ))}
+    </ul>
   );
-  if (focusables.length === 0) return;
-  const active = document.activeElement as HTMLElement | null;
-  const idx = active ? focusables.indexOf(active as HTMLButtonElement) : -1;
-  let next = idx;
-  if (e.key === "ArrowDown" || e.key === "ArrowRight") next = idx < 0 ? 0 : (idx + 1) % focusables.length;
-  else if (e.key === "ArrowUp" || e.key === "ArrowLeft") next = idx <= 0 ? focusables.length - 1 : idx - 1;
-  else if (e.key === "Home") next = 0;
-  else if (e.key === "End") next = focusables.length - 1;
-  e.preventDefault();
-  focusables[next]?.focus();
 }
 
 function bucketLabel(b: Bucket) {
