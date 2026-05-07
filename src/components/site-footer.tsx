@@ -29,12 +29,12 @@ export function SiteFooter() {
             >
               Example analysis
             </Link>
-            <a
-              href="mailto:hello@aiopportunitymapper.com?subject=Privacy%20question"
+            <Link
+              to="/privacy"
               className="hover:text-foreground transition-colors"
             >
               Privacy
-            </a>
+            </Link>
             <a
               href="mailto:hello@aiopportunitymapper.com?subject=Product%20feedback"
               className="hover:text-foreground transition-colors"
