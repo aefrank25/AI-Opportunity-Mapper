@@ -180,8 +180,8 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
 
       {/* Matrix */}
       <TooltipProvider delayDuration={150}>
-      <div className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
-        <div className="flex items-center justify-between gap-3">
+      <div className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
             Impact vs. ease of implementation
             <Tooltip>
@@ -203,24 +203,24 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
               </TooltipContent>
             </Tooltip>
           </div>
-          <div className="hidden sm:flex items-center gap-3 text-[11px] text-muted-foreground">
-            <LegendDot className="bg-emerald-500" /> Quick win
-            <LegendDot className="bg-blue-500" /> High-impact
-            <LegendDot className="bg-amber-500" /> Longer-term
-            <LegendDot className="bg-muted-foreground/60" /> Not yet
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-emerald-500" /> Quick win</span>
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-blue-500" /> High-impact</span>
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-amber-500" /> Longer-term</span>
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-muted-foreground/60" /> Not yet</span>
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-[auto_1fr] gap-2">
+        <div className="mt-4 grid grid-cols-[14px_1fr] gap-1.5 sm:grid-cols-[auto_1fr] sm:gap-2">
           {/* Y axis label */}
           <div className="flex items-center">
-            <div className="rotate-180 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground [writing-mode:vertical-rl]">
+            <div className="rotate-180 text-[9px] font-semibold uppercase tracking-wide text-muted-foreground [writing-mode:vertical-rl] sm:text-[10px]">
               Higher impact →
             </div>
           </div>
 
           {/* Plot area */}
-          <div className="relative aspect-[5/4] w-full overflow-hidden rounded-xl border border-border bg-surface-muted">
+          <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-surface-muted sm:aspect-[5/4]">
             {/* Quadrant grid */}
             <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
               <QuadrantLabel label="Quick wins" sub="High impact · Low effort" align="tl" />
@@ -240,15 +240,15 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
         </div>
 
         {/* X axis label */}
-        <div className="mt-2 grid grid-cols-[auto_1fr] gap-2">
-          <div className="w-4" />
-          <div className="text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Easier to implement → harder to implement
+        <div className="mt-2 grid grid-cols-[14px_1fr] gap-1.5 sm:grid-cols-[auto_1fr] sm:gap-2">
+          <div />
+          <div className="text-center text-[9px] font-semibold uppercase tracking-wide text-muted-foreground sm:text-[10px]">
+            Easier → harder to implement
           </div>
         </div>
 
         {/* Numbered key under the matrix */}
-        <ol className="mt-4 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+        <ol className="mt-4 grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
           {scored.map((s, i) => (
             <li key={s.op.id}>
               <button
@@ -259,7 +259,7 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
                 <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground">
                   {i + 1}
                 </span>
-                <span className="text-foreground">{s.op.name}</span>
+                <span className="min-w-0 break-words text-foreground">{s.op.name}</span>
               </button>
             </li>
           ))}
@@ -277,17 +277,17 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
           const meta = BUCKET_META[b];
           const { Icon } = meta;
           return (
-            <div key={b} className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-5">
-              <div className="flex items-start gap-3">
+            <div key={b} className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-5">
+              <div className="flex items-start gap-2.5 sm:gap-3">
                 <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${meta.tone}`}>
                   <Icon className="h-4 w-4" />
                 </span>
                 <div className="min-w-0">
                   <div className="text-sm font-semibold text-foreground">{meta.label}</div>
-                  <p className="mt-0.5 text-sm text-muted-foreground">{meta.blurb}</p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground sm:text-sm">{meta.blurb}</p>
                 </div>
               </div>
-              <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+              <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {items.map((s) => (
                   <BucketItem key={s.op.id} s={s} />
                 ))}
@@ -322,18 +322,18 @@ function QuadrantLabel({
   align: "tl" | "tr" | "bl" | "br";
 }) {
   const pos = {
-    tl: "items-start justify-start text-left p-2",
-    tr: "items-start justify-end text-right p-2",
-    bl: "items-end justify-start text-left p-2",
-    br: "items-end justify-end text-right p-2",
+    tl: "items-start justify-start text-left p-1.5 sm:p-2",
+    tr: "items-start justify-end text-right p-1.5 sm:p-2",
+    bl: "items-end justify-start text-left p-1.5 sm:p-2",
+    br: "items-end justify-end text-right p-1.5 sm:p-2",
   }[align];
   return (
     <div className={`flex ${pos}`}>
       <div>
-        <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <div className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground sm:text-[10px]">
           {label}
         </div>
-        <div className="text-[10px] text-muted-foreground/80">{sub}</div>
+        <div className="hidden text-[10px] text-muted-foreground/80 sm:block">{sub}</div>
       </div>
     </div>
   );
@@ -370,7 +370,7 @@ function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted:
         type="button"
         onClick={() => focusOpportunity(s.op.id)}
         aria-label={`Jump to ${s.op.name}`}
-        className={`relative flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold text-white shadow-sm ring-2 ring-background transition-transform hover:scale-110 focus:outline-none focus-visible:ring-primary ${color} ${
+        className={`relative flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-semibold text-white shadow-sm ring-2 ring-background transition-transform hover:scale-110 focus:outline-none focus-visible:ring-primary sm:h-7 sm:w-7 sm:text-[11px] ${color} ${
           highlighted ? "outline outline-2 outline-offset-2 outline-primary" : ""
         }`}
         title={s.op.name}
