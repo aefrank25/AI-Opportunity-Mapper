@@ -203,13 +203,27 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
               </TooltipContent>
             </Tooltip>
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+          <div className="hidden flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground sm:flex">
             <span className="inline-flex items-center gap-1"><LegendDot className="bg-emerald-500" /> Quick win</span>
             <span className="inline-flex items-center gap-1"><LegendDot className="bg-blue-500" /> High-impact</span>
             <span className="inline-flex items-center gap-1"><LegendDot className="bg-amber-500" /> Longer-term</span>
             <span className="inline-flex items-center gap-1"><LegendDot className="bg-muted-foreground/60" /> Not yet</span>
           </div>
         </div>
+
+        {/* Mobile-only collapsible legend */}
+        <details className="group mt-2 sm:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between rounded-md border border-border bg-surface-muted px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground">
+            <span>Color legend</span>
+            <span className="text-muted-foreground transition-transform group-open:rotate-180" aria-hidden="true">▾</span>
+          </summary>
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-[11px] text-muted-foreground">
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-emerald-500" /> Quick win</span>
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-blue-500" /> High-impact</span>
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-amber-500" /> Longer-term</span>
+            <span className="inline-flex items-center gap-1"><LegendDot className="bg-muted-foreground/60" /> Not yet</span>
+          </div>
+        </details>
 
         <div className="mt-4 grid grid-cols-[14px_1fr] gap-1.5 sm:grid-cols-[auto_1fr] sm:gap-2">
           {/* Y axis label */}
