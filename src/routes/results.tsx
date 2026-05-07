@@ -11,6 +11,7 @@ import { QuickWins } from "@/components/quick-wins";
 import { Roadmap } from "@/components/roadmap";
 import { OpportunityHeatmap } from "@/components/opportunity-heatmap";
 import { NextStepCta } from "@/components/next-step-cta";
+import { UnlockSection } from "@/components/unlock-section";
 import { FeedbackWidget } from "@/components/feedback-widget";
 import { Globe, RotateCcw } from "lucide-react";
 
@@ -121,6 +122,7 @@ function Results() {
                 index={i}
                 contextSignals={result.snapshot.signals}
                 priorityLabel={PRIORITY_LABELS[result.priority]}
+                locked={i > 0}
               />
             ))}
           </div>
@@ -129,6 +131,12 @@ function Results() {
         <QuickWins wins={result.quickWins} />
 
         <Roadmap roadmapKey={result.roadmapKey} />
+
+        <UnlockSection
+          isDemo={result.isDemo}
+          sourceUrl={result.displayUrl}
+          topOpportunity={result.topOpportunity?.name}
+        />
 
         <NextStepCta
           isDemo={result.isDemo}

@@ -17,10 +17,10 @@ export function NextStepCta({ isDemo, sourceUrl, topOpportunity }: Props) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-primary-foreground sm:text-2xl">
-            Ready to turn one opportunity into a real workflow?
+            Want this turned into a working prototype?
           </h2>
           <p className="mt-1 text-sm text-primary-foreground/80">
-            Pick the highest-impact opportunity and turn it into a concrete plan.
+            Generate an Implementation Brief for your top opportunity — scoped, sequenced, and ready to hand off.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
