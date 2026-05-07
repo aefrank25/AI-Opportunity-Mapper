@@ -180,7 +180,7 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
 
       {/* Matrix */}
       <TooltipProvider delayDuration={150}>
-      <div className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-6">
+      <div role="group" aria-label="Impact vs. ease of implementation matrix" className="rounded-2xl border border-border bg-card p-3 shadow-card sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
             Impact vs. ease of implementation
