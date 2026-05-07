@@ -220,17 +220,21 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
           </div>
 
           {/* Plot area */}
-          <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-surface-muted sm:aspect-[5/4]">
+          <div
+            role="figure"
+            aria-label={`Scatter plot of ${scored.length} opportunities. Horizontal axis: easier to harder to implement. Vertical axis: lower to higher impact.`}
+            className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-surface-muted sm:aspect-[5/4]"
+          >
             {/* Quadrant grid */}
-            <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
+            <div className="absolute inset-0 grid grid-cols-2 grid-rows-2" aria-hidden="true">
               <QuadrantLabel label="Quick wins" sub="High impact · Low effort" align="tl" />
               <QuadrantLabel label="High-impact next" sub="High impact · Higher effort" align="tr" />
               <QuadrantLabel label="Easy extras" sub="Lower impact · Low effort" align="bl" />
               <QuadrantLabel label="Lower priority" sub="Lower impact · Higher effort" align="br" />
             </div>
-            <div className="absolute inset-0 border-l border-t border-border/60" />
-            <div className="absolute left-1/2 top-0 h-full w-px bg-border/60" />
-            <div className="absolute left-0 top-1/2 h-px w-full bg-border/60" />
+            <div className="absolute inset-0 border-l border-t border-border/60" aria-hidden="true" />
+            <div className="absolute left-1/2 top-0 h-full w-px bg-border/60" aria-hidden="true" />
+            <div className="absolute left-0 top-1/2 h-px w-full bg-border/60" aria-hidden="true" />
 
             {/* Dots */}
             {scored.map((s, i) => (
