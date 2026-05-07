@@ -380,8 +380,35 @@ function focusOpportunity(id: string) {
   window.dispatchEvent(new CustomEvent("opportunity:focus", { detail: id }));
 }
 
+// Roving keyboard navigation across focusable buttons within a list.
+function handleListArrowKeys(e: React.KeyboardEvent<HTMLElement>) {
+  const keys = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"];
+  if (!keys.includes(e.key)) return;
+  const container = e.currentTarget;
+  const focusables = Array.from(
+    container.querySelectorAll<HTMLButtonElement>("button:not([disabled])"),
+  );
+  if (focusables.length === 0) return;
+  const active = document.activeElement as HTMLElement | null;
+  const idx = active ? focusables.indexOf(active as HTMLButtonElement) : -1;
+  let next = idx;
+  if (e.key === "ArrowDown" || e.key === "ArrowRight") next = idx < 0 ? 0 : (idx + 1) % focusables.length;
+  else if (e.key === "ArrowUp" || e.key === "ArrowLeft") next = idx <= 0 ? focusables.length - 1 : idx - 1;
+  else if (e.key === "Home") next = 0;
+  else if (e.key === "End") next = focusables.length - 1;
+  e.preventDefault();
+  focusables[next]?.focus();
+}
+
+function bucketLabel(b: Bucket) {
+  return BUCKET_META[b].label;
+}
+
 function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted: boolean }) {
   const color = dotColor(s.bucket);
+  const aria = `Opportunity ${index}: ${s.op.name}. ${bucketLabel(s.bucket)}. Impact ${s.opImpact}, ease ${s.ease}, confidence ${s.op.confidence}.${
+    highlighted ? " Recommended starting point." : ""
+  } Press Enter to jump to its card.`;
   return (
     <div
       className="absolute -translate-x-1/2 -translate-y-1/2"
@@ -390,29 +417,38 @@ function Dot({ s, index, highlighted }: { s: Scored; index: number; highlighted:
       <button
         type="button"
         onClick={() => focusOpportunity(s.op.id)}
-        aria-label={`Jump to ${s.op.name}`}
+        aria-label={aria}
+        aria-describedby={highlighted ? undefined : undefined}
         className={`relative flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-semibold text-white shadow-sm ring-2 ring-background transition-transform hover:scale-110 focus:outline-none focus-visible:ring-primary sm:h-7 sm:w-7 sm:text-[11px] ${color} ${
           highlighted ? "outline outline-2 outline-offset-2 outline-primary" : ""
         }`}
         title={s.op.name}
       >
-        {index}
+        <span aria-hidden="true">{index}</span>
       </button>
     </div>
   );
 }
 
 function BucketItem({ s }: { s: Scored }) {
+  const aria = `${s.op.name}. ${s.op.whyItMatters} Operational impact ${s.opImpact}, ease ${s.ease}, time to value ${s.timeToValue}, confidence ${s.op.confidence}. Press Enter to jump to its card.`;
   return (
-    <li className="rounded-xl border border-border bg-surface-muted p-3">
-      <div className="text-sm font-semibold text-foreground">{s.op.name}</div>
-      <p className="mt-1 text-xs text-muted-foreground">{s.op.whyItMatters}</p>
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        <Chip label="Op. impact" value={s.opImpact} />
-        <Chip label="Ease" value={s.ease} />
-        <Chip label="Time to value" value={s.timeToValue} fastIsGood />
-        <Chip label="Confidence" value={s.op.confidence} />
-      </div>
+    <li>
+      <button
+        type="button"
+        onClick={() => focusOpportunity(s.op.id)}
+        aria-label={aria}
+        className="flex w-full flex-col items-start rounded-xl border border-border bg-surface-muted p-3 text-left transition-colors hover:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        <div className="text-sm font-semibold text-foreground">{s.op.name}</div>
+        <p className="mt-1 text-xs text-muted-foreground">{s.op.whyItMatters}</p>
+        <div className="mt-2 flex flex-wrap gap-1.5" aria-hidden="true">
+          <Chip label="Op. impact" value={s.opImpact} />
+          <Chip label="Ease" value={s.ease} />
+          <Chip label="Time to value" value={s.timeToValue} fastIsGood />
+          <Chip label="Confidence" value={s.op.confidence} />
+        </div>
+      </button>
     </li>
   );
 }
