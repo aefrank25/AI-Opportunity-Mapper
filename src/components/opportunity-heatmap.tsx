@@ -1,7 +1,8 @@
-import { useMemo, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useMemo } from "react";
 import type { Opportunity, ScoreLevel } from "@/lib/types";
 import { Sparkles, Rocket, Compass, Clock, PauseCircle, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRovingTabindex } from "@/hooks/use-roving-tabindex";
 
 // ---- helpers -------------------------------------------------------------
 
