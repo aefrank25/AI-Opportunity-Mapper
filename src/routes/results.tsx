@@ -60,18 +60,20 @@ function Results() {
 
   return (
     <section className="px-4 sm:px-6">
-      <div className="mx-auto max-w-6xl py-8 sm:py-12 space-y-8">
+      <div className="mx-auto max-w-6xl py-5 space-y-5 sm:py-12 sm:space-y-8">
         {/* Header strip */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <div className="flex items-start gap-3 sm:items-center sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <div className="hidden text-[11px] font-semibold uppercase tracking-wide text-muted-foreground sm:block">
               Opportunity map
             </div>
-            <div className="mt-1 flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 text-lg font-semibold text-foreground truncate">
-                <Globe className="h-4 w-4 text-muted-foreground" />
+            <div className="mt-0 flex items-center gap-1.5 sm:mt-1 sm:gap-2">
+              <Globe className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <span className="truncate text-base font-semibold text-foreground sm:text-lg">
                 {result.displayUrl}
               </span>
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5 sm:gap-2">
               {result.isDemo && (
                 <span className="inline-flex items-center rounded-full bg-accent px-2 py-0.5 text-[11px] font-semibold text-accent-foreground">
                   Demo result
@@ -82,10 +84,10 @@ function Results() {
               </span>
             </div>
           </div>
-          <Button asChild variant="outline" size="sm">
-            <Link to="/">
+          <Button asChild variant="outline" size="sm" className="shrink-0">
+            <Link to="/" aria-label="Start over">
               <RotateCcw className="h-3.5 w-3.5" />
-              Start over
+              <span className="hidden sm:inline">Start over</span>
             </Link>
           </Button>
         </div>

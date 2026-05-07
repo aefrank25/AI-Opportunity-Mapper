@@ -33,7 +33,7 @@ export function ScoreChip({ label, level, inverted = false, hint }: ScoreChipPro
                 <button
                   type="button"
                   aria-label={`${label} explanation`}
-                  className="inline-flex items-center text-muted-foreground/70 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                  className="-m-1.5 inline-flex items-center justify-center p-1.5 text-muted-foreground/70 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
                 >
                   <Info className="h-3 w-3" />
                 </button>
