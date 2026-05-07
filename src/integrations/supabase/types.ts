@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          path: string | null
+          props: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          path?: string | null
+          props?: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          path?: string | null
+          props?: Json
+        }
+        Relationships: []
+      }
       implementation_brief_waitlist: {
         Row: {
           created_at: string
