@@ -347,7 +347,7 @@ function rankScore(o: Opportunity, priority: Priority): number {
     SCORE_VALUE[o.confidence] * 2 -
     SCORE_VALUE[o.effort] -
     SCORE_VALUE[o.automationRisk];
-  if (PRIORITY_BOOST[priority].includes(o.category)) base += 4;
+  if (PRIORITY_BOOST[priority].includes(o.category)) base += 2;
   // Penalize high automation risk more strongly for sensitive priorities.
   if (SENSITIVE_PRIORITIES.includes(priority)) {
     base -= SCORE_VALUE[o.automationRisk];
