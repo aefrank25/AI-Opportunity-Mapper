@@ -477,12 +477,34 @@ export function analyze(rawUrl: string, priority: Priority): AnalysisResult {
   const top3 = selectTop3(candidates, priority);
 
   const wins: QuickWin[] = [];
-  const usedWinIdx = new Set<number>();
-  while (wins.length < 3) {
+  const seenTitles = new Set<string>();
+  const pickFrom = (pool: QuickWin[] | undefined) => {
+    if (!pool || pool.length === 0) return;
+    const idx = Math.floor(rand() * pool.length);
+    const w = pool[idx];
+    if (w && !seenTitles.has(w.title)) {
+      seenTitles.add(w.title);
+      wins.push(w);
+    }
+  };
+
+  // 1 win tied to the top opportunity's category.
+  pickFrom(QUICK_WINS_BY_CATEGORY[top3[0].category]);
+  // 1 win tied to the second-ranked opportunity's category.
+  if (top3[1]) pickFrom(QUICK_WINS_BY_CATEGORY[top3[1].category]);
+  // 1 win tied to the selected priority's first boosted category.
+  const priorityCat = PRIORITY_BOOST[priority][0];
+  if (priorityCat) pickFrom(QUICK_WINS_BY_CATEGORY[priorityCat]);
+
+  // Fallback to the general pool until we have 3, dedup by title.
+  let safety = 0;
+  while (wins.length < 3 && safety++ < 50) {
     const idx = Math.floor(rand() * QUICK_WIN_POOL.length);
-    if (usedWinIdx.has(idx)) continue;
-    usedWinIdx.add(idx);
-    wins.push(QUICK_WIN_POOL[idx]);
+    const w = QUICK_WIN_POOL[idx];
+    if (!seenTitles.has(w.title)) {
+      seenTitles.add(w.title);
+      wins.push(w);
+    }
   }
 
   const snapshot: BusinessSnapshot = {
