@@ -156,7 +156,7 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
     signal: "Contact or 'work with us' form likely captures only basic fields.",
     painPoint: "Manual back-and-forth to figure out fit, budget, and timing before a real conversation.",
     improvement:
-      "Add an AI-assisted intake that asks 3–5 smart follow-up questions and produces a clean lead summary for the team.",
+      "Create a structured intake that captures answers to 3–5 qualifying questions and generates a clean lead summary the team can act on — making downstream follow-up automation-ready.",
     firstStep: "List the 5 questions you wish every new lead answered before the first call.",
     whyItMatters:
       "Most small teams lose hours each week chasing context. Better intake compounds into faster, higher-quality conversations.",
@@ -169,11 +169,11 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
     category: "customer_followup",
     name: "Customer follow-up",
     description:
-      "Use AI to draft personalized follow-up messages after inquiries, meetings, or purchases.",
+      "Generate personalized follow-up drafts from existing conversation context, reviewed by a human before sending.",
     signal: "Likely relies on memory or ad-hoc email for follow-up after first contact.",
     painPoint: "Leads and customers go cold because timely, personal follow-up is hard to keep up with.",
     improvement:
-      "Generate first-draft follow-up emails tied to the conversation context, ready for a quick human review.",
+      "Draft tailored follow-up messages tied to the original conversation, ready for a quick human review.",
     firstStep: "Pick one follow-up moment (e.g. post-discovery call) and write 3 example messages you'd send.",
     whyItMatters:
       "A consistent follow-up rhythm is one of the highest-ROI changes a small business can make.",
@@ -190,7 +190,7 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
     signal: "Bookings or consults appear central to the workflow.",
     painPoint: "Prep time is squeezed between back-to-back meetings.",
     improvement:
-      "Auto-generate a one-page brief from intake answers, prior notes, and any uploaded files.",
+      "Auto-generate a one-page brief from intake answers and prior notes — pre-meeting prep becomes structured and consistent.",
     firstStep: "Define what you'd want on a one-page brief before each consult.",
     whyItMatters: "Better-prepared meetings convert more often and feel more professional to the client.",
     impact: "Medium",
@@ -202,11 +202,11 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
     category: "faq_support",
     name: "FAQ & customer support assistance",
     description:
-      "Use AI to draft answers to common questions, with a human reviewing before sending.",
+      "Surface AI-assisted draft answers to common questions, grounded in real responses, with a human reviewing before sending.",
     signal: "Likely receives repeat questions about hours, scope, pricing, or process.",
     painPoint: "Repetitive questions consume team time that should go to higher-value work.",
     improvement:
-      "Build an internal AI assistant trained on your real answers — staff edit and send instead of rewriting.",
+      "Stand up an internal AI-assisted answer layer grounded in your real responses — staff edit and send instead of rewriting from scratch.",
     firstStep: "Collect 20 real questions you've answered in the last month.",
     whyItMatters: "Even modest deflection of repeat questions returns hours per week.",
     impact: "Medium",
@@ -218,11 +218,11 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
     category: "internal_admin",
     name: "Internal admin reduction",
     description:
-      "Automate small recurring admin: meeting notes, status updates, internal summaries.",
+      "Standardize small recurring admin: meeting notes, status updates, internal summaries.",
     signal: "Small team likely splitting client work and operational admin.",
     painPoint: "Admin work eats into delivery time and rarely gets the structure it deserves.",
     improvement:
-      "Use AI to turn meeting recordings and notes into structured updates for your tools of choice.",
+      "Convert meeting recordings and notes into structured updates that flow into the tools the team already uses.",
     firstStep: "Pick the one admin task you most resent doing each week.",
     whyItMatters: "Reclaiming a few hours of focus per week often unlocks more capacity than hiring.",
     impact: "Medium",
@@ -238,9 +238,9 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
     signal: "Recurring reporting cadence likely required for clients or leadership.",
     painPoint: "Report assembly is mostly copy-paste and chart screenshots.",
     improvement:
-      "Use AI to draft narrative around your existing numbers, then edit before sending.",
+      "Draft narrative explanation around your existing numbers, with humans owning the analytical judgment.",
     firstStep: "Find your last 3 reports and list which sections were truly bespoke.",
-    whyItMatters: "Reporting is high-leverage to automate because it repeats on a known cadence.",
+    whyItMatters: "Reporting is high-leverage to standardize because it repeats on a known cadence.",
     impact: "Medium",
     effort: "Medium",
     confidence: "Medium",
@@ -250,11 +250,11 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
     category: "content_repurposing",
     name: "Content repurposing",
     description:
-      "Turn one piece of content (article, talk, case study) into 3–5 derivative formats.",
+      "Adapt one piece of content (article, talk, case study) into 3–5 derivative formats.",
     signal: "Likely produces some long-form or case-based content.",
     painPoint: "Good content gets created once and rarely re-used across channels.",
     improvement:
-      "Use AI to spin a single source into newsletter, social, and sales-enablement variants.",
+      "Adapt one approved source into channel-specific drafts so distribution becomes a repeatable operational system.",
     firstStep: "Pick one recent piece of content that performed well and list 3 channels it never reached.",
     whyItMatters: "Distribution beats production volume for small teams.",
     impact: "Medium",
@@ -270,7 +270,7 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
     signal: "Custom services likely require bespoke proposals or estimates.",
     painPoint: "Proposals take hours and often start from a half-remembered prior version.",
     improvement:
-      "Use AI to assemble a first draft from intake answers and your best past proposals.",
+      "Assemble a structured proposal draft from intake answers and approved past proposals, ready for senior review.",
     firstStep: "Pick the 3 proposals you'd happily reuse as building blocks.",
     whyItMatters: "Faster, more consistent proposals improve close rate and free up senior time.",
     impact: "High",
@@ -286,7 +286,7 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
     signal: "Likely handles a steady stream of small inbound orders or requests.",
     painPoint: "Edge cases get buried in the same queue as routine items.",
     improvement:
-      "Use AI to classify incoming requests and flag the ones that genuinely need a human.",
+      "Route routine items automatically and surface only the requests that genuinely need a human.",
     firstStep: "Define what 'normal' vs. 'needs review' looks like in your current queue.",
     whyItMatters: "Most teams under-invest in triage and over-invest in heroics.",
     impact: "Medium",
@@ -302,7 +302,7 @@ const TEMPLATES: Record<OpportunityCategory, Omit<Opportunity, "id">> = {
     signal: "Custom client engagements likely need a structured kickoff.",
     painPoint: "The first weeks set the tone but tend to be improvised each time.",
     improvement:
-      "Use AI to generate a tailored onboarding plan from a short kickoff form.",
+      "Generate a tailored onboarding plan from a short kickoff form, so the first 14 days follow a repeatable system.",
     firstStep: "Map the steps a client experienced in your last successful onboarding.",
     whyItMatters: "Better onboarding lifts retention and reduces early-stage churn.",
     impact: "Medium",
