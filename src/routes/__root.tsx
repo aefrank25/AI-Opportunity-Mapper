@@ -51,6 +51,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         content: "Find practical AI and automation opportunities hiding in your business website.",
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "AI Opportunity Mapper" },
+      { name: "description", content: "Analyze your business website for AI and automation opportunities." },
+      { property: "og:description", content: "Analyze your business website for AI and automation opportunities." },
+      { name: "twitter:description", content: "Analyze your business website for AI and automation opportunities." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0b608a2a-83dd-48ce-81af-7f7c33f82451" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0b608a2a-83dd-48ce-81af-7f7c33f82451" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
