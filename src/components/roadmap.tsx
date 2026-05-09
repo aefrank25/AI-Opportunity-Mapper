@@ -2,7 +2,7 @@ import type { RoadmapKey } from "@/lib/types";
 import { roadmapFor } from "@/lib/roadmaps";
 import { Lock } from "lucide-react";
 
-function truncate(text: string, max = 70) {
+function truncate(text: string, max = 140) {
   if (text.length <= max) return text;
   return text.slice(0, max).trimEnd() + "…";
 }
