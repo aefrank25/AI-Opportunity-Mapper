@@ -366,6 +366,44 @@ const QUICK_WIN_POOL: QuickWin[] = [
   { title: "Define an order triage rule", action: "Write down what makes a request routine, needs review, or urgent." },
 ];
 
+const QUICK_WINS_BY_CATEGORY: Partial<Record<OpportunityCategory, QuickWin[]>> = {
+  lead_intake: [
+    { title: "Write your 'ideal lead' description", action: "One paragraph defining who you most want to hear from." },
+    { title: "List the 5 questions every new lead should answer", action: "Capture them before any sales call to make intake structured." },
+  ],
+  customer_followup: [
+    { title: "Draft 3 follow-up templates", action: "One for hot leads, one for warm, one for re-engagement." },
+    { title: "Pick one follow-up moment to standardize first", action: "Choose the highest-leverage touchpoint and define its trigger." },
+  ],
+  proposal_estimate: [
+    { title: "Find your 3 best past proposals", action: "Use them as the seed of a future AI-assisted draft." },
+    { title: "List the sections every proposal repeats", action: "Lock the reusable structure so each draft starts 70% done." },
+  ],
+  faq_support: [
+    { title: "Capture your top 20 FAQs", action: "Spend 30 minutes listing the questions you answer over and over." },
+    { title: "Tag the 5 questions that always need a human", action: "Define the boundary between automatable and judgment-required." },
+  ],
+  reporting_kpi: [
+    { title: "Pick one report to standardize", action: "Lock its structure so it stops being rewritten each time." },
+    { title: "List which sections were truly bespoke last cycle", action: "Everything else is a candidate for a structured template." },
+  ],
+  order_management: [
+    { title: "Define an order triage rule", action: "Write down what makes a request routine, needs review, or urgent." },
+  ],
+  client_onboarding: [
+    { title: "Define a kickoff form", action: "Capture the same core inputs before each new engagement." },
+  ],
+  appointment_prep: [
+    { title: "Audit your booking flow", action: "Walk through it as a customer and note every friction point." },
+  ],
+  internal_admin: [
+    { title: "Pick the admin task you most resent", action: "Make it the first candidate for a structured workflow." },
+  ],
+  content_repurposing: [
+    { title: "Pick one piece worth repurposing", action: "Choose a recent high-performer and list 3 channels it never reached." },
+  ],
+};
+
 // Categories considered "marketing/content-related" — used to avoid over-weighting them.
 const CONTENT_CATEGORIES = new Set<OpportunityCategory>(["content_repurposing"]);
 
