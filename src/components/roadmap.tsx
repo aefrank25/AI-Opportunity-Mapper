@@ -45,9 +45,19 @@ export function Roadmap({ roadmapKey }: { roadmapKey?: RoadmapKey }) {
               </div>
 
               {locked && (
-                <div className="mt-4 flex items-center gap-1.5 border-t border-dashed border-border pt-3 text-[12px] text-muted-foreground">
-                  <Lock className="h-3.5 w-3.5" aria-hidden />
-                  <span>Full implementation steps</span>
+                <div className="mt-4 space-y-2 border-t border-dashed border-border pt-3">
+                  <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                    <Lock className="h-3.5 w-3.5" aria-hidden />
+                    <span>Full implementation steps</span>
+                  </div>
+                  {i === 1 && (
+                    <a
+                      href="#unlock-section"
+                      className="inline-flex items-center gap-1 text-[12px] font-medium text-primary underline-offset-4 hover:underline"
+                    >
+                      See Complete Roadmap →
+                    </a>
+                  )}
                 </div>
               )}
             </li>
