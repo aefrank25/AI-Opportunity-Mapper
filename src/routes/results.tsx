@@ -82,7 +82,9 @@ function Results() {
                 </span>
               )}
               <span className="inline-flex items-center rounded-full border border-border bg-surface px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                Priority: {PRIORITY_LABELS[result.priority]}
+                {result.priority === "not_sure"
+                  ? "Exploratory scan"
+                  : `Priority: ${PRIORITY_LABELS[result.priority]}`}
               </span>
             </div>
           </div>
@@ -105,14 +107,21 @@ function Results() {
 
         <SnapshotCard snapshot={result.snapshot} />
 
-        <TopOpportunityCard opportunity={result.topOpportunity} />
+        <TopOpportunityCard
+          opportunity={result.topOpportunity}
+          priorityLabel={result.priority === "not_sure" ? undefined : PRIORITY_LABELS[result.priority]}
+        />
 
         <OpportunityHeatmap opportunities={result.opportunities} />
 
         <div>
-          <h2 className="text-lg font-semibold tracking-tight text-foreground">All opportunities</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
+            {result.priority === "not_sure" ? "Top inferred operational opportunities" : "Prioritized opportunities"}
+          </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Three opportunities ranked by impact, effort, confidence, and automation risk.
+            {result.priority === "not_sure"
+              ? "Balanced across impact, effort, and implementation readiness — the most likely areas for operational leverage."
+              : `Gently weighted toward your selected goal: ${PRIORITY_LABELS[result.priority]}. Ranked by inferred impact, effort, and implementation readiness.`}
           </p>
           <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {result.opportunities.map((o, i) => (
@@ -121,14 +130,18 @@ function Results() {
                 opportunity={o}
                 index={i}
                 contextSignals={result.snapshot.signals}
-                priorityLabel={PRIORITY_LABELS[result.priority]}
+                priorityLabel={result.priority === "not_sure" ? undefined : PRIORITY_LABELS[result.priority]}
+                priority={result.priority}
                 locked={i > 0}
               />
             ))}
           </div>
         </div>
 
-        <QuickWins wins={result.quickWins} />
+        <QuickWins
+          wins={result.quickWins}
+          priorityLabel={result.priority === "not_sure" ? undefined : PRIORITY_LABELS[result.priority]}
+        />
 
         <Roadmap roadmapKey={result.roadmapKey} />
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ScoreChip } from "./score-chip";
-import type { Opportunity } from "@/lib/types";
+import type { Opportunity, Priority } from "@/lib/types";
 import { ArrowRight, ChevronDown, Lock, Radar } from "lucide-react";
 
 const LOCKED_SECTIONS = [
@@ -14,14 +14,22 @@ export function OpportunityCard({
   index,
   contextSignals = [],
   priorityLabel,
+  priority,
   locked = false,
 }: {
   opportunity: Opportunity;
   index: number;
   contextSignals?: string[];
   priorityLabel?: string;
+  priority?: Priority;
   locked?: boolean;
 }) {
+  const hasPriority = !!priorityLabel && priority !== "not_sure";
+  const reasoningLine = hasPriority
+    ? index === 0
+      ? `Ranked slightly higher because this likely affects ${priorityLabel!.toLowerCase()}.`
+      : `Surfaced partly because this connects to ${priorityLabel!.toLowerCase()}-related workflow signals.`
+    : "Surfaced based on visible website patterns and the likely shape of this business's workflows.";
   const o = opportunity;
   const ref = useRef<HTMLDivElement>(null);
   const [highlighted, setHighlighted] = useState(false);
@@ -139,6 +147,9 @@ export function OpportunityCard({
             </button>
             {signalsOpen && (
               <div className="border-t border-border px-3 pb-3 pt-2">
+                <p className="mb-2 text-[11px] leading-snug text-muted-foreground">
+                  {reasoningLine}
+                </p>
                 <ul className="space-y-1.5 text-[12px] leading-snug text-foreground">
                   {signalList.map((s, i) => (
                     <li key={i} className="flex gap-2">
@@ -147,12 +158,6 @@ export function OpportunityCard({
                     </li>
                   ))}
                 </ul>
-                {priorityLabel && (
-                  <p className="mt-2 text-[11px] text-muted-foreground">
-                    Weighted toward your priority:{" "}
-                    <span className="font-medium text-foreground">{priorityLabel}</span>.
-                  </p>
-                )}
                 <p className="mt-2 text-[11px] text-muted-foreground">
                   Signals are inferred from publicly visible website patterns and business context — validate before acting.
                 </p>

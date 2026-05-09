@@ -1,8 +1,15 @@
 import type { Opportunity } from "@/lib/types";
 import { Sparkles, ArrowRight } from "lucide-react";
 
-export function TopOpportunityCard({ opportunity }: { opportunity: Opportunity }) {
+export function TopOpportunityCard({
+  opportunity,
+  priorityLabel,
+}: {
+  opportunity: Opportunity;
+  priorityLabel?: string;
+}) {
   const o = opportunity;
+  const badgeLabel = priorityLabel ? "Top recommendation for your goal" : "Top inferred opportunity";
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-card-lg">
       <div className="absolute inset-y-0 left-0 w-1.5 bg-primary" />
@@ -10,7 +17,7 @@ export function TopOpportunityCard({ opportunity }: { opportunity: Opportunity }
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-accent-foreground">
             <Sparkles className="h-3 w-3" />
-            Top recommendation
+            {badgeLabel}
           </span>
         </div>
         <h2 className="mt-3 text-xl font-semibold tracking-tight text-foreground sm:text-3xl">

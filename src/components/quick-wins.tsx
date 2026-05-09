@@ -1,13 +1,14 @@
 import type { QuickWin } from "@/lib/types";
 import { Zap } from "lucide-react";
 
-export function QuickWins({ wins }: { wins: QuickWin[] }) {
+export function QuickWins({ wins, priorityLabel }: { wins: QuickWin[]; priorityLabel?: string }) {
+  const subcopy = priorityLabel
+    ? `Small, low-risk moves to set up your highest-leverage opportunities, with a light bias toward ${priorityLabel.toLowerCase()}.`
+    : "Small, low-risk moves you can make this week to set up the bigger opportunities.";
   return (
     <div>
       <h2 className="text-lg font-semibold tracking-tight text-foreground">Quick wins</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Small, low-risk moves you can make this week to set up the bigger opportunities.
-      </p>
+      <p className="mt-1 text-sm text-muted-foreground">{subcopy}</p>
       <div className="mt-4 grid gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
         {wins.map((w) => (
           <div
