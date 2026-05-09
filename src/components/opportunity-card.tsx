@@ -70,6 +70,12 @@ export function OpportunityCard({
 
       {locked ? (
         <>
+          <dl className="mt-5 space-y-3 text-sm">
+            <Row label="Signal" value={o.signal} />
+            <Row label="Pain point" value={o.painPoint} />
+            <Row label="Improvement" value={o.improvement} />
+          </dl>
+
           <div className="relative mt-5">
             {/* short fade above the locked block for soft truncation */}
             <div
@@ -85,6 +91,12 @@ export function OpportunityCard({
                   </li>
                 ))}
               </ul>
+              <a
+                href="#unlock-section"
+                className="mt-3 inline-flex items-center gap-1 text-[12px] font-medium text-primary underline-offset-4 hover:underline"
+              >
+                Unlock Full Opportunity Map →
+              </a>
             </div>
           </div>
           <div className="mt-auto" />
