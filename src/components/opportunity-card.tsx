@@ -147,6 +147,9 @@ export function OpportunityCard({
             </button>
             {signalsOpen && (
               <div className="border-t border-border px-3 pb-3 pt-2">
+                <p className="mb-2 text-[11px] leading-snug text-muted-foreground">
+                  {reasoningLine}
+                </p>
                 <ul className="space-y-1.5 text-[12px] leading-snug text-foreground">
                   {signalList.map((s, i) => (
                     <li key={i} className="flex gap-2">
@@ -155,12 +158,6 @@ export function OpportunityCard({
                     </li>
                   ))}
                 </ul>
-                {priorityLabel && (
-                  <p className="mt-2 text-[11px] text-muted-foreground">
-                    Weighted toward your priority:{" "}
-                    <span className="font-medium text-foreground">{priorityLabel}</span>.
-                  </p>
-                )}
                 <p className="mt-2 text-[11px] text-muted-foreground">
                   Signals are inferred from publicly visible website patterns and business context — validate before acting.
                 </p>
