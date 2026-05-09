@@ -92,7 +92,7 @@ const ARCHETYPE_COPY: Record<
     summary:
       "Likely a direct-to-consumer storefront selling physical goods with recurring customer support and order questions.",
     audience: ["Retail customers and gift buyers", "Returning shoppers"],
-    signals: ["Product catalog pages", "Cart & checkout flow", "Support / shipping FAQ"],
+    signals: ["Likely product catalog pages", "Cart & checkout flow", "Likely support / shipping FAQ"],
     workflows: ["Order & request management", "Customer support", "Content & product copy"],
   },
   law: {
