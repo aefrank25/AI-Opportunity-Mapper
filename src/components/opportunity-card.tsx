@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ScoreChip } from "./score-chip";
-import type { Opportunity } from "@/lib/types";
+import type { Opportunity, Priority } from "@/lib/types";
 import { ArrowRight, ChevronDown, Lock, Radar } from "lucide-react";
 
 const LOCKED_SECTIONS = [
@@ -14,14 +14,22 @@ export function OpportunityCard({
   index,
   contextSignals = [],
   priorityLabel,
+  priority,
   locked = false,
 }: {
   opportunity: Opportunity;
   index: number;
   contextSignals?: string[];
   priorityLabel?: string;
+  priority?: Priority;
   locked?: boolean;
 }) {
+  const hasPriority = !!priorityLabel && priority !== "not_sure";
+  const reasoningLine = hasPriority
+    ? index === 0
+      ? `Ranked slightly higher because this likely affects ${priorityLabel!.toLowerCase()}.`
+      : `Surfaced partly because this connects to ${priorityLabel!.toLowerCase()}-related workflow signals.`
+    : "Surfaced based on visible website patterns and the likely shape of this business's workflows.";
   const o = opportunity;
   const ref = useRef<HTMLDivElement>(null);
   const [highlighted, setHighlighted] = useState(false);
