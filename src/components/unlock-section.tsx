@@ -57,7 +57,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
   };
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 shadow-card sm:p-8">
+    <div id="unlock-section" className="scroll-mt-8 rounded-2xl border border-border bg-card p-5 shadow-card sm:p-8">
       <div className="grid gap-6 sm:gap-8 md:grid-cols-[1.1fr_1fr]">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
