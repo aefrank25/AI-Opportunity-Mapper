@@ -23,7 +23,9 @@ export function Roadmap({ roadmapKey }: { roadmapKey?: RoadmapKey }) {
           return (
             <li
               key={w.week}
-              className="relative flex flex-col rounded-2xl border border-border bg-card p-4 shadow-card sm:p-5"
+              className={`relative flex flex-col rounded-2xl border border-border bg-card p-4 shadow-card sm:p-5 ${
+                locked ? "cursor-pointer" : ""
+              }`}
             >
               <div className="flex items-center gap-2">
                 <span
@@ -51,14 +53,19 @@ export function Roadmap({ roadmapKey }: { roadmapKey?: RoadmapKey }) {
                     <span>Full implementation steps</span>
                   </div>
                   {i === 1 && (
-                    <a
-                      href="#unlock-section"
-                      className="inline-flex items-center gap-1 text-[12px] font-medium text-primary underline-offset-4 hover:underline"
-                    >
+                    <span className="inline-flex items-center gap-1 text-[12px] font-medium text-primary">
                       See Complete Roadmap →
-                    </a>
+                    </span>
                   )}
                 </div>
+              )}
+
+              {locked && (
+                <a
+                  href="#unlock-section"
+                  aria-label="See complete 30-day roadmap"
+                  className="absolute inset-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                />
               )}
             </li>
           );
