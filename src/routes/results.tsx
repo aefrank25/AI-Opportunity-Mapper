@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { analyze } from "@/lib/analyzer";
@@ -29,6 +30,7 @@ interface ResultsSearch {
   url?: string;
   priority?: Priority;
   demo?: DemoId;
+  live?: 1;
 }
 
 const searchSchema = z
@@ -36,6 +38,7 @@ const searchSchema = z
     url: z.string().optional(),
     priority: z.enum(PRIORITY_VALUES as [Priority, ...Priority[]]).optional(),
     demo: z.enum(["clinic", "agency", "boutique"]).optional(),
+    live: z.literal(1).optional(),
   })
   .refine((v) => v.url || v.demo, { message: "url or demo required" }) as unknown as z.ZodType<ResultsSearch>;
 
@@ -53,12 +56,41 @@ export const Route = createFileRoute("/results")({
   component: Results,
 });
 
+function liveCacheKey(url: string, priority: string) {
+  return `aiom:live:${url}:${priority}`;
+}
+
 function Results() {
   const search = Route.useSearch() as ResultsSearch;
 
+  // Hydrate live result from sessionStorage on the client.
+  const [liveResult, setLiveResult] = useState<AnalysisResult | null>(null);
+  const wantLive = !!search.live && !!search.url;
+
+  useEffect(() => {
+    if (!wantLive) return;
+    if (typeof window === "undefined") return;
+    const raw = sessionStorage.getItem(
+      liveCacheKey(search.url!, search.priority ?? "not_sure"),
+    );
+    if (raw) {
+      try {
+        setLiveResult(JSON.parse(raw) as AnalysisResult);
+      } catch {
+        setLiveResult(null);
+      }
+    }
+  }, [wantLive, search.url, search.priority]);
+
   const result: AnalysisResult = search.demo
-    ? DEMOS[search.demo]
-    : analyze(search.url!, search.priority ?? "not_sure");
+    ? { ...DEMOS[search.demo], mode: "demo" }
+    : wantLive && liveResult
+      ? liveResult
+      : { ...analyze(search.url!, search.priority ?? "not_sure"), mode: "prototype" };
+
+  const mode = result.mode ?? (result.isDemo ? "demo" : "prototype");
+  const modeBadge =
+    mode === "demo" ? "Demo result" : mode === "live" ? "Live scan beta" : "Prototype result";
 
   return (
     <section className="px-4 sm:px-6">
@@ -76,17 +108,34 @@ function Results() {
               </span>
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-1.5 sm:gap-2">
-              {result.isDemo && (
-                <span className="inline-flex items-center rounded-full bg-accent px-2 py-0.5 text-[11px] font-semibold text-accent-foreground">
-                  Demo result
-                </span>
-              )}
+              <span
+                className={
+                  "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold " +
+                  (mode === "demo"
+                    ? "bg-accent text-accent-foreground"
+                    : mode === "live"
+                      ? "bg-primary/10 text-primary"
+                      : "border border-border bg-surface text-muted-foreground")
+                }
+              >
+                {modeBadge}
+              </span>
               <span className="inline-flex items-center rounded-full border border-border bg-surface px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
                 {result.priority === "not_sure"
                   ? "Exploratory scan"
                   : `Priority: ${PRIORITY_LABELS[result.priority]}`}
               </span>
             </div>
+            {mode === "live" && result.scannedPages && result.scannedPages.length > 0 && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Pages scanned: {result.scannedPages.length}
+              </p>
+            )}
+            {wantLive && !liveResult && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Live scan result not found — showing prototype recommendation instead.
+              </p>
+            )}
           </div>
           <Button asChild variant="outline" size="sm" className="shrink-0">
             <Link to="/" aria-label="Start over">
