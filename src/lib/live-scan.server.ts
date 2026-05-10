@@ -401,10 +401,15 @@ export async function runLiveScan(
   const pages = pickPages(home, links);
   if (pages.length === 0) throw new LiveScanError("no_pages", "No pages discovered.");
 
-  // 3. Scrape (parallel)
-  const scraped = (await Promise.all(pages.map(firecrawlScrape))).filter(
-    (p): p is { url: string; markdown: string } => p !== null,
-  );
+  // 3. Scrape (parallel, capped to MAX_PAGES)
+  const scraped = (
+    await Promise.all(
+      pages.map(async (p) => {
+        const r = await firecrawlScrape(p.url);
+        return r ? { ...r, category: p.category } : null;
+      }),
+    )
+  ).filter((p): p is { url: string; markdown: string; category: PageCategory } => p !== null);
   if (scraped.length === 0) {
     throw new LiveScanError("firecrawl_failed", "Could not read any page content.");
   }
