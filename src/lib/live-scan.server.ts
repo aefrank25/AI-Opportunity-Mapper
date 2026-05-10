@@ -15,16 +15,22 @@ const GATEWAY = "https://connector-gateway.lovable.dev";
 const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const AI_MODEL = "google/gemini-2.5-flash";
 
-const PAGE_PATTERNS: Array<{ key: string; rx: RegExp }> = [
-  { key: "about", rx: /\/(about|company|team|story)(\/|$)/i },
-  { key: "services", rx: /\/(services?|products?|pricing|solutions|offerings|menu)(\/|$)/i },
-  { key: "faq", rx: /\/(faqs?|help|support|knowledge)(\/|$)/i },
-  { key: "contact", rx: /\/(contact|book|booking|appointments?|quote|inquiry|enquiry|consult|consultation|get-started)(\/|$)/i },
+// Live Scan beta deliberately limits Firecrawl to a small, fixed set of
+// high-signal page types. We never crawl the full site.
+type PageCategory = "home" | "about" | "services" | "faq" | "contact";
+
+const PAGE_PATTERNS: Array<{ key: Exclude<PageCategory, "home">; rx: RegExp }> = [
+  { key: "about", rx: /\/(about|company|team|story|who-we-are)(\/|$)/i },
+  { key: "services", rx: /\/(services?|products?|pricing|plans|solutions|offerings|menu|shop)(\/|$)/i },
+  { key: "faq", rx: /\/(faqs?|help|support|knowledge|questions)(\/|$)/i },
+  { key: "contact", rx: /\/(contact|book(ing)?|appointments?|quote|inquiry|enquiry|consult(ation)?|get-started|schedule)(\/|$)/i },
 ];
 
-const PER_PAGE_CHARS = 6000;
-const TOTAL_CHARS_CAP = 30000;
-const MAX_PAGES = 5;
+// Hard caps — enforced before any AI generation runs.
+const MAP_LIMIT = 25;          // max links Firecrawl map may return
+const MAX_PAGES = 5;           // max pages we scrape (home + up to 4 categories)
+const PER_PAGE_CHARS = 6000;   // max chars retained per scraped page
+const TOTAL_CHARS_CAP = 30000; // max total chars passed to the AI extractor
 
 export class LiveScanError extends Error {
   code: "firecrawl_failed" | "ai_failed" | "parse_failed" | "no_pages" | "missing_secrets";
