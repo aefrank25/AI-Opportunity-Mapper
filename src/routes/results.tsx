@@ -128,7 +128,7 @@ function Results() {
             </div>
             {mode === "live" && result.scannedPages && result.scannedPages.length > 0 && (
               <p className="mt-2 text-xs text-muted-foreground">
-                Pages scanned: {result.scannedPages.length}
+                Pages scanned: {result.pageCount ?? result.scannedPages.length}
               </p>
             )}
             {wantLive && !liveResult && (

@@ -515,6 +515,7 @@ Generate the opportunity map. When a recommendation paraphrases an evidence quot
       : undefined),
     roadmapKey: CATEGORY_TO_ROADMAP[top.category],
     scannedPages: scraped.map((p) => p.url),
+    pageCount: scraped.length,
     evidence: signals.evidenceQuotes,
   };
 }
