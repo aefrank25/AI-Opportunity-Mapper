@@ -62,7 +62,7 @@ async function firecrawlMap(url: string): Promise<string[]> {
         "X-Connection-Api-Key": firecrawl,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ url, limit: 25, includeSubdomains: false }),
+      body: JSON.stringify({ url, limit: MAP_LIMIT, includeSubdomains: false }),
     });
     if (!res.ok) {
       const text = await res.text().catch(() => "");
