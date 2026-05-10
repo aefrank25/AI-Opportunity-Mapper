@@ -421,7 +421,7 @@ export async function runLiveScan(
     const remaining = TOTAL_CHARS_CAP - total;
     if (remaining <= 200) break;
     const slice = p.markdown.slice(0, remaining);
-    corpusParts.push(`=== ${p.url} ===\n${slice}`);
+    corpusParts.push(`=== [${p.category}] ${p.url} ===\n${slice}`);
     total += slice.length;
   }
   const corpus = corpusParts.join("\n\n");
