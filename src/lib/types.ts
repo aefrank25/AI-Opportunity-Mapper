@@ -59,6 +59,8 @@ export interface QuickWin {
   action: string;
 }
 
+export type ResultMode = "demo" | "prototype" | "live";
+
 export interface AnalysisResult {
   url: string;
   displayUrl: string;
@@ -71,6 +73,9 @@ export interface AnalysisResult {
   quickWins: QuickWin[];
   safetyNote?: string;
   roadmapKey?: RoadmapKey;
+  mode?: ResultMode;
+  scannedPages?: string[];
+  evidence?: string[];
 }
 
 export type RoadmapKey =
