@@ -79,19 +79,37 @@ async function firecrawlMap(url: string): Promise<string[]> {
   }
 }
 
-function pickPages(home: string, links: string[]): string[] {
-  const picked: string[] = [home];
-  const seenKeys = new Set<string>();
+function pickPages(home: string, links: string[]): Array<{ url: string; category: PageCategory }> {
   const homeNorm = home.replace(/\/$/, "");
+  let homeHost: string;
+  try {
+    homeHost = new URL(home).host;
+  } catch {
+    return [{ url: home, category: "home" }];
+  }
 
-  for (const { key, rx } of PAGE_PATTERNS) {
-    if (seenKeys.has(key)) continue;
-    const match = links.find((l) => rx.test(l) && l.replace(/\/$/, "") !== homeNorm);
-    if (match && !picked.includes(match)) {
-      picked.push(match);
-      seenKeys.add(key);
+  // Same-host only, dedup, drop the home URL itself.
+  const seen = new Set<string>();
+  const sameHost = links.filter((l) => {
+    try {
+      const u = new URL(l);
+      if (u.host !== homeHost) return false;
+      const norm = `${u.origin}${u.pathname.replace(/\/$/, "")}`;
+      if (norm === homeNorm || seen.has(norm)) return false;
+      seen.add(norm);
+      return true;
+    } catch {
+      return false;
     }
+  });
+
+  const picked: Array<{ url: string; category: PageCategory }> = [
+    { url: home, category: "home" },
+  ];
+  for (const { key, rx } of PAGE_PATTERNS) {
     if (picked.length >= MAX_PAGES) break;
+    const match = sameHost.find((l) => rx.test(l));
+    if (match) picked.push({ url: match, category: key });
   }
   return picked.slice(0, MAX_PAGES);
 }
