@@ -112,16 +112,37 @@ export function UrlInputCard() {
           </div>
         )}
 
+        <div className="flex items-start gap-3 rounded-xl border border-border bg-surface px-3.5 py-3">
+          <Switch
+            id="live-scan"
+            checked={liveScan}
+            onCheckedChange={toggleLive}
+            className="mt-0.5"
+          />
+          <div className="min-w-0 flex-1">
+            <Label htmlFor="live-scan" className="text-sm font-medium text-foreground cursor-pointer">
+              Live scan{" "}
+              <span className="ml-1 inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                Beta
+              </span>
+            </Label>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Read a few real pages from the site to ground recommendations in actual content. Falls
+              back to prototype mode if the site can't be reached.
+            </p>
+          </div>
+        </div>
+
         <Button type="submit" size="lg" className="h-11 w-full">
           <Sparkles className="h-4 w-4" />
-          Map opportunities
+          {liveScan ? "Run live scan" : "Map opportunities"}
         </Button>
 
         <p className="flex items-start gap-2 text-xs text-muted-foreground">
           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          This prototype uses publicly visible website patterns, business context, and inferred
-          workflow signals to suggest operational and AI opportunities for exploration.
-          Recommendations should be validated before implementation.
+          {liveScan
+            ? "Live scan reads a small number of public pages (homepage, about, services, FAQ, contact). Recommendations should be validated before implementation."
+            : "Prototype mode uses business-type patterns and inferred workflow signals. Recommendations should be validated before implementation."}
         </p>
       </form>
 
