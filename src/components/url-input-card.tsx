@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { PRIORITY_LABELS, type Priority } from "@/lib/types";
 import { urlSchema } from "@/lib/url";
 import { DEMO_META, type DemoId } from "@/lib/demos";
@@ -25,11 +26,26 @@ const PRIORITY_ORDER: Priority[] = [
   "not_sure",
 ];
 
+const LIVE_SCAN_KEY = "aiom:live-scan";
+
 export function UrlInputCard() {
   const navigate = useNavigate();
   const [url, setUrl] = useState("");
   const [priority, setPriority] = useState<Priority>("not_sure");
   const [error, setError] = useState<string | null>(null);
+  const [liveScan, setLiveScan] = useState<boolean>(true);
+
+  useEffect(() => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem(LIVE_SCAN_KEY) : null;
+    if (stored === "0") setLiveScan(false);
+  }, []);
+
+  function toggleLive(v: boolean) {
+    setLiveScan(v);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(LIVE_SCAN_KEY, v ? "1" : "0");
+    }
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,7 +57,9 @@ export function UrlInputCard() {
     setError(null);
     navigate({
       to: "/analyzing",
-      search: { url: result.data, priority },
+      search: liveScan
+        ? { url: result.data, priority, live: 1 }
+        : { url: result.data, priority },
     });
   }
 
