@@ -75,6 +75,7 @@ export interface AnalysisResult {
   roadmapKey?: RoadmapKey;
   mode?: ResultMode;
   scannedPages?: string[];
+  pageCount?: number;
   evidence?: string[];
 }
 
