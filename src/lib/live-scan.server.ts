@@ -15,16 +15,22 @@ const GATEWAY = "https://connector-gateway.lovable.dev";
 const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const AI_MODEL = "google/gemini-2.5-flash";
 
-const PAGE_PATTERNS: Array<{ key: string; rx: RegExp }> = [
-  { key: "about", rx: /\/(about|company|team|story)(\/|$)/i },
-  { key: "services", rx: /\/(services?|products?|pricing|solutions|offerings|menu)(\/|$)/i },
-  { key: "faq", rx: /\/(faqs?|help|support|knowledge)(\/|$)/i },
-  { key: "contact", rx: /\/(contact|book|booking|appointments?|quote|inquiry|enquiry|consult|consultation|get-started)(\/|$)/i },
+// Live Scan beta deliberately limits Firecrawl to a small, fixed set of
+// high-signal page types. We never crawl the full site.
+type PageCategory = "home" | "about" | "services" | "faq" | "contact";
+
+const PAGE_PATTERNS: Array<{ key: Exclude<PageCategory, "home">; rx: RegExp }> = [
+  { key: "about", rx: /\/(about|company|team|story|who-we-are)(\/|$)/i },
+  { key: "services", rx: /\/(services?|products?|pricing|plans|solutions|offerings|menu|shop)(\/|$)/i },
+  { key: "faq", rx: /\/(faqs?|help|support|knowledge|questions)(\/|$)/i },
+  { key: "contact", rx: /\/(contact|book(ing)?|appointments?|quote|inquiry|enquiry|consult(ation)?|get-started|schedule)(\/|$)/i },
 ];
 
-const PER_PAGE_CHARS = 6000;
-const TOTAL_CHARS_CAP = 30000;
-const MAX_PAGES = 5;
+// Hard caps — enforced before any AI generation runs.
+const MAP_LIMIT = 25;          // max links Firecrawl map may return
+const MAX_PAGES = 5;           // max pages we scrape (home + up to 4 categories)
+const PER_PAGE_CHARS = 6000;   // max chars retained per scraped page
+const TOTAL_CHARS_CAP = 30000; // max total chars passed to the AI extractor
 
 export class LiveScanError extends Error {
   code: "firecrawl_failed" | "ai_failed" | "parse_failed" | "no_pages" | "missing_secrets";
@@ -56,7 +62,7 @@ async function firecrawlMap(url: string): Promise<string[]> {
         "X-Connection-Api-Key": firecrawl,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ url, limit: 25, includeSubdomains: false }),
+      body: JSON.stringify({ url, limit: MAP_LIMIT, includeSubdomains: false }),
     });
     if (!res.ok) {
       const text = await res.text().catch(() => "");
@@ -73,19 +79,37 @@ async function firecrawlMap(url: string): Promise<string[]> {
   }
 }
 
-function pickPages(home: string, links: string[]): string[] {
-  const picked: string[] = [home];
-  const seenKeys = new Set<string>();
+function pickPages(home: string, links: string[]): Array<{ url: string; category: PageCategory }> {
   const homeNorm = home.replace(/\/$/, "");
+  let homeHost: string;
+  try {
+    homeHost = new URL(home).host;
+  } catch {
+    return [{ url: home, category: "home" }];
+  }
 
-  for (const { key, rx } of PAGE_PATTERNS) {
-    if (seenKeys.has(key)) continue;
-    const match = links.find((l) => rx.test(l) && l.replace(/\/$/, "") !== homeNorm);
-    if (match && !picked.includes(match)) {
-      picked.push(match);
-      seenKeys.add(key);
+  // Same-host only, dedup, drop the home URL itself.
+  const seen = new Set<string>();
+  const sameHost = links.filter((l) => {
+    try {
+      const u = new URL(l);
+      if (u.host !== homeHost) return false;
+      const norm = `${u.origin}${u.pathname.replace(/\/$/, "")}`;
+      if (norm === homeNorm || seen.has(norm)) return false;
+      seen.add(norm);
+      return true;
+    } catch {
+      return false;
     }
+  });
+
+  const picked: Array<{ url: string; category: PageCategory }> = [
+    { url: home, category: "home" },
+  ];
+  for (const { key, rx } of PAGE_PATTERNS) {
     if (picked.length >= MAX_PAGES) break;
+    const match = sameHost.find((l) => rx.test(l));
+    if (match) picked.push({ url: match, category: key });
   }
   return picked.slice(0, MAX_PAGES);
 }
@@ -377,10 +401,15 @@ export async function runLiveScan(
   const pages = pickPages(home, links);
   if (pages.length === 0) throw new LiveScanError("no_pages", "No pages discovered.");
 
-  // 3. Scrape (parallel)
-  const scraped = (await Promise.all(pages.map(firecrawlScrape))).filter(
-    (p): p is { url: string; markdown: string } => p !== null,
-  );
+  // 3. Scrape (parallel, capped to MAX_PAGES)
+  const scraped = (
+    await Promise.all(
+      pages.map(async (p) => {
+        const r = await firecrawlScrape(p.url);
+        return r ? { ...r, category: p.category } : null;
+      }),
+    )
+  ).filter((p): p is { url: string; markdown: string; category: PageCategory } => p !== null);
   if (scraped.length === 0) {
     throw new LiveScanError("firecrawl_failed", "Could not read any page content.");
   }
@@ -392,7 +421,7 @@ export async function runLiveScan(
     const remaining = TOTAL_CHARS_CAP - total;
     if (remaining <= 200) break;
     const slice = p.markdown.slice(0, remaining);
-    corpusParts.push(`=== ${p.url} ===\n${slice}`);
+    corpusParts.push(`=== [${p.category}] ${p.url} ===\n${slice}`);
     total += slice.length;
   }
   const corpus = corpusParts.join("\n\n");
