@@ -271,6 +271,8 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                         setEmail("");
                         setError(null);
                         setTouched(false);
+                        setConsent(false);
+                        setConsentError(null);
                       }}
                       className="font-medium text-primary underline-offset-4 hover:underline"
                     >
