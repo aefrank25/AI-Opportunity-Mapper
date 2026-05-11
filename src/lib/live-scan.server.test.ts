@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { runLiveScan, LiveScanError } from "./live-scan.server";
 import { LIVE_SCAN_FALLBACK_MESSAGE } from "./live-scan-messages";
 
-const URL_MAP = "https://connector-gateway.lovable.dev/firecrawl/v2/map";
-const URL_SCRAPE = "https://connector-gateway.lovable.dev/firecrawl/v2/scrape";
+const URL_MAP = "https://api.firecrawl.dev/v2/map";
+const URL_SCRAPE = "https://api.firecrawl.dev/v2/scrape";
 const URL_AI = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 type Handler = (init?: RequestInit) => Promise<Response> | Response;

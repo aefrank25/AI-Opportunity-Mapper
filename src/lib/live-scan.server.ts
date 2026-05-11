@@ -11,7 +11,7 @@ import type {
 import { CATEGORY_TO_ROADMAP } from "./roadmaps";
 import { displayHost, normalizeUrl } from "./url";
 
-const GATEWAY = "https://connector-gateway.lovable.dev";
+const FIRECRAWL_API = "https://api.firecrawl.dev/v2";
 const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const AI_MODEL = "google/gemini-2.5-flash";
 
@@ -98,14 +98,13 @@ function getKeys(diag: LiveScanDiagnostics) {
 }
 
 async function firecrawlMap(url: string, diag: LiveScanDiagnostics): Promise<string[]> {
-  const { lovable, firecrawl } = getKeys(diag);
+  const { firecrawl } = getKeys(diag);
   let res: Response;
   try {
-    res = await fetch(`${GATEWAY}/firecrawl/v2/map`, {
+    res = await fetch(`${FIRECRAWL_API}/map`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${lovable}`,
-        "X-Connection-Api-Key": firecrawl,
+        Authorization: `Bearer ${firecrawl}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ url, limit: MAP_LIMIT, includeSubdomains: false }),
@@ -124,7 +123,7 @@ async function firecrawlMap(url: string, diag: LiveScanDiagnostics): Promise<str
   }
   const data = (await res.json().catch(() => ({}))) as {
     links?: Array<string | { url: string }>;
-    data?: { links?: string[] };
+    data?: { links?: Array<string | { url: string }> };
   };
   const raw = data.links ?? data.data?.links ?? [];
   return raw
@@ -166,13 +165,12 @@ async function firecrawlScrape(
   url: string,
   diag: LiveScanDiagnostics,
 ): Promise<{ url: string; markdown: string } | null> {
-  const { lovable, firecrawl } = getKeys(diag);
+  const { firecrawl } = getKeys(diag);
   try {
-    const res = await fetch(`${GATEWAY}/firecrawl/v2/scrape`, {
+    const res = await fetch(`${FIRECRAWL_API}/scrape`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${lovable}`,
-        "X-Connection-Api-Key": firecrawl,
+        Authorization: `Bearer ${firecrawl}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ url, formats: ["markdown"], onlyMainContent: true }),
