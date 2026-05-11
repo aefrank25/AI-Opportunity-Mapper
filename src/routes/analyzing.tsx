@@ -8,6 +8,7 @@ import { displayHost } from "@/lib/url";
 import { DEMO_META, type DemoId } from "@/lib/demos";
 import { liveScan } from "@/lib/live-scan.functions";
 import { LIVE_SCAN_FALLBACK_MESSAGE } from "@/lib/live-scan-messages";
+import { recordLiveScanSuccess } from "@/lib/live-scan-usage";
 import { Loader2, AlertCircle } from "lucide-react";
 
 const FAILURE_LABELS: Record<string, string> = {
@@ -154,6 +155,7 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
         setStep(LIVE_STEPS.length);
         if (typeof window !== "undefined") {
           sessionStorage.setItem(liveCacheKey(url, priority), JSON.stringify(res.result));
+          recordLiveScanSuccess();
         }
         setTimeout(() => {
           navigate({
