@@ -145,7 +145,17 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
       input?.focus();
       return;
     }
+    if (!consent) {
+      const msg = "Please confirm you'd like to receive these updates.";
+      setConsentError(msg);
+      track("expanded_map_submit_error", {
+        error_type: "validation",
+        reason: "consent_required",
+      });
+      return;
+    }
     setError(null);
+    setConsentError(null);
     mutation.mutate(
       { email: trimmed },
       {
