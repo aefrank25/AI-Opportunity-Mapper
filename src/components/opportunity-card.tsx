@@ -103,7 +103,7 @@ export function OpportunityCard({
                 href="#unlock-section"
                 className="mt-3 inline-flex items-center gap-1 text-[12px] font-medium text-primary underline-offset-4 hover:underline"
               >
-                Unlock Full Opportunity Map →
+                Request expanded analysis →
               </a>
             </div>
           </div>
