@@ -136,6 +136,15 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
               ))}
             </ul>
           </div>
+
+          <div className="mt-5 rounded-lg border border-border bg-surface-muted/40 p-3">
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              What to expect
+            </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Expanded analysis is coming soon. Join the list to be notified when deeper prioritization, supporting signals, sequencing, and exportable reports become available. Your interest helps shape what gets built next. There is no charge to join.
+            </p>
+          </div>
         </div>
 
         <div className="rounded-xl border border-border bg-surface-muted/60 p-4 sm:p-5">
