@@ -149,7 +149,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
                 )}
               </Button>
               <p className="text-[12px] leading-snug text-muted-foreground">
-                No spam. Just product updates and early access.
+                No spam. Just updates when expanded analysis is available.
               </p>
             </form>
           )}
