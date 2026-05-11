@@ -1,6 +1,7 @@
 import type { RoadmapKey } from "@/lib/types";
 import { roadmapFor } from "@/lib/roadmaps";
 import { Lock } from "lucide-react";
+import { focusUnlockEmail } from "@/lib/focus-unlock-email";
 
 function truncate(text: string, max = 140) {
   if (text.length <= max) return text;
