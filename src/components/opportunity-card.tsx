@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ScoreChip } from "./score-chip";
 import type { Opportunity, Priority } from "@/lib/types";
 import { ArrowRight, ChevronDown, Lock, Radar } from "lucide-react";
+import { focusUnlockEmail } from "@/lib/focus-unlock-email";
 
 const LOCKED_SECTIONS = [
   "Full operational analysis",
