@@ -21,6 +21,7 @@ interface Props {
   isDemo: boolean;
   sourceUrl?: string;
   topOpportunity?: string;
+  funnelContext?: ExpandedMapFunnelContext;
 }
 
 const UNLOCKS = [
