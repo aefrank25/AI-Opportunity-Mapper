@@ -9,6 +9,25 @@ import { DEMO_META, type DemoId } from "@/lib/demos";
 import { liveScan } from "@/lib/live-scan.functions";
 import { Loader2, AlertCircle } from "lucide-react";
 
+const FAILURE_LABELS: Record<string, string> = {
+  firecrawl_unavailable: "Firecrawl connector/API unavailable",
+  url_invalid: "URL normalization error",
+  page_discovery_failed: "Page discovery failed",
+  page_scrape_failed: "Page scraping failed",
+  no_content: "No usable content extracted",
+  llm_unavailable: "LLM/gateway unavailable",
+  validation_failed: "AI output validation failed",
+  timeout: "Timeout",
+  missing_secrets: "Live scan not configured",
+  unknown: "Unknown error",
+};
+
+interface FailureDetails {
+  code: string;
+  message: string;
+  diagnostics: Record<string, unknown>;
+}
+
 interface AnalyzingSearch {
   url?: string;
   priority?: string;
@@ -97,16 +116,20 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
   const callLiveScan = useServerFn(liveScan);
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [failure, setFailure] = useState<FailureDetails | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
   const startedRef = useRef(false);
 
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
 
-    // Visual cadence — increment step every ~1.4s up to second-to-last while request runs.
     const interval = setInterval(() => {
       setStep((s) => Math.min(s + 1, LIVE_STEPS.length - 1));
     }, 1400);
+
+    const FALLBACK_MSG =
+      "We couldn't complete a live scan for this site. You can try another URL or run a prototype recommendation based on business-type patterns.";
 
     (async () => {
       try {
@@ -115,9 +138,17 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
         });
         clearInterval(interval);
         if (!res.ok) {
-          setError(
-            "We couldn't complete a live scan for this site. You can try another URL or run a prototype recommendation based on business-type patterns.",
-          );
+          const details: FailureDetails = {
+            code: res.code ?? "unknown",
+            message: res.message ?? "Unknown error",
+            diagnostics: (res.diagnostics ?? {}) as unknown as Record<string, unknown>,
+          };
+          console.error("[live-scan] failed", {
+            label: FAILURE_LABELS[details.code] ?? details.code,
+            ...details,
+          });
+          setFailure(details);
+          setError(FALLBACK_MSG);
           return;
         }
         setStep(LIVE_STEPS.length);
@@ -132,10 +163,14 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
         }, 250);
       } catch (e) {
         clearInterval(interval);
-        console.error(e);
-        setError(
-          "We couldn't complete a live scan for this site. You can try another URL or run a prototype recommendation based on business-type patterns.",
-        );
+        const message = e instanceof Error ? e.message : String(e);
+        console.error("[live-scan] threw", { message, error: e });
+        setFailure({
+          code: "unknown",
+          message,
+          diagnostics: { rawError: message },
+        });
+        setError(FALLBACK_MSG);
       }
     })();
 
@@ -143,6 +178,7 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
   }, [callLiveScan, navigate, url, priority]);
 
   const subject = displayHost(url);
+  const isDev = import.meta.env.DEV;
 
   return (
     <section className="px-4 sm:px-6">
@@ -166,11 +202,44 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
                 <p className="text-sm text-foreground">{error}</p>
               </div>
+
+              {isDev && failure && (
+                <div className="rounded-xl border border-border bg-surface">
+                  <button
+                    type="button"
+                    onClick={() => setShowDetails((v) => !v)}
+                    className="flex w-full items-center justify-between px-4 py-2.5 text-left text-xs font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    <span>
+                      Technical details (dev only) ·{" "}
+                      <span className="text-foreground">
+                        {FAILURE_LABELS[failure.code] ?? failure.code}
+                      </span>
+                    </span>
+                    <span>{showDetails ? "−" : "+"}</span>
+                  </button>
+                  {showDetails && (
+                    <pre className="max-h-72 overflow-auto border-t border-border bg-card px-4 py-3 text-[11px] leading-relaxed text-muted-foreground">
+{JSON.stringify(
+  {
+    code: failure.code,
+    label: FAILURE_LABELS[failure.code] ?? failure.code,
+    message: failure.message,
+    diagnostics: failure.diagnostics,
+  },
+  null,
+  2,
+)}
+                    </pre>
+                  )}
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-2">
                 <Button
                   onClick={() =>
                     navigate({
-                      to: "/analyzing",
+                      to: "/results",
                       search: { url, priority: priority as never },
                     })
                   }
