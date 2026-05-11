@@ -155,6 +155,7 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
         setStep(LIVE_STEPS.length);
         if (typeof window !== "undefined") {
           sessionStorage.setItem(liveCacheKey(url, priority), JSON.stringify(res.result));
+          recordLiveScanSuccess();
         }
         setTimeout(() => {
           navigate({
