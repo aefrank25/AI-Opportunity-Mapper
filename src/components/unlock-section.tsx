@@ -83,19 +83,42 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
+    trackEvent("expanded_map_submit_attempt", { isDemo, sourceUrl });
     const validationError = validate(email);
     if (validationError) {
       setError(validationError);
+      trackEvent("expanded_map_validation_error", {
+        isDemo,
+        reason: validationError,
+        emptyField: email.trim().length === 0,
+      });
       const input = document.getElementById("unlock-email") as HTMLInputElement | null;
       input?.focus();
       return;
     }
     setError(null);
+    const trimmed = email.trim();
     mutation.mutate(
-      { email: email.trim() },
+      { email: trimmed },
       {
-        onError: (err) =>
-          setError(friendlyServerError(err instanceof Error ? err.message : "")),
+        onSuccess: () => {
+          trackEvent("expanded_map_signup_success", {
+            isDemo,
+            sourceUrl,
+            emailDomain: emailDomain(trimmed),
+            topOpportunity: topOpportunity ?? null,
+          });
+        },
+        onError: (err) => {
+          const message = err instanceof Error ? err.message : "";
+          setError(friendlyServerError(message));
+          trackEvent("expanded_map_signup_error", {
+            isDemo,
+            sourceUrl,
+            emailDomain: emailDomain(trimmed),
+            reason: message || "unknown",
+          });
+        },
       },
     );
   };
