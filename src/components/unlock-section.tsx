@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,9 +30,31 @@ const FREE_INCLUDES = [
   "Basic roadmap",
 ];
 
+const emailSchema = z
+  .string()
+  .trim()
+  .min(1, { message: "Please enter your email address." })
+  .max(255, { message: "Email is too long — please use under 255 characters." })
+  .email({ message: "That doesn't look like a valid email. Try the format name@company.com." });
+
+function friendlyServerError(message: string): string {
+  const m = message.toLowerCase();
+  if (m.includes("already") || m.includes("duplicate") || m.includes("exists")) {
+    return "This email is already on the list — you're all set.";
+  }
+  if (m.includes("rate") || m.includes("too many")) {
+    return "Too many attempts. Please wait a moment and try again.";
+  }
+  if (m.includes("network") || m.includes("fetch") || m.includes("timeout")) {
+    return "Network issue — check your connection and try again.";
+  }
+  return message || "Something went wrong. Please try again in a moment.";
+}
+
 export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [touched, setTouched] = useState(false);
   const join = useServerFn(joinBriefWaitlist);
 
   const mutation = useMutation({
@@ -46,22 +69,33 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
       }),
   });
 
+  const validate = (value: string): string | null => {
+    const result = emailSchema.safeParse(value);
+    return result.success ? null : result.error.issues[0]?.message ?? "Invalid email.";
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    const trimmed = email.trim();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(trimmed)) {
-      setError("Please enter a valid email address.");
+    setTouched(true);
+    const validationError = validate(email);
+    if (validationError) {
+      setError(validationError);
+      const input = document.getElementById("unlock-email") as HTMLInputElement | null;
+      input?.focus();
       return;
     }
+    setError(null);
     mutation.mutate(
-      { email: trimmed },
+      { email: email.trim() },
       {
         onError: (err) =>
-          setError(err instanceof Error ? err.message : "Something went wrong."),
+          setError(friendlyServerError(err instanceof Error ? err.message : "")),
       },
     );
   };
+
+  const hasError = !!error;
+  const submittedEmail = mutation.variables?.email;
 
   return (
     <div id="unlock-section" className="scroll-mt-8 rounded-2xl border border-border bg-card p-5 shadow-card sm:p-8">
@@ -106,17 +140,47 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
 
         <div className="rounded-xl border border-border bg-surface-muted/60 p-4 sm:p-5">
           {mutation.isSuccess ? (
-            <div className="flex flex-col items-start gap-2">
-              <CheckCircle2 className="h-5 w-5 text-primary" />
-              <div className="text-sm font-medium text-foreground">
-                You're on the list.
+            <div
+              role="status"
+              aria-live="polite"
+              className="rounded-lg border border-primary/30 bg-primary/5 p-4"
+            >
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
+                <div className="space-y-1.5">
+                  <div className="text-sm font-semibold text-foreground">
+                    You're on the list — confirmation saved.
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {submittedEmail ? (
+                      <>
+                        We've added <span className="font-medium text-foreground">{submittedEmail}</span> to the early access list. We'll email you the moment expanded analysis is available — usually no more than once or twice a month.
+                      </>
+                    ) : (
+                      <>We'll email you the moment expanded analysis is available — usually no more than once or twice a month.</>
+                    )}
+                  </p>
+                  <p className="text-[12px] text-muted-foreground">
+                    Don't see anything later? Check your spam folder, or{" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        mutation.reset();
+                        setEmail("");
+                        setError(null);
+                        setTouched(false);
+                      }}
+                      className="font-medium text-primary underline-offset-4 hover:underline"
+                    >
+                      use a different email
+                    </button>
+                    .
+                  </p>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground">
-                We'll reach out when expanded analysis access is available.
-              </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <form onSubmit={handleSubmit} noValidate className="space-y-3">
               <div className="space-y-1.5">
                 <Label htmlFor="unlock-email" className="text-sm">
                   Email
@@ -128,12 +192,38 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
                   autoComplete="email"
                   placeholder="you@company.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (touched) {
+                      setError(validate(e.target.value));
+                    }
+                  }}
+                  onBlur={() => {
+                    setTouched(true);
+                    setError(validate(email));
+                  }}
+                  maxLength={255}
                   required
+                  aria-invalid={hasError}
+                  aria-describedby={hasError ? "unlock-email-error" : "unlock-email-hint"}
                   disabled={mutation.isPending}
+                  className={hasError ? "border-destructive focus-visible:ring-destructive" : ""}
                 />
+                {hasError ? (
+                  <p
+                    id="unlock-email-error"
+                    role="alert"
+                    className="flex items-start gap-1.5 text-sm text-destructive"
+                  >
+                    <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <span>{error}</span>
+                  </p>
+                ) : (
+                  <p id="unlock-email-hint" className="text-[12px] text-muted-foreground">
+                    Use a work email so we can match it to your scan.
+                  </p>
+                )}
               </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
               <Button
                 type="submit"
                 className="w-full"
