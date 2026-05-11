@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ScoreChip } from "./score-chip";
 import type { Opportunity, Priority } from "@/lib/types";
 import { ArrowRight, ChevronDown, Lock, Radar } from "lucide-react";
+import { focusUnlockEmail } from "@/lib/focus-unlock-email";
 
 const LOCKED_SECTIONS = [
   "Full operational analysis",
@@ -99,12 +100,16 @@ export function OpportunityCard({
                   </li>
                 ))}
               </ul>
-              <a
-                href="#unlock-section"
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  focusUnlockEmail();
+                }}
                 className="mt-3 inline-flex items-center gap-1 text-[12px] font-medium text-primary underline-offset-4 hover:underline"
               >
                 Request expanded analysis →
-              </a>
+              </button>
             </div>
           </div>
           <div className="mt-auto" />

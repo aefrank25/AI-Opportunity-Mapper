@@ -1,6 +1,7 @@
 import type { RoadmapKey } from "@/lib/types";
 import { roadmapFor } from "@/lib/roadmaps";
 import { Lock } from "lucide-react";
+import { focusUnlockEmail } from "@/lib/focus-unlock-email";
 
 function truncate(text: string, max = 140) {
   if (text.length <= max) return text;
@@ -61,9 +62,10 @@ export function Roadmap({ roadmapKey }: { roadmapKey?: RoadmapKey }) {
               )}
 
               {locked && (
-                <a
-                  href="#unlock-section"
-                  aria-label="See complete 30-day roadmap"
+                <button
+                  type="button"
+                  onClick={focusUnlockEmail}
+                  aria-label="Request expanded roadmap details"
                   className="absolute inset-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 />
               )}
