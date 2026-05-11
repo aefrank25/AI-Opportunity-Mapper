@@ -3,6 +3,7 @@ import { ScoreChip } from "./score-chip";
 import type { Opportunity, Priority } from "@/lib/types";
 import { ArrowRight, ChevronDown, Lock, Radar } from "lucide-react";
 import { focusUnlockEmail } from "@/lib/focus-unlock-email";
+import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
 
 const LOCKED_SECTIONS = [
   "Full operational analysis",
