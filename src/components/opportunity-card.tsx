@@ -107,6 +107,13 @@ export function OpportunityCard({
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
+                  if (funnelContext) {
+                    trackExpandedMap("expanded_map_request_clicked", funnelContext, {
+                      source_section: "opportunity_card",
+                      opportunity_index: index,
+                      opportunity_id: o.id,
+                    });
+                  }
                   focusUnlockEmail();
                 }}
                 className="mt-3 inline-flex items-center gap-1 text-[12px] font-medium text-primary underline-offset-4 hover:underline"
