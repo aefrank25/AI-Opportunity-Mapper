@@ -190,6 +190,7 @@ function Results() {
                 priorityLabel={result.priority === "not_sure" ? undefined : PRIORITY_LABELS[result.priority]}
                 priority={result.priority}
                 locked={i > 0}
+                funnelContext={funnelContext}
               />
             ))}
           </div>
@@ -200,12 +201,13 @@ function Results() {
           priorityLabel={result.priority === "not_sure" ? undefined : PRIORITY_LABELS[result.priority]}
         />
 
-        <Roadmap roadmapKey={result.roadmapKey} />
+        <Roadmap roadmapKey={result.roadmapKey} funnelContext={funnelContext} />
 
         <UnlockSection
           isDemo={result.isDemo}
           sourceUrl={result.displayUrl}
           topOpportunity={result.topOpportunity?.name}
+          funnelContext={funnelContext}
         />
         <FeedbackWidget
           isDemo={result.isDemo}
