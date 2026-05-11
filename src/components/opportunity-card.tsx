@@ -99,12 +99,16 @@ export function OpportunityCard({
                   </li>
                 ))}
               </ul>
-              <a
-                href="#unlock-section"
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  focusUnlockEmail();
+                }}
                 className="mt-3 inline-flex items-center gap-1 text-[12px] font-medium text-primary underline-offset-4 hover:underline"
               >
                 Request expanded analysis →
-              </a>
+              </button>
             </div>
           </div>
           <div className="mt-auto" />
