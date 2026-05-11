@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { joinBriefWaitlist } from "@/lib/brief-waitlist.functions";
-import { trackEvent } from "@/lib/analytics";
+import {
+  trackExpandedMap,
+  type ExpandedMapFunnelContext,
+} from "@/lib/expanded-map-analytics";
 
 function emailDomain(email: string): string {
   const at = email.lastIndexOf("@");
