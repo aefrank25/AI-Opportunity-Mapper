@@ -333,6 +333,42 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                   </p>
                 )}
               </div>
+              <div className="space-y-1.5">
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="unlock-consent"
+                    checked={consent}
+                    disabled={mutation.isPending}
+                    onCheckedChange={(checked) => {
+                      const next = checked === true;
+                      setConsent(next);
+                      if (next) {
+                        setConsentError(null);
+                        track("expanded_map_consent_checked");
+                      }
+                    }}
+                    aria-invalid={!!consentError}
+                    aria-describedby={consentError ? "unlock-consent-error" : undefined}
+                    className="mt-0.5"
+                  />
+                  <Label
+                    htmlFor="unlock-consent"
+                    className="text-[12px] font-normal leading-snug text-muted-foreground"
+                  >
+                    Yes, email me when expanded analysis is available. I can unsubscribe at any time.
+                  </Label>
+                </div>
+                {consentError && (
+                  <p
+                    id="unlock-consent-error"
+                    role="alert"
+                    className="flex items-start gap-1.5 text-sm text-destructive"
+                  >
+                    <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <span>{consentError}</span>
+                  </p>
+                )}
+              </div>
               <Button
                 type="submit"
                 className="w-full"
