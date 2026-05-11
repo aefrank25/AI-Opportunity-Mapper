@@ -1,27 +1,21 @@
-import { useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ImplementationBriefDialog } from "@/components/implementation-brief-dialog";
 
 interface Props {
   isDemo: boolean;
-  sourceUrl?: string;
-  topOpportunity?: string;
 }
 
-// Toggle when the Expanded Opportunity Map is actually available.
-const EXPANDED_MAP_AVAILABLE = false;
-
-export function NextStepCta({ isDemo, sourceUrl, topOpportunity }: Props) {
-  const [open, setOpen] = useState(false);
-
-  const handleClick = () => {
-    if (EXPANDED_MAP_AVAILABLE) {
-      setOpen(true);
-    } else {
-      toast("Expanded Opportunity Map is planned for the next version.");
-    }
+export function NextStepCta({ isDemo }: Props) {
+  const handleJoin = () => {
+    if (typeof document === "undefined") return;
+    const section = document.getElementById("unlock-section");
+    if (!section) return;
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Focus the email field shortly after scroll begins.
+    setTimeout(() => {
+      const input = document.getElementById("unlock-email") as HTMLInputElement | null;
+      input?.focus();
+    }, 400);
   };
 
   return (
@@ -29,10 +23,10 @@ export function NextStepCta({ isDemo, sourceUrl, topOpportunity }: Props) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-primary-foreground sm:text-2xl">
-            Want the expanded opportunity map?
+            Expanded Opportunity Map — coming soon
           </h2>
           <p className="mt-1 text-sm text-primary-foreground/80">
-            See the deeper prioritization, supporting signals, sequencing, and expanded next steps behind this scan.
+            Deeper prioritization, supporting signals, sequencing, and expanded next steps. Join early access to be notified when it's available.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
@@ -40,9 +34,9 @@ export function NextStepCta({ isDemo, sourceUrl, topOpportunity }: Props) {
             variant="secondary"
             size="default"
             className="w-full sm:w-auto sm:h-11 sm:rounded-md sm:px-8"
-            onClick={handleClick}
+            onClick={handleJoin}
           >
-            Get Expanded Map
+            Join Early Access
           </Button>
           <Button
             asChild
@@ -63,16 +57,6 @@ export function NextStepCta({ isDemo, sourceUrl, topOpportunity }: Props) {
             Try it on your own website →
           </Link>
         </div>
-      )}
-
-      {EXPANDED_MAP_AVAILABLE && (
-        <ImplementationBriefDialog
-          open={open}
-          onOpenChange={setOpen}
-          sourceUrl={sourceUrl}
-          topOpportunity={topOpportunity}
-          isDemo={isDemo}
-        />
       )}
     </div>
   );
