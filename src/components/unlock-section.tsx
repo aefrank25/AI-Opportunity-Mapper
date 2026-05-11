@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { joinBriefWaitlist } from "@/lib/brief-waitlist.functions";
 import {
   trackExpandedMap,
@@ -66,6 +67,8 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
   const [emailStartedFired, setEmailStartedFired] = useState(false);
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState<string | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const viewedFiredRef = useRef(false);
   const join = useServerFn(joinBriefWaitlist);
@@ -142,7 +145,17 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
       input?.focus();
       return;
     }
+    if (!consent) {
+      const msg = "Please confirm you'd like to receive these updates.";
+      setConsentError(msg);
+      track("expanded_map_submit_error", {
+        error_type: "validation",
+        reason: "consent_required",
+      });
+      return;
+    }
     setError(null);
+    setConsentError(null);
     mutation.mutate(
       { email: trimmed },
       {
@@ -258,6 +271,8 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                         setEmail("");
                         setError(null);
                         setTouched(false);
+                        setConsent(false);
+                        setConsentError(null);
                       }}
                       className="font-medium text-primary underline-offset-4 hover:underline"
                     >
@@ -315,6 +330,42 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                 ) : (
                   <p id="unlock-email-hint" className="text-[12px] text-muted-foreground">
                     Use a work email so we can match it to your scan.
+                  </p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="unlock-consent"
+                    checked={consent}
+                    disabled={mutation.isPending}
+                    onCheckedChange={(checked) => {
+                      const next = checked === true;
+                      setConsent(next);
+                      if (next) {
+                        setConsentError(null);
+                        track("expanded_map_consent_checked");
+                      }
+                    }}
+                    aria-invalid={!!consentError}
+                    aria-describedby={consentError ? "unlock-consent-error" : undefined}
+                    className="mt-0.5"
+                  />
+                  <Label
+                    htmlFor="unlock-consent"
+                    className="text-[12px] font-normal leading-snug text-muted-foreground"
+                  >
+                    Yes, email me when expanded analysis is available. I can unsubscribe at any time.
+                  </Label>
+                </div>
+                {consentError && (
+                  <p
+                    id="unlock-consent-error"
+                    role="alert"
+                    className="flex items-start gap-1.5 text-sm text-destructive"
+                  >
+                    <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <span>{consentError}</span>
                   </p>
                 )}
               </div>
