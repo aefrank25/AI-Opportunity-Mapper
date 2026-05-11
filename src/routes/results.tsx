@@ -11,7 +11,7 @@ import { OpportunityCard } from "@/components/opportunity-card";
 import { QuickWins } from "@/components/quick-wins";
 import { Roadmap } from "@/components/roadmap";
 import { OpportunityHeatmap } from "@/components/opportunity-heatmap";
-import { NextStepCta } from "@/components/next-step-cta";
+
 import { UnlockSection } from "@/components/unlock-section";
 import { FeedbackWidget } from "@/components/feedback-widget";
 import { Globe, RotateCcw } from "lucide-react";
