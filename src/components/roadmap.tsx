@@ -71,7 +71,15 @@ export function Roadmap({
               {locked && (
                 <button
                   type="button"
-                  onClick={focusUnlockEmail}
+                  onClick={() => {
+                    if (funnelContext) {
+                      trackExpandedMap("expanded_map_request_clicked", funnelContext, {
+                        source_section: "roadmap_card",
+                        roadmap_week_index: i,
+                      });
+                    }
+                    focusUnlockEmail();
+                  }}
                   aria-label="Request expanded roadmap details"
                   className="absolute inset-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 />
