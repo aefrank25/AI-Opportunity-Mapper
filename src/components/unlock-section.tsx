@@ -329,7 +329,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                   </p>
                 ) : (
                   <p id="unlock-email-hint" className="text-[12px] text-muted-foreground">
-                    Use a work email so we can match it to your scan.
+                    Use the email where you’d like to receive updates about expanded analysis.
                   </p>
                 )}
               </div>
