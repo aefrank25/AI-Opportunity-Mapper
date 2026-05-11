@@ -67,6 +67,8 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
   const [emailStartedFired, setEmailStartedFired] = useState(false);
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState<string | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const viewedFiredRef = useRef(false);
   const join = useServerFn(joinBriefWaitlist);
