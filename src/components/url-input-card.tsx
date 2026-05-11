@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,6 +15,12 @@ import { Switch } from "@/components/ui/switch";
 import { PRIORITY_LABELS, type Priority } from "@/lib/types";
 import { urlSchema } from "@/lib/url";
 import { DEMO_META, type DemoId } from "@/lib/demos";
+import {
+  checkLiveScanGate,
+  unlockEmailBonus,
+  liveScansRemaining,
+  type LiveScanUsage,
+} from "@/lib/live-scan-usage";
 import { Sparkles, Info, ArrowRight } from "lucide-react";
 
 const PRIORITY_ORDER: Priority[] = [
@@ -28,16 +35,26 @@ const PRIORITY_ORDER: Priority[] = [
 
 const LIVE_SCAN_KEY = "aiom:live-scan";
 
+type GateState =
+  | { kind: "ok" }
+  | { kind: "needs_email"; usage: LiveScanUsage }
+  | { kind: "limit_reached"; usage: LiveScanUsage };
+
 export function UrlInputCard() {
   const navigate = useNavigate();
   const [url, setUrl] = useState("");
   const [priority, setPriority] = useState<Priority>("not_sure");
   const [error, setError] = useState<string | null>(null);
   const [liveScan, setLiveScan] = useState<boolean>(true);
+  const [gate, setGate] = useState<GateState>({ kind: "ok" });
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [remaining, setRemaining] = useState<number | null>(null);
 
   useEffect(() => {
     const stored = typeof window !== "undefined" ? localStorage.getItem(LIVE_SCAN_KEY) : null;
     if (stored === "0") setLiveScan(false);
+    setRemaining(liveScansRemaining());
   }, []);
 
   function toggleLive(v: boolean) {
@@ -45,6 +62,14 @@ export function UrlInputCard() {
     if (typeof window !== "undefined") {
       localStorage.setItem(LIVE_SCAN_KEY, v ? "1" : "0");
     }
+  }
+
+  function startLive(validUrl: string, p: Priority) {
+    navigate({ to: "/analyzing", search: { url: validUrl, priority: p, live: 1 } });
+  }
+
+  function startPrototype(validUrl: string, p: Priority) {
+    navigate({ to: "/analyzing", search: { url: validUrl, priority: p } });
   }
 
   function submit(e: React.FormEvent) {
@@ -55,16 +80,57 @@ export function UrlInputCard() {
       return;
     }
     setError(null);
-    navigate({
-      to: "/analyzing",
-      search: liveScan
-        ? { url: result.data, priority, live: 1 }
-        : { url: result.data, priority },
-    });
+
+    if (!liveScan) {
+      startPrototype(result.data, priority);
+      return;
+    }
+
+    const g = checkLiveScanGate();
+    if (g.allowed) {
+      startLive(result.data, priority);
+    } else if (g.reason === "needs_email") {
+      setGate({ kind: "needs_email", usage: g.usage });
+    } else {
+      setGate({ kind: "limit_reached", usage: g.usage });
+    }
+  }
+
+  function handleEmailUnlock(e: React.FormEvent) {
+    e.preventDefault();
+    setEmailError(null);
+    const trimmed = email.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(trimmed)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+    unlockEmailBonus(trimmed);
+    toast("You're on the beta list. 2 more Live Scans are available today.");
+    setGate({ kind: "ok" });
+    setRemaining(liveScansRemaining());
+
+    const parsed = urlSchema.safeParse(url);
+    if (parsed.success) startLive(parsed.data, priority);
+  }
+
+  function handleFullReport() {
+    // No checkout implemented yet — surface placeholder, same pattern as expanded map CTA.
+    toast("Full Report checkout is planned for the next version.");
   }
 
   function runDemo(id: DemoId) {
     navigate({ to: "/analyzing", search: { demo: id } });
+  }
+
+  function runPrototypeFromGate() {
+    const parsed = urlSchema.safeParse(url);
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? "Invalid URL.");
+      setGate({ kind: "ok" });
+      return;
+    }
+    setGate({ kind: "ok" });
+    startPrototype(parsed.data, priority);
   }
 
   return (
@@ -130,6 +196,21 @@ export function UrlInputCard() {
               Read a few real pages from the site to ground recommendations in actual content. Falls
               back to prototype mode if the site can't be reached.
             </p>
+            {liveScan && (
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                <span className="hidden sm:inline">
+                  Free beta includes 1 Live Scan per day. Enter your email after your first scan to get 2 more. Demo scans are unlimited.
+                </span>
+                <span className="sm:hidden">
+                  1 free Live Scan daily. Get 2 more with email. Demos are unlimited.
+                </span>
+                {remaining !== null && (
+                  <span className="ml-1 font-medium text-foreground">
+                    ({remaining} left today)
+                  </span>
+                )}
+              </p>
+            )}
           </div>
         </div>
 
@@ -145,6 +226,70 @@ export function UrlInputCard() {
             : "Prototype mode uses business-type patterns and inferred workflow signals. Recommendations should be validated before implementation."}
         </p>
       </form>
+
+      {gate.kind === "needs_email" && (
+        <div className="mt-5 rounded-xl border border-primary/30 bg-accent p-4 sm:p-5">
+          <div className="text-sm font-semibold text-foreground">
+            You've used today's free Live Scan
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Enter your email to get 2 more beta scans today, or run a prototype recommendation instead.
+          </p>
+          <form onSubmit={handleEmailUnlock} className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <Input
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder="you@company.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-10"
+              required
+            />
+            <Button type="submit" className="h-10 sm:w-auto">
+              Get 2 more scans
+            </Button>
+          </form>
+          {emailError && (
+            <p className="mt-2 text-xs text-destructive">{emailError}</p>
+          )}
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={runPrototypeFromGate}>
+              Run prototype instead
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => runDemo("clinic")}
+            >
+              Try a demo
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {gate.kind === "limit_reached" && (
+        <div className="mt-5 rounded-xl border border-primary/30 bg-accent p-4 sm:p-5">
+          <div className="text-sm font-semibold text-foreground">
+            You've used all 3 free Live Scans available today
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            You can run a prototype recommendation, try a demo, or get the full report for one of your scanned websites.
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Full Report: get the expanded opportunity map with deeper prioritization, supporting signals, suggested sequencing, expanded next steps, and exportable report access. One-time upgrade per website.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button onClick={handleFullReport}>Get Full Report</Button>
+            <Button variant="outline" onClick={runPrototypeFromGate}>
+              Run prototype instead
+            </Button>
+            <Button variant="ghost" onClick={() => runDemo("clinic")}>
+              Try a demo
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div className="mt-6 border-t border-border pt-5">
         <div className="text-sm font-medium text-foreground">
