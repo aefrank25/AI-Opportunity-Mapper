@@ -9,6 +9,25 @@ import { DEMO_META, type DemoId } from "@/lib/demos";
 import { liveScan } from "@/lib/live-scan.functions";
 import { Loader2, AlertCircle } from "lucide-react";
 
+const FAILURE_LABELS: Record<string, string> = {
+  firecrawl_unavailable: "Firecrawl connector/API unavailable",
+  url_invalid: "URL normalization error",
+  page_discovery_failed: "Page discovery failed",
+  page_scrape_failed: "Page scraping failed",
+  no_content: "No usable content extracted",
+  llm_unavailable: "LLM/gateway unavailable",
+  validation_failed: "AI output validation failed",
+  timeout: "Timeout",
+  missing_secrets: "Live scan not configured",
+  unknown: "Unknown error",
+};
+
+interface FailureDetails {
+  code: string;
+  message: string;
+  diagnostics: Record<string, unknown>;
+}
+
 interface AnalyzingSearch {
   url?: string;
   priority?: string;
