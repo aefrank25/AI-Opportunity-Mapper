@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { joinBriefWaitlist } from "@/lib/brief-waitlist.functions";
+import { trackEvent } from "@/lib/analytics";
+
+function emailDomain(email: string): string {
+  const at = email.lastIndexOf("@");
+  return at >= 0 ? email.slice(at + 1).toLowerCase() : "";
+}
 
 interface Props {
   isDemo: boolean;
