@@ -15,8 +15,6 @@ const GATEWAY = "https://connector-gateway.lovable.dev";
 const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const AI_MODEL = "google/gemini-2.5-flash";
 
-// Live Scan beta deliberately limits Firecrawl to a small, fixed set of
-// high-signal page types. We never crawl the full site.
 type PageCategory = "home" | "about" | "services" | "faq" | "contact";
 
 const PAGE_PATTERNS: Array<{ key: Exclude<PageCategory, "home">; rx: RegExp }> = [
@@ -26,36 +24,84 @@ const PAGE_PATTERNS: Array<{ key: Exclude<PageCategory, "home">; rx: RegExp }> =
   { key: "contact", rx: /\/(contact|book(ing)?|appointments?|quote|inquiry|enquiry|consult(ation)?|get-started|schedule)(\/|$)/i },
 ];
 
-// Hard caps — enforced before any AI generation runs.
-const MAP_LIMIT = 25;          // max links Firecrawl map may return
-const MAX_PAGES = 5;           // max pages we scrape (home + up to 4 categories)
-const PER_PAGE_CHARS = 6000;   // max chars retained per scraped page
-const TOTAL_CHARS_CAP = 30000; // max total chars passed to the AI extractor
+const MAP_LIMIT = 25;
+const MAX_PAGES = 5;
+const PER_PAGE_CHARS = 6000;
+const TOTAL_CHARS_CAP = 30000;
+const OVERALL_TIMEOUT_MS = 60_000;
+
+export type LiveScanCode =
+  | "firecrawl_unavailable"
+  | "url_invalid"
+  | "page_discovery_failed"
+  | "page_scrape_failed"
+  | "no_content"
+  | "llm_unavailable"
+  | "validation_failed"
+  | "timeout"
+  | "missing_secrets"
+  | "unknown";
+
+export interface LiveScanDiagnostics {
+  normalizedUrl?: string;
+  mapSucceeded: boolean;
+  discoveredCount: number;
+  selectedPages: string[];
+  scrapedCount: number;
+  totalChars: number;
+  llmCallStarted: boolean;
+  validationFailed: boolean;
+  rawError?: string;
+  step?: string;
+}
 
 export class LiveScanError extends Error {
-  code: "firecrawl_failed" | "ai_failed" | "parse_failed" | "no_pages" | "missing_secrets";
-  constructor(code: LiveScanError["code"], message: string) {
+  code: LiveScanCode;
+  diagnostics: LiveScanDiagnostics;
+  constructor(code: LiveScanCode, message: string, diagnostics: LiveScanDiagnostics) {
     super(message);
     this.code = code;
+    this.diagnostics = diagnostics;
   }
 }
 
-function getKeys() {
+function emptyDiag(): LiveScanDiagnostics {
+  return {
+    mapSucceeded: false,
+    discoveredCount: 0,
+    selectedPages: [],
+    scrapedCount: 0,
+    totalChars: 0,
+    llmCallStarted: false,
+    validationFailed: false,
+  };
+}
+
+// Strip API keys/tokens from any string before sending to client/log.
+function redact(msg: string): string {
+  return msg
+    .replace(/Bearer\s+[A-Za-z0-9._\-]+/gi, "Bearer [redacted]")
+    .replace(/(api[_-]?key|authorization|token)[^,\s"']{0,4}[A-Za-z0-9._\-]{8,}/gi, "$1=[redacted]");
+}
+
+function getKeys(diag: LiveScanDiagnostics) {
   const lovable = process.env.LOVABLE_API_KEY;
   const firecrawl = process.env.FIRECRAWL_API_KEY;
   if (!lovable || !firecrawl) {
     throw new LiveScanError(
       "missing_secrets",
-      "Live scan is not fully configured. Please try again or run prototype mode.",
+      "Live scan is not fully configured.",
+      { ...diag, step: "config" },
     );
   }
   return { lovable, firecrawl };
 }
 
-async function firecrawlMap(url: string): Promise<string[]> {
-  const { lovable, firecrawl } = getKeys();
+async function firecrawlMap(url: string, diag: LiveScanDiagnostics): Promise<string[]> {
+  const { lovable, firecrawl } = getKeys(diag);
+  let res: Response;
   try {
-    const res = await fetch(`${GATEWAY}/firecrawl/v2/map`, {
+    res = await fetch(`${GATEWAY}/firecrawl/v2/map`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${lovable}`,
@@ -64,19 +110,26 @@ async function firecrawlMap(url: string): Promise<string[]> {
       },
       body: JSON.stringify({ url, limit: MAP_LIMIT, includeSubdomains: false }),
     });
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      throw new LiveScanError("firecrawl_failed", `Map failed: ${res.status} ${text.slice(0, 200)}`);
-    }
-    const data = (await res.json()) as { links?: Array<string | { url: string }>; data?: { links?: string[] } };
-    const raw = data.links ?? data.data?.links ?? [];
-    return raw
-      .map((l) => (typeof l === "string" ? l : l?.url))
-      .filter((u): u is string => typeof u === "string");
   } catch (e) {
-    if (e instanceof LiveScanError) throw e;
-    throw new LiveScanError("firecrawl_failed", `Map error: ${(e as Error).message}`);
+    throw new LiveScanError(
+      "firecrawl_unavailable",
+      `Firecrawl map network error: ${redact((e as Error).message)}`,
+      { ...diag, step: "map" },
+    );
   }
+  if (!res.ok) {
+    const text = redact((await res.text().catch(() => "")).slice(0, 300));
+    const code: LiveScanCode = res.status >= 500 || res.status === 429 ? "firecrawl_unavailable" : "page_discovery_failed";
+    throw new LiveScanError(code, `Firecrawl map ${res.status}: ${text}`, { ...diag, step: "map" });
+  }
+  const data = (await res.json().catch(() => ({}))) as {
+    links?: Array<string | { url: string }>;
+    data?: { links?: string[] };
+  };
+  const raw = data.links ?? data.data?.links ?? [];
+  return raw
+    .map((l) => (typeof l === "string" ? l : l?.url))
+    .filter((u): u is string => typeof u === "string");
 }
 
 function pickPages(home: string, links: string[]): Array<{ url: string; category: PageCategory }> {
@@ -87,8 +140,6 @@ function pickPages(home: string, links: string[]): Array<{ url: string; category
   } catch {
     return [{ url: home, category: "home" }];
   }
-
-  // Same-host only, dedup, drop the home URL itself.
   const seen = new Set<string>();
   const sameHost = links.filter((l) => {
     try {
@@ -102,10 +153,7 @@ function pickPages(home: string, links: string[]): Array<{ url: string; category
       return false;
     }
   });
-
-  const picked: Array<{ url: string; category: PageCategory }> = [
-    { url: home, category: "home" },
-  ];
+  const picked: Array<{ url: string; category: PageCategory }> = [{ url: home, category: "home" }];
   for (const { key, rx } of PAGE_PATTERNS) {
     if (picked.length >= MAX_PAGES) break;
     const match = sameHost.find((l) => rx.test(l));
@@ -114,8 +162,11 @@ function pickPages(home: string, links: string[]): Array<{ url: string; category
   return picked.slice(0, MAX_PAGES);
 }
 
-async function firecrawlScrape(url: string): Promise<{ url: string; markdown: string } | null> {
-  const { lovable, firecrawl } = getKeys();
+async function firecrawlScrape(
+  url: string,
+  diag: LiveScanDiagnostics,
+): Promise<{ url: string; markdown: string } | null> {
+  const { lovable, firecrawl } = getKeys(diag);
   try {
     const res = await fetch(`${GATEWAY}/firecrawl/v2/scrape`, {
       method: "POST",
@@ -124,17 +175,10 @@ async function firecrawlScrape(url: string): Promise<{ url: string; markdown: st
         "X-Connection-Api-Key": firecrawl,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        url,
-        formats: ["markdown"],
-        onlyMainContent: true,
-      }),
+      body: JSON.stringify({ url, formats: ["markdown"], onlyMainContent: true }),
     });
     if (!res.ok) return null;
-    const data = (await res.json()) as {
-      markdown?: string;
-      data?: { markdown?: string };
-    };
+    const data = (await res.json()) as { markdown?: string; data?: { markdown?: string } };
     const md = data.markdown ?? data.data?.markdown ?? "";
     if (!md.trim()) return null;
     return { url, markdown: md.slice(0, PER_PAGE_CHARS) };
@@ -148,8 +192,10 @@ async function aiToolCall<T>(
   userPrompt: string,
   toolName: string,
   parameters: Record<string, unknown>,
+  diag: LiveScanDiagnostics,
 ): Promise<T> {
-  const { lovable } = getKeys();
+  const { lovable } = getKeys(diag);
+  diag.llmCallStarted = true;
   const body = {
     model: AI_MODEL,
     messages: [
@@ -159,11 +205,7 @@ async function aiToolCall<T>(
     tools: [
       {
         type: "function",
-        function: {
-          name: toolName,
-          description: "Return the structured result.",
-          parameters,
-        },
+        function: { name: toolName, description: "Return the structured result.", parameters },
       },
     ],
     tool_choice: { type: "function", function: { name: toolName } },
@@ -173,33 +215,34 @@ async function aiToolCall<T>(
   try {
     res = await fetch(AI_URL, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${lovable}`,
-        "Content-Type": "application/json",
-      },
+      headers: { Authorization: `Bearer ${lovable}`, "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
   } catch (e) {
-    throw new LiveScanError("ai_failed", `AI request failed: ${(e as Error).message}`);
+    throw new LiveScanError(
+      "llm_unavailable",
+      `AI gateway network error: ${redact((e as Error).message)}`,
+      { ...diag, step: "llm" },
+    );
   }
 
   if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new LiveScanError("ai_failed", `AI ${res.status}: ${text.slice(0, 200)}`);
+    const text = redact((await res.text().catch(() => "")).slice(0, 300));
+    throw new LiveScanError("llm_unavailable", `AI ${res.status}: ${text}`, { ...diag, step: "llm" });
   }
   const data = (await res.json()) as {
-    choices?: Array<{
-      message?: {
-        tool_calls?: Array<{ function?: { arguments?: string } }>;
-      };
-    }>;
+    choices?: Array<{ message?: { tool_calls?: Array<{ function?: { arguments?: string } }> } }>;
   };
   const args = data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
-  if (!args) throw new LiveScanError("parse_failed", "AI returned no tool call.");
+  if (!args) {
+    diag.validationFailed = true;
+    throw new LiveScanError("validation_failed", "AI returned no tool call.", { ...diag, step: "llm_parse" });
+  }
   try {
     return JSON.parse(args) as T;
   } catch {
-    throw new LiveScanError("parse_failed", "AI returned invalid JSON.");
+    diag.validationFailed = true;
+    throw new LiveScanError("validation_failed", "AI returned invalid JSON.", { ...diag, step: "llm_parse" });
   }
 }
 
@@ -316,11 +359,7 @@ const MAP_SCHEMA = {
       type: "array",
       minItems: 3,
       maxItems: 3,
-      items: {
-        type: "object",
-        properties: OPPORTUNITY_PROPS,
-        required: OPPORTUNITY_REQUIRED,
-      },
+      items: { type: "object", properties: OPPORTUNITY_PROPS, required: OPPORTUNITY_REQUIRED },
     },
     quickWins: {
       type: "array",
@@ -328,10 +367,7 @@ const MAP_SCHEMA = {
       maxItems: 5,
       items: {
         type: "object",
-        properties: {
-          title: { type: "string" },
-          action: { type: "string" },
-        },
+        properties: { title: { type: "string" }, action: { type: "string" } },
         required: ["title", "action"],
       },
     },
@@ -366,9 +402,7 @@ function normScore(s: string): ScoreLevel {
   return SCORE_VALUES.includes(s as ScoreLevel) ? (s as ScoreLevel) : "Medium";
 }
 function normCategory(c: string): OpportunityCategory {
-  return CATEGORIES.includes(c as OpportunityCategory)
-    ? (c as OpportunityCategory)
-    : "internal_admin";
+  return CATEGORIES.includes(c as OpportunityCategory) ? (c as OpportunityCategory) : "internal_admin";
 }
 
 function verifyEvidence(quotes: string[], corpus: string): string[] {
@@ -379,42 +413,60 @@ function verifyEvidence(quotes: string[], corpus: string): string[] {
     .filter((q) => norm.includes(q.toLowerCase().replace(/\s+/g, " ").slice(0, 80)));
 }
 
-export async function runLiveScan(
+async function runLiveScanInner(
   rawUrl: string,
   priority: Priority,
+  diag: LiveScanDiagnostics,
 ): Promise<AnalysisResult> {
-  getKeys(); // throws missing_secrets early
-
-  const cleaned = normalizeUrl(rawUrl);
+  // Normalize URL
+  let cleaned: string;
+  try {
+    cleaned = normalizeUrl(rawUrl);
+    if (!cleaned || !/^([a-z0-9-]+\.)+[a-z]{2,}/i.test(cleaned)) {
+      throw new Error("Invalid hostname");
+    }
+  } catch (e) {
+    throw new LiveScanError("url_invalid", `URL normalization failed: ${(e as Error).message}`, {
+      ...diag,
+      step: "normalize",
+    });
+  }
+  diag.normalizedUrl = cleaned;
   const home = `https://${cleaned}`;
 
+  getKeys(diag);
+
   // 1. Map
-  let links: string[] = [];
-  try {
-    links = await firecrawlMap(home);
-  } catch (e) {
-    if (e instanceof LiveScanError) throw e;
-    throw new LiveScanError("firecrawl_failed", (e as Error).message);
-  }
+  const links = await firecrawlMap(home, diag);
+  diag.mapSucceeded = true;
+  diag.discoveredCount = links.length;
 
   // 2. Pick pages
   const pages = pickPages(home, links);
-  if (pages.length === 0) throw new LiveScanError("no_pages", "No pages discovered.");
+  diag.selectedPages = pages.map((p) => p.url);
+  if (pages.length === 0) {
+    throw new LiveScanError("page_discovery_failed", "No pages discovered.", { ...diag, step: "pick" });
+  }
 
-  // 3. Scrape (parallel, capped to MAX_PAGES)
+  // 3. Scrape
   const scraped = (
     await Promise.all(
       pages.map(async (p) => {
-        const r = await firecrawlScrape(p.url);
+        const r = await firecrawlScrape(p.url, diag);
         return r ? { ...r, category: p.category } : null;
       }),
     )
   ).filter((p): p is { url: string; markdown: string; category: PageCategory } => p !== null);
+  diag.scrapedCount = scraped.length;
+
   if (scraped.length === 0) {
-    throw new LiveScanError("firecrawl_failed", "Could not read any page content.");
+    throw new LiveScanError("page_scrape_failed", "Could not read any page content.", {
+      ...diag,
+      step: "scrape",
+    });
   }
 
-  // Build corpus with cap
+  // Build corpus
   let total = 0;
   const corpusParts: string[] = [];
   for (const p of scraped) {
@@ -425,6 +477,14 @@ export async function runLiveScan(
     total += slice.length;
   }
   const corpus = corpusParts.join("\n\n");
+  diag.totalChars = total;
+
+  if (total < 200) {
+    throw new LiveScanError("no_content", "Scraped content was too short to analyze.", {
+      ...diag,
+      step: "corpus",
+    });
+  }
 
   // 4. Extract signals
   const signals = await aiToolCall<ExtractedSignals>(
@@ -432,13 +492,13 @@ export async function runLiveScan(
     `Website pages content:\n\n${corpus}`,
     "extract_signals",
     SIGNALS_SCHEMA,
+    diag,
   );
 
   signals.evidenceQuotes = verifyEvidence(signals.evidenceQuotes ?? [], corpus).slice(0, 8);
 
   // 5. Generate opportunity map
-  const mapPriority =
-    priority === "not_sure" ? "no specific priority (balance broadly)" : priority;
+  const mapPriority = priority === "not_sure" ? "no specific priority (balance broadly)" : priority;
 
   const systemPrompt = `You are a practical AI opportunity strategist for SMBs. Generate a grounded opportunity map from extracted website signals and a selected business priority.
 
@@ -464,7 +524,7 @@ ${JSON.stringify(signals, null, 2)}
 
 Generate the opportunity map. When a recommendation paraphrases an evidence quote, you may use "The site mentions…"; otherwise use "likely" or "may".`;
 
-  const map = await aiToolCall<RawMap>(systemPrompt, userPrompt, "opportunity_map", MAP_SCHEMA);
+  const map = await aiToolCall<RawMap>(systemPrompt, userPrompt, "opportunity_map", MAP_SCHEMA, diag);
 
   // 6. Validate / normalize
   if (
@@ -474,7 +534,11 @@ Generate the opportunity map. When a recommendation paraphrases an evidence quot
     !Array.isArray(map.quickWins) ||
     map.quickWins.length < 1
   ) {
-    throw new LiveScanError("parse_failed", "AI map missing required fields.");
+    diag.validationFailed = true;
+    throw new LiveScanError("validation_failed", "AI map missing required fields.", {
+      ...diag,
+      step: "validate",
+    });
   }
 
   const opportunities: Opportunity[] = map.opportunities.slice(0, 3).map((o, i) => ({
@@ -493,10 +557,7 @@ Generate the opportunity map. When a recommendation paraphrases an evidence quot
     automationRisk: normScore(o.automationRisk),
   }));
 
-  // Pad to 3 if AI returned fewer (defensive)
-  while (opportunities.length < 3) {
-    opportunities.push(opportunities[0]);
-  }
+  while (opportunities.length < 3) opportunities.push(opportunities[0]);
 
   const top = opportunities[0];
 
@@ -510,12 +571,42 @@ Generate the opportunity map. When a recommendation paraphrases an evidence quot
     topOpportunity: top,
     opportunities,
     quickWins: map.quickWins.slice(0, 5),
-    safetyNote: map.safetyNote || (signals.sensitiveDomain
-      ? "This appears to be a sensitive-domain workflow. Keep AI limited to administrative tasks, approved templates, and staff-reviewed communication. Human approval should precede anything customer-facing."
-      : undefined),
+    safetyNote:
+      map.safetyNote ||
+      (signals.sensitiveDomain
+        ? "This appears to be a sensitive-domain workflow. Keep AI limited to administrative tasks, approved templates, and staff-reviewed communication. Human approval should precede anything customer-facing."
+        : undefined),
     roadmapKey: CATEGORY_TO_ROADMAP[top.category],
     scannedPages: scraped.map((p) => p.url),
     pageCount: scraped.length,
     evidence: signals.evidenceQuotes,
   };
+}
+
+export async function runLiveScan(rawUrl: string, priority: Priority): Promise<AnalysisResult> {
+  const diag = emptyDiag();
+  try {
+    return await Promise.race([
+      runLiveScanInner(rawUrl, priority, diag),
+      new Promise<AnalysisResult>((_, reject) =>
+        setTimeout(
+          () =>
+            reject(
+              new LiveScanError("timeout", `Live scan timed out after ${OVERALL_TIMEOUT_MS}ms`, {
+                ...diag,
+                step: "timeout",
+              }),
+            ),
+          OVERALL_TIMEOUT_MS,
+        ),
+      ),
+    ]);
+  } catch (e) {
+    if (e instanceof LiveScanError) {
+      e.diagnostics.rawError = redact(e.message);
+      throw e;
+    }
+    const msg = redact((e as Error).message ?? String(e));
+    throw new LiveScanError("unknown", msg, { ...diag, rawError: msg, step: "unknown" });
+  }
 }
