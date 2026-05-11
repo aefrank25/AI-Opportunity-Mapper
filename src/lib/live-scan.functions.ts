@@ -24,10 +24,31 @@ export const liveScan = createServerFn({ method: "POST" })
       const result = await runLiveScan(data.url, data.priority);
       return { ok: true as const, result };
     } catch (e) {
-      const code = e instanceof LiveScanError ? e.code : "ai_failed";
-      const message =
-        e instanceof Error ? e.message : "Unknown error during live scan.";
-      console.error("[liveScan]", code, message);
-      return { ok: false as const, code, message };
+      if (e instanceof LiveScanError) {
+        console.error("[liveScan]", e.code, e.message, e.diagnostics);
+        return {
+          ok: false as const,
+          code: e.code,
+          message: e.message,
+          diagnostics: e.diagnostics,
+        };
+      }
+      const message = e instanceof Error ? e.message : "Unknown error during live scan.";
+      console.error("[liveScan] unknown", message);
+      return {
+        ok: false as const,
+        code: "unknown" as const,
+        message,
+        diagnostics: {
+          mapSucceeded: false,
+          discoveredCount: 0,
+          selectedPages: [],
+          scrapedCount: 0,
+          totalChars: 0,
+          llmCallStarted: false,
+          validationFailed: false,
+          rawError: message,
+        },
+      };
     }
   });
