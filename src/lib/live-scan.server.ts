@@ -165,13 +165,12 @@ async function firecrawlScrape(
   url: string,
   diag: LiveScanDiagnostics,
 ): Promise<{ url: string; markdown: string } | null> {
-  const { lovable, firecrawl } = getKeys(diag);
+  const { firecrawl } = getKeys(diag);
   try {
-    const res = await fetch(`${GATEWAY}/firecrawl/v2/scrape`, {
+    const res = await fetch(`${FIRECRAWL_API}/scrape`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${lovable}`,
-        "X-Connection-Api-Key": firecrawl,
+        Authorization: `Bearer ${firecrawl}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ url, formats: ["markdown"], onlyMainContent: true }),
