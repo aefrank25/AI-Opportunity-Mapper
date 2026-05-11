@@ -236,7 +236,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
               What to expect
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              Expanded analysis is coming soon. Join the list to be notified when deeper prioritization, supporting signals, sequencing, and exportable reports become available. Your interest helps shape what gets built next. There is no charge to join.
+              Expanded analysis is coming soon. Join the list to be notified when deeper prioritization, supporting signals, sequencing, and exportable reports become available. Your interest helps shape what gets built next. There is no charge to join the notification list.
             </p>
           </div>
         </div>
@@ -387,7 +387,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
               <p className="text-[12px] leading-snug text-muted-foreground">
                 No spam. Just updates when expanded analysis is available. See our{" "}
                 <Link to="/privacy" className="font-medium text-primary underline-offset-4 hover:underline">
-                  Privacy
+                  Privacy Policy
                 </Link>{" "}
                 and{" "}
                 <Link to="/terms" className="font-medium text-primary underline-offset-4 hover:underline">
