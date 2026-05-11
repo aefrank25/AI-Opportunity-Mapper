@@ -15,6 +15,7 @@ import { OpportunityHeatmap } from "@/components/opportunity-heatmap";
 import { UnlockSection } from "@/components/unlock-section";
 import { FeedbackWidget } from "@/components/feedback-widget";
 import { Globe, RotateCcw } from "lucide-react";
+import type { ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
 
 const PRIORITY_VALUES: Priority[] = [
   "save_time",
