@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -384,7 +385,15 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                 )}
               </Button>
               <p className="text-[12px] leading-snug text-muted-foreground">
-                No spam. Just updates when expanded analysis is available.
+                No spam. Just updates when expanded analysis is available. See our{" "}
+                <Link to="/privacy" className="font-medium text-primary underline-offset-4 hover:underline">
+                  Privacy
+                </Link>{" "}
+                and{" "}
+                <Link to="/terms" className="font-medium text-primary underline-offset-4 hover:underline">
+                  Terms
+                </Link>{" "}
+                for how your email is used.
               </p>
             </form>
           )}
