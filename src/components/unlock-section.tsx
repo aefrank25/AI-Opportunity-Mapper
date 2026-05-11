@@ -61,11 +61,53 @@ function friendlyServerError(message: string): string {
   return message || "Something went wrong. Please try again in a moment.";
 }
 
-export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
+export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext }: Props) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
+  const [emailStartedFired, setEmailStartedFired] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const viewedFiredRef = useRef(false);
   const join = useServerFn(joinBriefWaitlist);
+
+  const track = (
+    event: Parameters<typeof trackExpandedMap>[0],
+    extras: Record<string, unknown> = {},
+  ) => {
+    if (!funnelContext) return;
+    trackExpandedMap(event, funnelContext, {
+      source_section: "expanded_map_section",
+      ...extras,
+    });
+  };
+
+  // Fire expanded_map_viewed once when the section enters the viewport.
+  useEffect(() => {
+    if (!funnelContext) return;
+    const node = sectionRef.current;
+    if (!node || viewedFiredRef.current) return;
+    if (typeof IntersectionObserver === "undefined") {
+      viewedFiredRef.current = true;
+      track("expanded_map_viewed");
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && !viewedFiredRef.current) {
+            viewedFiredRef.current = true;
+            track("expanded_map_viewed");
+            observer.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: 0.25 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [funnelContext]);
 
   const mutation = useMutation({
     mutationFn: (vars: { email: string }) =>
@@ -87,40 +129,45 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
-    trackEvent("expanded_map_submit_attempt", { isDemo, sourceUrl });
+    const trimmed = email.trim();
     const validationError = validate(email);
     if (validationError) {
       setError(validationError);
-      trackEvent("expanded_map_validation_error", {
-        isDemo,
+      track("expanded_map_submit_error", {
+        error_type: "validation",
         reason: validationError,
-        emptyField: email.trim().length === 0,
+        empty_field: trimmed.length === 0,
       });
       const input = document.getElementById("unlock-email") as HTMLInputElement | null;
       input?.focus();
       return;
     }
     setError(null);
-    const trimmed = email.trim();
     mutation.mutate(
       { email: trimmed },
       {
         onSuccess: () => {
-          trackEvent("expanded_map_signup_success", {
-            isDemo,
-            sourceUrl,
-            emailDomain: emailDomain(trimmed),
-            topOpportunity: topOpportunity ?? null,
+          track("expanded_map_submitted", {
+            email_domain: emailDomain(trimmed),
+            top_opportunity: topOpportunity ?? null,
           });
         },
         onError: (err) => {
           const message = err instanceof Error ? err.message : "";
           setError(friendlyServerError(message));
-          trackEvent("expanded_map_signup_error", {
-            isDemo,
-            sourceUrl,
-            emailDomain: emailDomain(trimmed),
+          const lower = message.toLowerCase();
+          const errorType =
+            lower.includes("already") || lower.includes("duplicate") || lower.includes("exists")
+              ? "duplicate"
+              : lower.includes("rate") || lower.includes("too many")
+                ? "rate_limited"
+                : lower.includes("network") || lower.includes("fetch") || lower.includes("timeout")
+                  ? "network"
+                  : "server";
+          track("expanded_map_submit_error", {
+            error_type: errorType,
             reason: message || "unknown",
+            email_domain: emailDomain(trimmed),
           });
         },
       },
