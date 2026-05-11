@@ -2,13 +2,20 @@ import type { RoadmapKey } from "@/lib/types";
 import { roadmapFor } from "@/lib/roadmaps";
 import { Lock } from "lucide-react";
 import { focusUnlockEmail } from "@/lib/focus-unlock-email";
+import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
 
 function truncate(text: string, max = 140) {
   if (text.length <= max) return text;
   return text.slice(0, max).trimEnd() + "…";
 }
 
-export function Roadmap({ roadmapKey }: { roadmapKey?: RoadmapKey }) {
+export function Roadmap({
+  roadmapKey,
+  funnelContext,
+}: {
+  roadmapKey?: RoadmapKey;
+  funnelContext?: ExpandedMapFunnelContext;
+}) {
   const weeks = roadmapFor(roadmapKey);
 
   return (
@@ -64,7 +71,15 @@ export function Roadmap({ roadmapKey }: { roadmapKey?: RoadmapKey }) {
               {locked && (
                 <button
                   type="button"
-                  onClick={focusUnlockEmail}
+                  onClick={() => {
+                    if (funnelContext) {
+                      trackExpandedMap("expanded_map_request_clicked", funnelContext, {
+                        source_section: "roadmap_card",
+                        roadmap_week_index: i,
+                      });
+                    }
+                    focusUnlockEmail();
+                  }}
                   aria-label="Request expanded roadmap details"
                   className="absolute inset-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 />

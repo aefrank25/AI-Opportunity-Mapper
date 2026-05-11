@@ -15,6 +15,7 @@ import { OpportunityHeatmap } from "@/components/opportunity-heatmap";
 import { UnlockSection } from "@/components/unlock-section";
 import { FeedbackWidget } from "@/components/feedback-widget";
 import { Globe, RotateCcw } from "lucide-react";
+import type { ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
 
 const PRIORITY_VALUES: Priority[] = [
   "save_time",
@@ -91,6 +92,13 @@ function Results() {
   const mode = result.mode ?? (result.isDemo ? "demo" : "prototype");
   const modeBadge =
     mode === "demo" ? "Demo result" : mode === "live" ? "Live scan beta" : "Prototype result";
+
+  const funnelContext: ExpandedMapFunnelContext = {
+    result_mode: mode,
+    selected_priority: result.priority,
+    inferred_business_type: result.roadmapKey ?? "unknown",
+    pages_scanned: result.pageCount ?? result.scannedPages?.length ?? null,
+  };
 
   return (
     <section className="px-4 sm:px-6">
@@ -182,6 +190,7 @@ function Results() {
                 priorityLabel={result.priority === "not_sure" ? undefined : PRIORITY_LABELS[result.priority]}
                 priority={result.priority}
                 locked={i > 0}
+                funnelContext={funnelContext}
               />
             ))}
           </div>
@@ -192,12 +201,13 @@ function Results() {
           priorityLabel={result.priority === "not_sure" ? undefined : PRIORITY_LABELS[result.priority]}
         />
 
-        <Roadmap roadmapKey={result.roadmapKey} />
+        <Roadmap roadmapKey={result.roadmapKey} funnelContext={funnelContext} />
 
         <UnlockSection
           isDemo={result.isDemo}
           sourceUrl={result.displayUrl}
           topOpportunity={result.topOpportunity?.name}
+          funnelContext={funnelContext}
         />
         <FeedbackWidget
           isDemo={result.isDemo}

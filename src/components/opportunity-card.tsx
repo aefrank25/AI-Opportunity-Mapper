@@ -3,6 +3,7 @@ import { ScoreChip } from "./score-chip";
 import type { Opportunity, Priority } from "@/lib/types";
 import { ArrowRight, ChevronDown, Lock, Radar } from "lucide-react";
 import { focusUnlockEmail } from "@/lib/focus-unlock-email";
+import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
 
 const LOCKED_SECTIONS = [
   "Full operational analysis",
@@ -17,6 +18,7 @@ export function OpportunityCard({
   priorityLabel,
   priority,
   locked = false,
+  funnelContext,
 }: {
   opportunity: Opportunity;
   index: number;
@@ -24,6 +26,7 @@ export function OpportunityCard({
   priorityLabel?: string;
   priority?: Priority;
   locked?: boolean;
+  funnelContext?: ExpandedMapFunnelContext;
 }) {
   const hasPriority = !!priorityLabel && priority !== "not_sure";
   const reasoningLine = hasPriority
@@ -104,6 +107,13 @@ export function OpportunityCard({
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
+                  if (funnelContext) {
+                    trackExpandedMap("expanded_map_request_clicked", funnelContext, {
+                      source_section: "opportunity_card",
+                      opportunity_index: index,
+                      opportunity_id: o.id,
+                    });
+                  }
                   focusUnlockEmail();
                 }}
                 className="mt-3 inline-flex items-center gap-1 text-[12px] font-medium text-primary underline-offset-4 hover:underline"

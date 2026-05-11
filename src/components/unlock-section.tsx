@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { joinBriefWaitlist } from "@/lib/brief-waitlist.functions";
-import { trackEvent } from "@/lib/analytics";
+import {
+  trackExpandedMap,
+  type ExpandedMapFunnelContext,
+} from "@/lib/expanded-map-analytics";
 
 function emailDomain(email: string): string {
   const at = email.lastIndexOf("@");
@@ -18,6 +21,7 @@ interface Props {
   isDemo: boolean;
   sourceUrl?: string;
   topOpportunity?: string;
+  funnelContext?: ExpandedMapFunnelContext;
 }
 
 const UNLOCKS = [
@@ -57,11 +61,53 @@ function friendlyServerError(message: string): string {
   return message || "Something went wrong. Please try again in a moment.";
 }
 
-export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
+export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext }: Props) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
+  const [emailStartedFired, setEmailStartedFired] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const viewedFiredRef = useRef(false);
   const join = useServerFn(joinBriefWaitlist);
+
+  const track = (
+    event: Parameters<typeof trackExpandedMap>[0],
+    extras: Record<string, unknown> = {},
+  ) => {
+    if (!funnelContext) return;
+    trackExpandedMap(event, funnelContext, {
+      source_section: "expanded_map_section",
+      ...extras,
+    });
+  };
+
+  // Fire expanded_map_viewed once when the section enters the viewport.
+  useEffect(() => {
+    if (!funnelContext) return;
+    const node = sectionRef.current;
+    if (!node || viewedFiredRef.current) return;
+    if (typeof IntersectionObserver === "undefined") {
+      viewedFiredRef.current = true;
+      track("expanded_map_viewed");
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && !viewedFiredRef.current) {
+            viewedFiredRef.current = true;
+            track("expanded_map_viewed");
+            observer.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: 0.25 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [funnelContext]);
 
   const mutation = useMutation({
     mutationFn: (vars: { email: string }) =>
@@ -83,40 +129,45 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
-    trackEvent("expanded_map_submit_attempt", { isDemo, sourceUrl });
+    const trimmed = email.trim();
     const validationError = validate(email);
     if (validationError) {
       setError(validationError);
-      trackEvent("expanded_map_validation_error", {
-        isDemo,
+      track("expanded_map_submit_error", {
+        error_type: "validation",
         reason: validationError,
-        emptyField: email.trim().length === 0,
+        empty_field: trimmed.length === 0,
       });
       const input = document.getElementById("unlock-email") as HTMLInputElement | null;
       input?.focus();
       return;
     }
     setError(null);
-    const trimmed = email.trim();
     mutation.mutate(
       { email: trimmed },
       {
         onSuccess: () => {
-          trackEvent("expanded_map_signup_success", {
-            isDemo,
-            sourceUrl,
-            emailDomain: emailDomain(trimmed),
-            topOpportunity: topOpportunity ?? null,
+          track("expanded_map_submitted", {
+            email_domain: emailDomain(trimmed),
+            top_opportunity: topOpportunity ?? null,
           });
         },
         onError: (err) => {
           const message = err instanceof Error ? err.message : "";
           setError(friendlyServerError(message));
-          trackEvent("expanded_map_signup_error", {
-            isDemo,
-            sourceUrl,
-            emailDomain: emailDomain(trimmed),
+          const lower = message.toLowerCase();
+          const errorType =
+            lower.includes("already") || lower.includes("duplicate") || lower.includes("exists")
+              ? "duplicate"
+              : lower.includes("rate") || lower.includes("too many")
+                ? "rate_limited"
+                : lower.includes("network") || lower.includes("fetch") || lower.includes("timeout")
+                  ? "network"
+                  : "server";
+          track("expanded_map_submit_error", {
+            error_type: errorType,
             reason: message || "unknown",
+            email_domain: emailDomain(trimmed),
           });
         },
       },
@@ -127,7 +178,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
   const submittedEmail = mutation.variables?.email;
 
   return (
-    <div id="unlock-section" className="scroll-mt-8 rounded-2xl border border-border bg-card p-5 shadow-card sm:p-8">
+    <div ref={sectionRef} id="unlock-section" className="scroll-mt-8 rounded-2xl border border-border bg-card p-5 shadow-card sm:p-8">
       <div className="grid gap-6 sm:gap-8 md:grid-cols-[1.1fr_1fr]">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -231,9 +282,14 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
                   placeholder="you@company.com"
                   value={email}
                   onChange={(e) => {
-                    setEmail(e.target.value);
+                    const value = e.target.value;
+                    setEmail(value);
+                    if (!emailStartedFired && value.length > 0) {
+                      setEmailStartedFired(true);
+                      track("expanded_map_email_started");
+                    }
                     if (touched) {
-                      setError(validate(e.target.value));
+                      setError(validate(value));
                     }
                   }}
                   onBlur={() => {
