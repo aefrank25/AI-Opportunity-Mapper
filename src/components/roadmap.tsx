@@ -2,13 +2,20 @@ import type { RoadmapKey } from "@/lib/types";
 import { roadmapFor } from "@/lib/roadmaps";
 import { Lock } from "lucide-react";
 import { focusUnlockEmail } from "@/lib/focus-unlock-email";
+import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
 
 function truncate(text: string, max = 140) {
   if (text.length <= max) return text;
   return text.slice(0, max).trimEnd() + "…";
 }
 
-export function Roadmap({ roadmapKey }: { roadmapKey?: RoadmapKey }) {
+export function Roadmap({
+  roadmapKey,
+  funnelContext,
+}: {
+  roadmapKey?: RoadmapKey;
+  funnelContext?: ExpandedMapFunnelContext;
+}) {
   const weeks = roadmapFor(roadmapKey);
 
   return (
