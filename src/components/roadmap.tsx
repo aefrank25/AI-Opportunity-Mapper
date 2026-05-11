@@ -61,9 +61,10 @@ export function Roadmap({ roadmapKey }: { roadmapKey?: RoadmapKey }) {
               )}
 
               {locked && (
-                <a
-                  href="#unlock-section"
-                  aria-label="See complete 30-day roadmap"
+                <button
+                  type="button"
+                  onClick={focusUnlockEmail}
+                  aria-label="Request expanded roadmap details"
                   className="absolute inset-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 />
               )}
