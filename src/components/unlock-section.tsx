@@ -14,12 +14,19 @@ interface Props {
 }
 
 const UNLOCKS = [
-  "All identified operational opportunities",
-  "Full prioritization roadmap",
-  "Expanded workflow signal analysis",
-  "Detailed operational reasoning",
-  "Exportable PDF report",
-  "Complete 30-day implementation roadmap",
+  "Deeper prioritization across all opportunities",
+  "Supporting evidence and signals behind each recommendation",
+  "Suggested sequencing for the highest-leverage areas",
+  "Expanded roadmap with more detail per phase",
+  "Exportable report (coming soon)",
+];
+
+const FREE_INCLUDES = [
+  "Business snapshot",
+  "Top recommendation",
+  "Prioritized opportunities",
+  "Quick wins",
+  "Basic roadmap",
 ];
 
 export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
@@ -64,17 +71,24 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
             Continue deeper
           </div>
           <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
-            Unlock the Full Opportunity Map
+            Want the expanded opportunity map?
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            See all identified operational opportunities, implementation
-            priorities, expanded workflow analysis, and strategic
-            recommendations.
+            Get notified when expanded analysis is available, including deeper prioritization, supporting signals, suggested sequencing, and exportable reports.
           </p>
+
+          <div className="mt-5 rounded-lg border border-border bg-surface-muted/40 p-3">
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              This free scan includes
+            </div>
+            <p className="mt-1 text-sm text-foreground">
+              {FREE_INCLUDES.join(" · ")}
+            </p>
+          </div>
 
           <div className="mt-5">
             <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              What you'll unlock
+              The Expanded Opportunity Map adds
             </div>
             <ul className="mt-2 space-y-1.5 text-sm text-foreground">
               {UNLOCKS.map((u) => (
@@ -131,11 +145,11 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity }: Props) {
                     Submitting…
                   </>
                 ) : (
-                  "Unlock Full Opportunity Map"
+                  "Notify me when available"
                 )}
               </Button>
               <p className="text-[12px] leading-snug text-muted-foreground">
-                We'll notify you when expanded analysis access is available.
+                No spam. Just product updates and early access.
               </p>
             </form>
           )}
