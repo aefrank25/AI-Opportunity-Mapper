@@ -93,6 +93,13 @@ function Results() {
   const modeBadge =
     mode === "demo" ? "Demo result" : mode === "live" ? "Live scan beta" : "Prototype result";
 
+  const funnelContext: ExpandedMapFunnelContext = {
+    result_mode: mode,
+    selected_priority: result.priority,
+    inferred_business_type: result.roadmapKey ?? "unknown",
+    pages_scanned: result.pageCount ?? result.scannedPages?.length ?? null,
+  };
+
   return (
     <section className="px-4 sm:px-6">
       <div className="mx-auto max-w-6xl py-5 space-y-5 sm:py-12 sm:space-y-8">
