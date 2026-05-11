@@ -282,9 +282,14 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                   placeholder="you@company.com"
                   value={email}
                   onChange={(e) => {
-                    setEmail(e.target.value);
+                    const value = e.target.value;
+                    setEmail(value);
+                    if (!emailStartedFired && value.length > 0) {
+                      setEmailStartedFired(true);
+                      track("expanded_map_email_started");
+                    }
                     if (touched) {
-                      setError(validate(e.target.value));
+                      setError(validate(value));
                     }
                   }}
                   onBlur={() => {
