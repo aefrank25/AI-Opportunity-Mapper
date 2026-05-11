@@ -54,7 +54,7 @@ export function Roadmap({ roadmapKey }: { roadmapKey?: RoadmapKey }) {
                   </div>
                   {i === 1 && (
                     <span className="inline-flex items-center gap-1 text-[12px] font-medium text-primary">
-                      See Complete Roadmap →
+                      Request expanded roadmap →
                     </span>
                   )}
                 </div>
