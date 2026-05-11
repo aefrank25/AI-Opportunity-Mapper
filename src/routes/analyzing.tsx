@@ -141,7 +141,7 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
           const details: FailureDetails = {
             code: res.code ?? "unknown",
             message: res.message ?? "Unknown error",
-            diagnostics: (res.diagnostics ?? {}) as Record<string, unknown>,
+            diagnostics: (res.diagnostics ?? {}) as unknown as Record<string, unknown>,
           };
           console.error("[live-scan] failed", {
             label: FAILURE_LABELS[details.code] ?? details.code,
