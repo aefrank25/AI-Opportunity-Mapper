@@ -11,7 +11,7 @@ import type {
 import { CATEGORY_TO_ROADMAP } from "./roadmaps";
 import { displayHost, normalizeUrl } from "./url";
 
-const GATEWAY = "https://connector-gateway.lovable.dev";
+const FIRECRAWL_API = "https://api.firecrawl.dev/v2";
 const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const AI_MODEL = "google/gemini-2.5-flash";
 
