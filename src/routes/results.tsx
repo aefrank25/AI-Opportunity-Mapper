@@ -199,9 +199,6 @@ function Results() {
           sourceUrl={result.displayUrl}
           topOpportunity={result.topOpportunity?.name}
         />
-
-        <NextStepCta isDemo={result.isDemo} />
-
         <FeedbackWidget
           isDemo={result.isDemo}
           sourceUrl={result.displayUrl}
