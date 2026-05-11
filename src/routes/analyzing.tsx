@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { displayHost } from "@/lib/url";
 import { DEMO_META, type DemoId } from "@/lib/demos";
 import { liveScan } from "@/lib/live-scan.functions";
+import { LIVE_SCAN_FALLBACK_MESSAGE } from "@/lib/live-scan-messages";
 import { Loader2, AlertCircle } from "lucide-react";
 
 const FAILURE_LABELS: Record<string, string> = {
@@ -128,8 +129,7 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
       setStep((s) => Math.min(s + 1, LIVE_STEPS.length - 1));
     }, 1400);
 
-    const FALLBACK_MSG =
-      "We couldn't complete a live scan for this site. You can try another URL or run a prototype recommendation based on business-type patterns.";
+    const FALLBACK_MSG = LIVE_SCAN_FALLBACK_MESSAGE;
 
     (async () => {
       try {
