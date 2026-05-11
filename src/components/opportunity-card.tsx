@@ -18,6 +18,7 @@ export function OpportunityCard({
   priorityLabel,
   priority,
   locked = false,
+  funnelContext,
 }: {
   opportunity: Opportunity;
   index: number;
@@ -25,6 +26,7 @@ export function OpportunityCard({
   priorityLabel?: string;
   priority?: Priority;
   locked?: boolean;
+  funnelContext?: ExpandedMapFunnelContext;
 }) {
   const hasPriority = !!priorityLabel && priority !== "not_sure";
   const reasoningLine = hasPriority
