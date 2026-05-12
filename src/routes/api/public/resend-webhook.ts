@@ -53,7 +53,7 @@ export const Route = createFileRoute("/api/public/resend-webhook")({
           .insert({
             event_type: eventType,
             email,
-            payload: event as unknown as Record<string, unknown>,
+            payload: JSON.parse(JSON.stringify(event)),
             resend_event_id: resendEventId,
           });
 
