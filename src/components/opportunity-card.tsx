@@ -60,7 +60,7 @@ export function OpportunityCard({
     <div
       ref={ref}
       id={`opportunity-${o.id}`}
-      className={`flex h-full flex-col rounded-2xl border bg-card p-4 shadow-card transition-all duration-500 sm:p-6 ${
+      className={`flex flex-col rounded-2xl border bg-card p-4 shadow-card transition-all duration-500 sm:p-6 ${
         highlighted ? "border-primary ring-2 ring-primary/40" : "border-border"
       }`}
     >
