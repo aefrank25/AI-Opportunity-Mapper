@@ -27,5 +27,47 @@ export const joinBriefWaitlist = createServerFn({ method: "POST" })
       throw new Error("Could not join the waitlist. Please try again.");
     }
 
+    // Best-effort: also add to Resend Audience. Never fail the user-facing
+    // submission if Resend is unreachable or returns an error.
+    try {
+      const lovableApiKey = process.env.LOVABLE_API_KEY;
+      const resendApiKey = process.env.RESEND_API_KEY;
+      const audienceId = process.env.RESEND_AUDIENCE_ID;
+
+      if (lovableApiKey && resendApiKey && audienceId) {
+        const res = await fetch(
+          `https://connector-gateway.lovable.dev/resend/audiences/${audienceId}/contacts`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${lovableApiKey}`,
+              "X-Connection-Api-Key": resendApiKey,
+            },
+            body: JSON.stringify({
+              email: data.email,
+              unsubscribed: false,
+            }),
+          },
+        );
+
+        if (!res.ok) {
+          const body = await res.text().catch(() => "");
+          // Resend returns 409-ish for duplicates; treat any "already exists" as success.
+          if (!/already|exists|duplicate/i.test(body)) {
+            console.error(
+              `[brief-waitlist] resend audience add failed [${res.status}]: ${body}`,
+            );
+          }
+        }
+      } else {
+        console.warn(
+          "[brief-waitlist] Resend audience sync skipped: missing LOVABLE_API_KEY, RESEND_API_KEY, or RESEND_AUDIENCE_ID",
+        );
+      }
+    } catch (err) {
+      console.error("[brief-waitlist] resend audience add threw:", err);
+    }
+
     return { ok: true as const };
   });
