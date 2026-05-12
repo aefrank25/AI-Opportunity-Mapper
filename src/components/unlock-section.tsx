@@ -376,13 +376,13 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                   "Notify me when available"
                 )}
               </Button>
-              <p className="pt-2 text-[12px] leading-snug text-muted-foreground">
+              <p className="pt-3 sm:pt-2 text-[12px] leading-relaxed text-muted-foreground">
                 No spam. Just updates when expanded analysis is available.
               </p>
-              <p className="pt-3 text-[12px] leading-snug text-muted-foreground">
+              <p className="pt-4 sm:pt-3 text-[12px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">What to expect:</span> Expanded analysis is coming soon. Join the list to be notified when deeper prioritization, supporting signals, sequencing, and exportable reports are available. There is no charge to join the notification list.
               </p>
-              <p className="pt-2 text-[12px] leading-snug text-muted-foreground">
+              <p className="pt-3 sm:pt-2 text-[12px] leading-relaxed text-muted-foreground">
                 See our{" "}
                 <Link to="/privacy" className="font-medium text-primary underline-offset-4 hover:underline">
                   Privacy Policy
