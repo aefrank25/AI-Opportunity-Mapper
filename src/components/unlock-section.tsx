@@ -342,7 +342,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                     }}
                     aria-invalid={!!consentError}
                     aria-describedby={consentError ? "unlock-consent-error" : undefined}
-                    className="mt-0.5"
+                    className="mt-0.5 rounded-sm"
                   />
                   <Label
                     htmlFor="unlock-consent"
@@ -364,7 +364,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
               </div>
               <Button
                 type="submit"
-                className="w-full"
+                className="mt-1 w-full"
                 disabled={mutation.isPending}
               >
                 {mutation.isPending ? (
@@ -376,13 +376,13 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                   "Notify me when available"
                 )}
               </Button>
-              <p className="text-[12px] leading-snug text-muted-foreground">
+              <p className="pt-2 text-[12px] leading-snug text-muted-foreground">
                 No spam. Just updates when expanded analysis is available.
               </p>
-              <p className="text-[12px] leading-snug text-muted-foreground">
-                <span className="font-medium text-foreground">What to expect:</span> Expanded analysis is coming soon. Join the list to be notified when deeper prioritization, supporting signals, sequencing, and exportable reports become available. There is no charge to join the notification list.
+              <p className="pt-3 text-[12px] leading-snug text-muted-foreground">
+                <span className="font-medium text-foreground">What to expect:</span> Expanded analysis is coming soon. Join the list to be notified when deeper prioritization, supporting signals, sequencing, and exportable reports are available. There is no charge to join the notification list.
               </p>
-              <p className="text-[12px] leading-snug text-muted-foreground">
+              <p className="pt-2 text-[12px] leading-snug text-muted-foreground">
                 See our{" "}
                 <Link to="/privacy" className="font-medium text-primary underline-offset-4 hover:underline">
                   Privacy Policy
