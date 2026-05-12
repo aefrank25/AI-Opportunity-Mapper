@@ -12,6 +12,30 @@ const inputSchema = z.object({
 export const joinBriefWaitlist = createServerFn({ method: "POST" })
   .inputValidator((input) => inputSchema.parse(input))
   .handler(async ({ data }) => {
+    // 1. Check if this email has previously opted out (unsubscribe / bounce / complaint).
+    //    If so, we still acknowledge the form silently but do NOT add them back to the
+    //    Resend audience and do NOT record a fresh waitlist row — respect their opt-out.
+    const { data: suppression, error: suppLookupError } = await supabaseAdmin
+      .from("email_suppressions")
+      .select("reason")
+      .eq("email", data.email)
+      .limit(1)
+      .maybeSingle();
+
+    if (suppLookupError) {
+      console.error("[brief-waitlist] suppression lookup failed:", suppLookupError);
+      // Fail closed-ish: continue, but we'd rather over-suppress than under-suppress
+      // if Resend webhook data is unreachable. Here we choose to continue.
+    }
+
+    if (suppression) {
+      console.info(
+        `[brief-waitlist] suppressed signup for ${data.email} (${suppression.reason})`,
+      );
+      return { ok: true as const, suppressed: true as const };
+    }
+
+    // 2. Insert into the waitlist DB (unique-violation = already on the list).
     const { error } = await supabaseAdmin
       .from("implementation_brief_waitlist")
       .insert({
@@ -21,53 +45,88 @@ export const joinBriefWaitlist = createServerFn({ method: "POST" })
         is_demo: data.isDemo ?? false,
       });
 
-    // Treat unique-violation as success (already on the list).
     if (error && error.code !== "23505") {
       console.error("[brief-waitlist] insert failed:", error);
       throw new Error("Could not join the waitlist. Please try again.");
     }
 
-    // Best-effort: also add to Resend Audience. Never fail the user-facing
-    // submission if Resend is unreachable or returns an error.
+    // 3. Best-effort sync to Resend Audience. Before adding, we also re-check Resend's
+    //    own state for this contact — if they exist there with `unsubscribed: true`,
+    //    we mirror the suppression locally and skip re-subscribing them.
     try {
       const lovableApiKey = process.env.LOVABLE_API_KEY;
       const resendApiKey = process.env.RESEND_API_KEY;
       const audienceId = process.env.RESEND_AUDIENCE_ID;
 
-      if (lovableApiKey && resendApiKey && audienceId) {
-        const res = await fetch(
-          `https://connector-gateway.lovable.dev/resend/audiences/${audienceId}/contacts`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${lovableApiKey}`,
-              "X-Connection-Api-Key": resendApiKey,
-            },
-            body: JSON.stringify({
-              email: data.email,
-              unsubscribed: false,
-            }),
-          },
-        );
-
-        if (!res.ok) {
-          const body = await res.text().catch(() => "");
-          // Resend returns 409-ish for duplicates; treat any "already exists" as success.
-          if (!/already|exists|duplicate/i.test(body)) {
-            console.error(
-              `[brief-waitlist] resend audience add failed [${res.status}]: ${body}`,
-            );
-          }
-        }
-      } else {
+      if (!lovableApiKey || !resendApiKey || !audienceId) {
         console.warn(
           "[brief-waitlist] Resend audience sync skipped: missing LOVABLE_API_KEY, RESEND_API_KEY, or RESEND_AUDIENCE_ID",
         );
+        return { ok: true as const, suppressed: false as const };
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${lovableApiKey}`,
+        "X-Connection-Api-Key": resendApiKey,
+      };
+
+      // Check existing contact state in Resend (handles unsubscribes that haven't
+      // come through the webhook yet, or cases where the webhook secret was rotated).
+      const lookupRes = await fetch(
+        `https://connector-gateway.lovable.dev/resend/audiences/${audienceId}/contacts/${encodeURIComponent(
+          data.email,
+        )}`,
+        { method: "GET", headers },
+      );
+
+      if (lookupRes.ok) {
+        const existing = (await lookupRes.json().catch(() => null)) as
+          | { data?: { unsubscribed?: boolean } }
+          | { unsubscribed?: boolean }
+          | null;
+        const unsubscribed =
+          (existing && "data" in existing && existing.data?.unsubscribed === true) ||
+          (existing && "unsubscribed" in existing && existing.unsubscribed === true);
+
+        if (unsubscribed) {
+          // Mirror Resend's opt-out into our suppression list and stop here.
+          await supabaseAdmin
+            .from("email_suppressions")
+            .upsert(
+              {
+                email: data.email,
+                reason: "unsubscribed",
+                source: "resend",
+                metadata: { discovered_via: "signup_lookup" },
+              },
+              { onConflict: "email,reason" },
+            );
+          return { ok: true as const, suppressed: true as const };
+        }
+      }
+
+      // Not unsubscribed (or contact does not yet exist) — upsert as subscribed.
+      const addRes = await fetch(
+        `https://connector-gateway.lovable.dev/resend/audiences/${audienceId}/contacts`,
+        {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ email: data.email, unsubscribed: false }),
+        },
+      );
+
+      if (!addRes.ok) {
+        const body = await addRes.text().catch(() => "");
+        if (!/already|exists|duplicate/i.test(body)) {
+          console.error(
+            `[brief-waitlist] resend audience add failed [${addRes.status}]: ${body}`,
+          );
+        }
       }
     } catch (err) {
-      console.error("[brief-waitlist] resend audience add threw:", err);
+      console.error("[brief-waitlist] resend audience sync threw:", err);
     }
 
-    return { ok: true as const };
+    return { ok: true as const, suppressed: false as const };
   });
