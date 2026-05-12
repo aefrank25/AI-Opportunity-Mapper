@@ -17,6 +17,7 @@ import { Route as AnalyzingRouteImport } from './routes/analyzing'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminFeedbackRouteImport } from './routes/admin_.feedback'
+import { Route as ApiPublicResendWebhookRouteImport } from './routes/api/public/resend-webhook'
 import { Route as ApiPublicAnalyticsRouteImport } from './routes/api/public/analytics'
 
 const TermsRoute = TermsRouteImport.update({
@@ -59,6 +60,11 @@ const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
   path: '/admin/feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicResendWebhookRoute = ApiPublicResendWebhookRouteImport.update({
+  id: '/api/public/resend-webhook',
+  path: '/api/public/resend-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicAnalyticsRoute = ApiPublicAnalyticsRouteImport.update({
   id: '/api/public/analytics',
   path: '/api/public/analytics',
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin/feedback': typeof AdminFeedbackRoute
   '/api/public/analytics': typeof ApiPublicAnalyticsRoute
+  '/api/public/resend-webhook': typeof ApiPublicResendWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin/feedback': typeof AdminFeedbackRoute
   '/api/public/analytics': typeof ApiPublicAnalyticsRoute
+  '/api/public/resend-webhook': typeof ApiPublicResendWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/admin_/feedback': typeof AdminFeedbackRoute
   '/api/public/analytics': typeof ApiPublicAnalyticsRoute
+  '/api/public/resend-webhook': typeof ApiPublicResendWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/feedback'
     | '/api/public/analytics'
+    | '/api/public/resend-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/feedback'
     | '/api/public/analytics'
+    | '/api/public/resend-webhook'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin_/feedback'
     | '/api/public/analytics'
+    | '/api/public/resend-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   AdminFeedbackRoute: typeof AdminFeedbackRoute
   ApiPublicAnalyticsRoute: typeof ApiPublicAnalyticsRoute
+  ApiPublicResendWebhookRoute: typeof ApiPublicResendWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/resend-webhook': {
+      id: '/api/public/resend-webhook'
+      path: '/api/public/resend-webhook'
+      fullPath: '/api/public/resend-webhook'
+      preLoaderRoute: typeof ApiPublicResendWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/analytics': {
       id: '/api/public/analytics'
       path: '/api/public/analytics'
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   AdminFeedbackRoute: AdminFeedbackRoute,
   ApiPublicAnalyticsRoute: ApiPublicAnalyticsRoute,
+  ApiPublicResendWebhookRoute: ApiPublicResendWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

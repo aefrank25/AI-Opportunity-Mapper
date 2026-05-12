@@ -38,6 +38,33 @@ export type Database = {
         }
         Relationships: []
       }
+      email_suppressions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          metadata: Json
+          reason: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          metadata?: Json
+          reason: string
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          metadata?: Json
+          reason?: string
+          source?: string
+        }
+        Relationships: []
+      }
       implementation_brief_waitlist: {
         Row: {
           created_at: string
@@ -92,6 +119,33 @@ export type Database = {
           rating?: number
           source_url?: string | null
           top_opportunity?: string | null
+        }
+        Relationships: []
+      }
+      resend_webhook_events: {
+        Row: {
+          email: string | null
+          event_type: string
+          id: string
+          payload: Json
+          received_at: string
+          resend_event_id: string | null
+        }
+        Insert: {
+          email?: string | null
+          event_type: string
+          id?: string
+          payload: Json
+          received_at?: string
+          resend_event_id?: string | null
+        }
+        Update: {
+          email?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          received_at?: string
+          resend_event_id?: string | null
         }
         Relationships: []
       }
