@@ -69,7 +69,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Scan a business website and get a prioritized map of practical AI and automation opportunities, including quick wins, workflow signals, and suggested next steps.",
+          "Scan a business website for a prioritized map of practical AI and automation opportunities, with quick wins and suggested next steps.",
       },
       {
         property: "og:title",
