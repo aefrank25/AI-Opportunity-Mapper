@@ -50,11 +50,16 @@ export function SiteFooter() {
           </nav>
         </div>
 
-        <p className="mt-6 border-t border-border/60 pt-4 text-[11px] leading-relaxed text-muted-foreground">
-          Insights are generated from publicly visible website patterns
-          and inferred workflow signals. Recommendations should be validated before
-          implementation.
-        </p>
+        <div className="mt-6 border-t border-border/60 pt-4 space-y-2">
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            Insights are generated from publicly visible website patterns
+            and inferred workflow signals. Recommendations should be validated before
+            implementation.
+          </p>
+          <p className="text-[11px] text-muted-foreground">
+            © 2026 AI Opportunity Mapper. All rights reserved.
+          </p>
+        </div>
       </div>
     </footer>
   );
