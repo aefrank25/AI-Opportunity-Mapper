@@ -56,11 +56,12 @@ function takeToken(ip: string, now: number): { ok: boolean; retryAfter: number }
 
 function getClientIp(request: Request): string {
   const h = request.headers;
-  const xff = h.get("x-forwarded-for");
-  if (xff) return xff.split(",")[0]!.trim();
+  // Prefer Cloudflare-set headers — they cannot be spoofed by the client.
+  // Only fall back to x-forwarded-for if neither is present.
   return (
     h.get("cf-connecting-ip") ||
     h.get("x-real-ip") ||
+    h.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     "unknown"
   );
 }
