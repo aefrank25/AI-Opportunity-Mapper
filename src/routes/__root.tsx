@@ -39,22 +39,22 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "AI Opportunity Mapper" },
+      { title: "AI Opportunity Mapper | Find Practical AI Opportunities" },
       {
         name: "description",
         content:
           "Find practical AI and automation opportunities for your business. Paste a URL and get a prioritized opportunity map.",
       },
-      { property: "og:title", content: "AI Opportunity Mapper" },
+      { property: "og:title", content: "AI Opportunity Mapper | Find Practical AI Opportunities" },
       {
         property: "og:description",
         content: "Find practical AI and automation opportunities hiding in your business website.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "AI Opportunity Mapper" },
-      { name: "description", content: "Analyze your business website for AI and automation opportunities." },
-      { property: "og:description", content: "Analyze your business website for AI and automation opportunities." },
-      { name: "twitter:description", content: "Analyze your business website for AI and automation opportunities." },
+      { name: "twitter:title", content: "AI Opportunity Mapper | Find Practical AI Opportunities" },
+      { name: "description", content: "Scan a business website and get a prioritized map of practical AI and automation opportunities, including quick wins, workflow signals, and suggested next steps" },
+      { property: "og:description", content: "Scan a business website and get a prioritized map of practical AI and automation opportunities, including quick wins, workflow signals, and suggested next steps" },
+      { name: "twitter:description", content: "Scan a business website and get a prioritized map of practical AI and automation opportunities, including quick wins, workflow signals, and suggested next steps" },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0b608a2a-83dd-48ce-81af-7f7c33f82451" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0b608a2a-83dd-48ce-81af-7f7c33f82451" },
       { name: "twitter:card", content: "summary_large_image" },
