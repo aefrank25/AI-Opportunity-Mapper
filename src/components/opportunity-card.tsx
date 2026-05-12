@@ -6,9 +6,9 @@ import { focusUnlockEmail } from "@/lib/focus-unlock-email";
 import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
 
 const LOCKED_SECTIONS = [
-  "Full operational analysis",
+  "Deeper opportunity analysis",
   "Prioritization reasoning",
-  "Recommended implementation path",
+  "Suggested next steps",
 ];
 
 export function OpportunityCard({
@@ -60,7 +60,7 @@ export function OpportunityCard({
     <div
       ref={ref}
       id={`opportunity-${o.id}`}
-      className={`flex h-full flex-col rounded-2xl border bg-card p-4 shadow-card transition-all duration-500 sm:p-6 ${
+      className={`flex flex-col rounded-2xl border bg-card p-4 shadow-card transition-all duration-500 sm:p-6 ${
         highlighted ? "border-primary ring-2 ring-primary/40" : "border-border"
       }`}
     >
@@ -73,7 +73,7 @@ export function OpportunityCard({
       <p className="mt-1 text-sm text-muted-foreground">{o.description}</p>
 
 
-      <div className="mt-5 grid grid-cols-2 gap-1.5 sm:gap-2">
+      <div className="mt-5 grid grid-cols-1 gap-1.5 sm:grid-cols-2 sm:gap-2">
         <ScoreChip label="Impact" level={o.impact} />
         <ScoreChip label="Effort" level={o.effort} />
         <ScoreChip label="Confidence" level={o.confidence} />

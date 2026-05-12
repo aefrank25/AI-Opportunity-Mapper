@@ -180,7 +180,7 @@ function Results() {
               ? "Balanced across impact, effort, and implementation readiness — the most likely areas for operational leverage."
               : `Gently weighted toward your selected goal: ${PRIORITY_LABELS[result.priority]}. Ranked by inferred impact, effort, and implementation readiness.`}
           </p>
-          <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-4 grid items-start gap-4 lg:grid-cols-2 xl:grid-cols-3">
             {result.opportunities.map((o, i) => (
               <OpportunityCard
                 key={o.id}
