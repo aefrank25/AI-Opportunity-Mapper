@@ -27,8 +27,8 @@ export function ScoreChip({ label, level, inverted = false, hint }: ScoreChipPro
 
   return (
     <div className="flex flex-col gap-1 rounded-lg bg-surface px-2.5 py-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-      <span className="inline-flex min-w-0 items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground sm:text-[11px]">
-        <span className="truncate">{label}</span>
+      <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground sm:text-[11px]">
+        <span className="whitespace-normal break-words">{label}</span>
         {explanation && (
           <Popover open={open} onOpenChange={setOpen} modal={false}>
             <PopoverTrigger asChild>
