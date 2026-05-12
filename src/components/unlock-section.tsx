@@ -7,12 +7,8 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { joinBriefWaitlist } from "@/lib/brief-waitlist.functions";
-import {
-  trackExpandedMap,
-  type ExpandedMapFunnelContext,
-} from "@/lib/expanded-map-analytics";
+import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
 
 function emailDomain(email: string): string {
   const at = email.lastIndexOf("@");
@@ -127,7 +123,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
 
   const validate = (value: string): string | null => {
     const result = emailSchema.safeParse(value);
-    return result.success ? null : result.error.issues[0]?.message ?? "Invalid email.";
+    return result.success ? null : (result.error.issues[0]?.message ?? "Invalid email.");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -192,7 +188,11 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
   const submittedEmail = mutation.variables?.email;
 
   return (
-    <div ref={sectionRef} id="unlock-section" className="scroll-mt-8 rounded-2xl border border-border bg-card p-5 shadow-card sm:p-8">
+    <div
+      ref={sectionRef}
+      id="unlock-section"
+      className="scroll-mt-8 rounded-2xl border border-border bg-card p-5 shadow-card sm:p-8"
+    >
       <div className="grid gap-6 sm:gap-8 lg:grid-cols-[1.1fr_1fr]">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -202,16 +202,15 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
             Want the expanded opportunity map?
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Get notified when expanded analysis is available, including deeper prioritization, supporting signals, suggested sequencing, and exportable reports.
+            Get notified when expanded analysis is available, including deeper prioritization,
+            supporting signals, suggested sequencing, and exportable reports.
           </p>
 
           <div className="mt-5 rounded-lg border border-border bg-surface-muted/40 p-3">
             <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               This free scan includes
             </div>
-            <p className="mt-1 text-sm text-foreground">
-              {FREE_INCLUDES.join(" · ")}
-            </p>
+            <p className="mt-1 text-sm text-foreground">{FREE_INCLUDES.join(" · ")}</p>
           </div>
 
           <div className="mt-5">
@@ -221,16 +220,12 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
             <ul className="mt-2 space-y-1.5 text-sm text-foreground">
               {UNLOCKS.map((u) => (
                 <li key={u} className="flex gap-2">
-                  <span
-                    aria-hidden
-                    className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary"
-                  />
+                  <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" />
                   <span>{u}</span>
                 </li>
               ))}
             </ul>
           </div>
-
         </div>
 
         <div className="rounded-xl border border-border bg-surface-muted/60 p-4 sm:p-5">
@@ -249,10 +244,16 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                   <p className="text-sm text-muted-foreground">
                     {submittedEmail ? (
                       <>
-                        We've added <span className="font-medium text-foreground">{submittedEmail}</span> to the early access list. We'll email you the moment expanded analysis is available — usually no more than once or twice a month.
+                        We've added{" "}
+                        <span className="font-medium text-foreground">{submittedEmail}</span> to the
+                        early access list. We'll email you the moment expanded analysis is available
+                        — usually no more than once or twice a month.
                       </>
                     ) : (
-                      <>We'll email you the moment expanded analysis is available — usually no more than once or twice a month.</>
+                      <>
+                        We'll email you the moment expanded analysis is available — usually no more
+                        than once or twice a month.
+                      </>
                     )}
                   </p>
                   <p className="text-[12px] text-muted-foreground">
@@ -328,12 +329,13 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-start gap-2">
-                  <Checkbox
+                  <input
+                    type="checkbox"
                     id="unlock-consent"
                     checked={consent}
                     disabled={mutation.isPending}
-                    onCheckedChange={(checked) => {
-                      const next = checked === true;
+                    onChange={(event) => {
+                      const next = event.currentTarget.checked;
                       setConsent(next);
                       if (next) {
                         setConsentError(null);
@@ -342,13 +344,14 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                     }}
                     aria-invalid={!!consentError}
                     aria-describedby={consentError ? "unlock-consent-error" : undefined}
-                    className="mt-0.5 rounded-sm"
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded-sm border border-primary accent-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   />
                   <Label
                     htmlFor="unlock-consent"
                     className="text-[12px] font-normal leading-snug text-muted-foreground"
                   >
-                    Yes, email me when expanded analysis is available. I can unsubscribe at any time.
+                    Yes, email me when expanded analysis is available. I can unsubscribe at any
+                    time.
                   </Label>
                 </div>
                 {consentError && (
@@ -362,11 +365,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                   </p>
                 )}
               </div>
-              <Button
-                type="submit"
-                className="mt-1 w-full"
-                disabled={mutation.isPending}
-              >
+              <Button type="submit" className="mt-1 w-full" disabled={mutation.isPending}>
                 {mutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -380,15 +379,24 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                 No spam. Just updates when expanded analysis is available.
               </p>
               <p className="pt-4 sm:pt-3 text-[12px] leading-relaxed text-muted-foreground">
-                <span className="font-medium text-foreground">What to expect:</span> Expanded analysis is coming soon. Join the list to be notified when deeper prioritization, supporting signals, sequencing, and exportable reports are available. There is no charge to join the notification list.
+                <span className="font-medium text-foreground">What to expect:</span> Expanded
+                analysis is coming soon. Join the list to be notified when deeper prioritization,
+                supporting signals, sequencing, and exportable reports are available. There is no
+                charge to join the notification list.
               </p>
               <p className="pt-3 sm:pt-2 text-[12px] leading-relaxed text-muted-foreground">
                 See our{" "}
-                <Link to="/privacy" className="font-medium text-primary underline-offset-4 hover:underline">
+                <Link
+                  to="/privacy"
+                  className="font-medium text-primary underline-offset-4 hover:underline"
+                >
                   Privacy Policy
                 </Link>{" "}
                 and{" "}
-                <Link to="/terms" className="font-medium text-primary underline-offset-4 hover:underline">
+                <Link
+                  to="/terms"
+                  className="font-medium text-primary underline-offset-4 hover:underline"
+                >
                   Terms
                 </Link>{" "}
                 for how your email is used.
