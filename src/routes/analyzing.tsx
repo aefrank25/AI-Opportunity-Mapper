@@ -51,6 +51,10 @@ export const Route = createFileRoute("/analyzing")({
     meta: [
       { title: "Analyzing — AI Opportunity Mapper" },
       { name: "description", content: "Interpreting business context and mapping AI opportunities." },
+      { property: "og:title", content: "Analyzing — AI Opportunity Mapper" },
+      { property: "og:description", content: "Interpreting business context and mapping practical AI and automation opportunities." },
+      { name: "twitter:title", content: "Analyzing — AI Opportunity Mapper" },
+      { name: "twitter:description", content: "Interpreting business context and mapping practical AI and automation opportunities." },
     ],
   }),
   validateSearch: (s) => searchSchema.parse(s),
