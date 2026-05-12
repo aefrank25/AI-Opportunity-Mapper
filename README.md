@@ -203,6 +203,15 @@ This project is actively evolving based on:
 
 ---
 
+## Author
+
+Built by Amy Frank.
+
+LinkedIn:
+[https://www.linkedin.com/in/amy-e-f94/]
+
+---
+
 ## License
 
 MIT License
