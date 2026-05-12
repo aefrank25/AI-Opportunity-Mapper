@@ -1,0 +1,17 @@
+# AI Opportunity Mapper
+
+> Scan a business website and get a prioritized map of practical AI and automation opportunities, including quick wins, workflow signals, and suggested next steps. Built for founders, operators, and consultants.
+
+## Pages
+
+- [Home](/): Paste a business URL and get a prioritized AI opportunity map with quick wins and a 30-day starter roadmap.
+- [Analyzing](/analyzing): Live progress view while the system interprets a business website and maps AI and automation opportunities.
+- [Opportunity map](/results): Generated results page showing the business snapshot, top recommendation, prioritized opportunities, quick wins, and roadmap.
+- [Privacy](/privacy): Privacy policy.
+- [Terms](/terms): Terms of service.
+
+## Examples
+
+- [Dental clinic example](/analyzing?demo=clinic): Patient recall, appointment prep, and front-desk FAQ opportunities for a multi-provider dental practice.
+- [Marketing agency example](/analyzing?demo=agency): Proposal drafting, client reporting, and onboarding kit opportunities for a small full-service agency.
+- [Online boutique example](/analyzing?demo=boutique): Support reply drafts, order triage, and product content repurposing for a curated online boutique.
