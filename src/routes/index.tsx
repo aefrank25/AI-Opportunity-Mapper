@@ -1,15 +1,120 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { UrlInputCard } from "@/components/url-input-card";
 import { Compass, Layers, ListChecks } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { DEMO_META, type DemoId } from "@/lib/demos";
+
+const CANONICAL = "https://ai-opp-mapper.lovable.app/";
+const OG_IMAGE =
+  "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0b608a2a-83dd-48ce-81af-7f7c33f82451";
+
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "What is an AI opportunity map?",
+    a: "An AI opportunity map identifies practical places where AI or automation may help a business reduce manual work, improve follow-up, support customers, or make workflows more consistent.",
+  },
+  {
+    q: "What does the free scan include?",
+    a: "The free scan includes a business snapshot, top recommendation, prioritized opportunities, quick wins, and a basic roadmap.",
+  },
+  {
+    q: "Does AI Opportunity Mapper analyze my website?",
+    a: "Live Scan beta reads a small number of public website pages when available. If the site cannot be reached, the app can fall back to prototype recommendations based on business-type patterns.",
+  },
+  {
+    q: "What is expanded analysis?",
+    a: "Expanded analysis is a planned deeper version with more prioritization, supporting signals, suggested sequencing, expanded roadmap detail, and exportable reports.",
+  },
+  {
+    q: "Is this an AI readiness assessment?",
+    a: "No. The app focuses on finding and prioritizing practical AI and automation opportunities, not grading overall AI readiness.",
+  },
+  {
+    q: "Who is this for?",
+    a: "It is designed for founders, operators, consultants, and small teams who want practical ideas for where AI could help first.",
+  },
+  {
+    q: "Do I need technical knowledge to use it?",
+    a: "No. The output is written in plain language and focuses on business workflows, quick wins, and next steps.",
+  },
+];
+
+const EXAMPLES: { id: DemoId; description: string }[] = [
+  {
+    id: "clinic",
+    description:
+      "Patient recall, appointment prep, and front-desk FAQ opportunities for a multi-provider dental practice.",
+  },
+  {
+    id: "agency",
+    description:
+      "Proposal drafting, client reporting, and onboarding kit opportunities for a small full-service marketing agency.",
+  },
+  {
+    id: "boutique",
+    description:
+      "Support reply drafts, order triage, and product content repurposing for a curated online boutique.",
+  },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AI Opportunity Mapper — Find practical AI opportunities for your business" },
+      { title: "AI Opportunity Mapper | Practical AI Ideas for Business" },
       {
         name: "description",
         content:
-          "Paste a business website and get a prioritized map of practical AI and automation opportunities to explore first.",
+          "Scan a business website and get a prioritized map of practical AI and automation opportunities, including quick wins, workflow signals, and suggested next steps.",
+      },
+      {
+        property: "og:title",
+        content: "AI Opportunity Mapper | Practical AI Ideas for Business",
+      },
+      {
+        property: "og:description",
+        content:
+          "Get a prioritized map of practical AI and automation opportunities for a business website.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: CANONICAL },
+      { property: "og:image", content: OG_IMAGE },
+    ],
+    links: [{ rel: "canonical", href: CANONICAL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "AI Opportunity Mapper",
+          applicationCategory: "BusinessApplication",
+          operatingSystem: "Web",
+          url: CANONICAL,
+          description:
+            "Scan a business website and get a prioritized map of practical AI and automation opportunities, including quick wins, workflow signals, and suggested next steps.",
+          offers: {
+            "@type": "Offer",
+            price: "0",
+            priceCurrency: "USD",
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: FAQS.map(({ q, a }) => ({
+            "@type": "Question",
+            name: q,
+            acceptedAnswer: { "@type": "Answer", text: a },
+          })),
+        }),
       },
     ],
   }),
@@ -25,7 +130,7 @@ function Index() {
             For founders, operators & consultants
           </span>
           <h1 className="mt-4 text-[1.75rem] leading-tight font-semibold tracking-tight text-foreground sm:mt-5 sm:text-4xl lg:text-5xl">
-            Find the best AI opportunities hiding in your business website.
+            Find practical AI and automation opportunities for your business
           </h1>
           <p className="mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg">
             Paste a business website and get a prioritized map of practical AI and automation
@@ -42,7 +147,7 @@ function Index() {
         <div id="how-it-works" className="mx-auto max-w-5xl scroll-mt-20 rounded-2xl border border-border bg-surface p-6 sm:p-8">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              How it works
+              How AI Opportunity Mapper works
             </h2>
             <Link
               to="/analyzing"
@@ -69,6 +174,91 @@ function Index() {
               desc="Three ranked opportunities, quick wins, and a 30-day starter roadmap."
             />
           </div>
+        </div>
+      </section>
+
+      <section className="px-4 sm:px-6 mt-10">
+        <div className="mx-auto max-w-5xl rounded-2xl border border-border bg-surface p-6 sm:p-8">
+          <h2 className="text-lg font-semibold text-foreground">
+            What the free scan includes
+          </h2>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground list-disc pl-5">
+            <li>Business snapshot summarizing audience and workflow areas</li>
+            <li>Top AI opportunity recommendation with rationale</li>
+            <li>Prioritized list of practical AI and automation opportunities</li>
+            <li>Quick wins you can act on this week</li>
+            <li>Starter 30-day roadmap aligned to your priority</li>
+            <li>Plain-language next steps for non-technical teams</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="px-4 sm:px-6 mt-10">
+        <div className="mx-auto max-w-5xl rounded-2xl border border-border bg-surface p-6 sm:p-8">
+          <h2 className="text-lg font-semibold text-foreground">
+            What expanded analysis adds
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Expanded analysis is a planned deeper version of the opportunity map. It is not
+            yet available.
+          </p>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground list-disc pl-5">
+            <li>Deeper prioritization across more opportunities</li>
+            <li>Supporting signals behind each recommendation</li>
+            <li>Suggested sequencing for what to tackle first</li>
+            <li>Expanded roadmap detail beyond 30 days</li>
+            <li>Exportable reports to share with your team</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="px-4 sm:px-6 mt-10">
+        <div className="mx-auto max-w-5xl rounded-2xl border border-border bg-surface p-6 sm:p-8">
+          <h2 className="text-lg font-semibold text-foreground">
+            Example AI opportunity maps
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Browse sample opportunity maps to see how the analysis reads for different kinds
+            of small businesses.
+          </p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-3">
+            {EXAMPLES.map((ex) => {
+              const meta = DEMO_META[ex.id];
+              return (
+                <Link
+                  key={ex.id}
+                  to="/analyzing"
+                  search={{ demo: ex.id }}
+                  className="block rounded-xl border border-border bg-background p-4 hover:border-primary/40 transition-colors"
+                >
+                  <div className="text-sm font-semibold text-foreground">{meta.label}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{meta.tagline}</div>
+                  <p className="mt-2 text-sm text-muted-foreground">{ex.description}</p>
+                  <span className="mt-3 inline-block text-sm font-medium text-primary">
+                    View example →
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 sm:px-6 mt-10 mb-6">
+        <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-surface p-6 sm:p-8">
+          <h2 className="text-lg font-semibold text-foreground">
+            Frequently asked questions
+          </h2>
+          <Accordion type="single" collapsible className="mt-2">
+            {FAQS.map((f, i) => (
+              <AccordionItem key={i} value={`faq-${i}`}>
+                <AccordionTrigger>{f.q}</AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground">
+                  {f.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </section>
     </>
