@@ -39,19 +39,19 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "AI Opportunity Mapper | Find Practical AI Opportunities" },
+      { title: "AI Opportunity Mapper | Practical AI Ideas for Business" },
       {
         name: "description",
         content:
           "Find practical AI and automation opportunities for your business. Paste a URL and get a prioritized opportunity map.",
       },
-      { property: "og:title", content: "AI Opportunity Mapper | Find Practical AI Opportunities" },
+      { property: "og:title", content: "AI Opportunity Mapper | Practical AI Ideas for Business" },
       {
         property: "og:description",
         content: "Find practical AI and automation opportunities hiding in your business website.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "AI Opportunity Mapper | Find Practical AI Opportunities" },
+      { name: "twitter:title", content: "AI Opportunity Mapper | Practical AI Ideas for Business" },
       { name: "description", content: "Scan a business website and get a prioritized map of practical AI and automation opportunities, including quick wins, workflow signals, and suggested next steps" },
       { property: "og:description", content: "Scan a business website and get a prioritized map of practical AI and automation opportunities, including quick wins, workflow signals, and suggested next steps" },
       { name: "twitter:description", content: "Scan a business website and get a prioritized map of practical AI and automation opportunities, including quick wins, workflow signals, and suggested next steps" },
