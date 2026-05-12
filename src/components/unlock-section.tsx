@@ -231,14 +231,6 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
             </ul>
           </div>
 
-          <div className="mt-5 rounded-lg border border-border bg-surface-muted/40 p-3">
-            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              What to expect
-            </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Expanded analysis is coming soon. Join the list to be notified when deeper prioritization, supporting signals, sequencing, and exportable reports become available. Your interest helps prioritize what gets built next. There is no charge to join the notification list.
-            </p>
-          </div>
         </div>
 
         <div className="rounded-xl border border-border bg-surface-muted/60 p-4 sm:p-5">
@@ -385,7 +377,13 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                 )}
               </Button>
               <p className="text-[12px] leading-snug text-muted-foreground">
-                No spam. Just updates when expanded analysis is available. See our{" "}
+                No spam. Just updates when expanded analysis is available.
+              </p>
+              <p className="text-[12px] leading-snug text-muted-foreground">
+                <span className="font-medium text-foreground">What to expect:</span> Expanded analysis is coming soon. Join the list to be notified when deeper prioritization, supporting signals, sequencing, and exportable reports become available. There is no charge to join the notification list.
+              </p>
+              <p className="text-[12px] leading-snug text-muted-foreground">
+                See our{" "}
                 <Link to="/privacy" className="font-medium text-primary underline-offset-4 hover:underline">
                   Privacy Policy
                 </Link>{" "}
