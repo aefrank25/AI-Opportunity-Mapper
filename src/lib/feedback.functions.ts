@@ -20,6 +20,9 @@ export const submitRecommendationFeedback = createServerFn({ method: "POST" })
       top_opportunity: data.topOpportunity || null,
       is_demo: data.isDemo,
     });
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[feedback] insert failed:", error);
+      throw new Error("Could not save feedback. Please try again.");
+    }
     return { ok: true };
   });
