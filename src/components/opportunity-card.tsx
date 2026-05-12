@@ -73,7 +73,7 @@ export function OpportunityCard({
       <p className="mt-1 text-sm text-muted-foreground">{o.description}</p>
 
 
-      <div className="mt-5 grid grid-cols-1 gap-1.5 sm:grid-cols-2 sm:gap-2">
+      <div className="mt-5 flex flex-col gap-1.5 sm:gap-2">
         <ScoreChip label="Impact" level={o.impact} />
         <ScoreChip label="Effort" level={o.effort} />
         <ScoreChip label="Confidence" level={o.confidence} />
