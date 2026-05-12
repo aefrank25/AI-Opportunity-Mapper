@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
@@ -23,6 +24,11 @@ import { Route as ApiPublicAnalyticsRouteImport } from './routes/api/public/anal
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResultsRoute = ResultsRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/results': typeof ResultsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/feedback': typeof AdminFeedbackRoute
   '/api/public/analytics': typeof ApiPublicAnalyticsRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/results': typeof ResultsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/feedback': typeof AdminFeedbackRoute
   '/api/public/analytics': typeof ApiPublicAnalyticsRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/results': typeof ResultsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin_/feedback': typeof AdminFeedbackRoute
   '/api/public/analytics': typeof ApiPublicAnalyticsRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacy'
     | '/results'
+    | '/sitemap.xml'
     | '/terms'
     | '/admin/feedback'
     | '/api/public/analytics'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacy'
     | '/results'
+    | '/sitemap.xml'
     | '/terms'
     | '/admin/feedback'
     | '/api/public/analytics'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacy'
     | '/results'
+    | '/sitemap.xml'
     | '/terms'
     | '/admin_/feedback'
     | '/api/public/analytics'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
   ResultsRoute: typeof ResultsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   AdminFeedbackRoute: typeof AdminFeedbackRoute
   ApiPublicAnalyticsRoute: typeof ApiPublicAnalyticsRoute
@@ -167,6 +180,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/results': {
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
   ResultsRoute: ResultsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   AdminFeedbackRoute: AdminFeedbackRoute,
   ApiPublicAnalyticsRoute: ApiPublicAnalyticsRoute,
