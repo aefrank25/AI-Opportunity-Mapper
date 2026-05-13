@@ -1,5 +1,5 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
-import { COLORS } from "./theme";
+import { COLORS } from "../theme";
 
 export const DotGrid: React.FC = () => {
   const frame = useCurrentFrame();
