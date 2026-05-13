@@ -1,6 +1,7 @@
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { COLORS } from "../theme";
 
+
 export const Caption: React.FC<{ step?: string; text: string }> = ({
   step,
   text,
