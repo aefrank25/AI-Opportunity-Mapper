@@ -138,6 +138,9 @@ function Index() {
             Enter a business website and get a prioritized map of practical AI and automation
             opportunities to explore first.
           </p>
+          <p className="mt-2 text-xs text-muted-foreground/80 sm:text-sm">
+            Designed for small businesses and the teams or advisors helping them decide where AI could actually help first.
+          </p>
         </div>
 
         <div className="mx-auto max-w-3xl pb-10">
