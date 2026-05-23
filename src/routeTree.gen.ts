@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminFeedbackRouteImport } from './routes/admin_.feedback'
 import { Route as ApiPublicResendWebhookRouteImport } from './routes/api/public/resend-webhook'
 import { Route as ApiPublicAnalyticsRouteImport } from './routes/api/public/analytics'
+import { Route as ApiPublicHooksWaitlistDigestRouteImport } from './routes/api/public/hooks/waitlist-digest'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -76,6 +77,12 @@ const ApiPublicAnalyticsRoute = ApiPublicAnalyticsRouteImport.update({
   path: '/api/public/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksWaitlistDigestRoute =
+  ApiPublicHooksWaitlistDigestRouteImport.update({
+    id: '/api/public/hooks/waitlist-digest',
+    path: '/api/public/hooks/waitlist-digest',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/admin/feedback': typeof AdminFeedbackRoute
   '/api/public/analytics': typeof ApiPublicAnalyticsRoute
   '/api/public/resend-webhook': typeof ApiPublicResendWebhookRoute
+  '/api/public/hooks/waitlist-digest': typeof ApiPublicHooksWaitlistDigestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -102,6 +110,7 @@ export interface FileRoutesByTo {
   '/admin/feedback': typeof AdminFeedbackRoute
   '/api/public/analytics': typeof ApiPublicAnalyticsRoute
   '/api/public/resend-webhook': typeof ApiPublicResendWebhookRoute
+  '/api/public/hooks/waitlist-digest': typeof ApiPublicHooksWaitlistDigestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,6 +125,7 @@ export interface FileRoutesById {
   '/admin_/feedback': typeof AdminFeedbackRoute
   '/api/public/analytics': typeof ApiPublicAnalyticsRoute
   '/api/public/resend-webhook': typeof ApiPublicResendWebhookRoute
+  '/api/public/hooks/waitlist-digest': typeof ApiPublicHooksWaitlistDigestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/admin/feedback'
     | '/api/public/analytics'
     | '/api/public/resend-webhook'
+    | '/api/public/hooks/waitlist-digest'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/admin/feedback'
     | '/api/public/analytics'
     | '/api/public/resend-webhook'
+    | '/api/public/hooks/waitlist-digest'
   id:
     | '__root__'
     | '/'
@@ -157,6 +169,7 @@ export interface FileRouteTypes {
     | '/admin_/feedback'
     | '/api/public/analytics'
     | '/api/public/resend-webhook'
+    | '/api/public/hooks/waitlist-digest'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -171,6 +184,7 @@ export interface RootRouteChildren {
   AdminFeedbackRoute: typeof AdminFeedbackRoute
   ApiPublicAnalyticsRoute: typeof ApiPublicAnalyticsRoute
   ApiPublicResendWebhookRoute: typeof ApiPublicResendWebhookRoute
+  ApiPublicHooksWaitlistDigestRoute: typeof ApiPublicHooksWaitlistDigestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -252,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/waitlist-digest': {
+      id: '/api/public/hooks/waitlist-digest'
+      path: '/api/public/hooks/waitlist-digest'
+      fullPath: '/api/public/hooks/waitlist-digest'
+      preLoaderRoute: typeof ApiPublicHooksWaitlistDigestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -267,7 +288,17 @@ const rootRouteChildren: RootRouteChildren = {
   AdminFeedbackRoute: AdminFeedbackRoute,
   ApiPublicAnalyticsRoute: ApiPublicAnalyticsRoute,
   ApiPublicResendWebhookRoute: ApiPublicResendWebhookRoute,
+  ApiPublicHooksWaitlistDigestRoute: ApiPublicHooksWaitlistDigestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
