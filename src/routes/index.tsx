@@ -129,7 +129,7 @@ function Index() {
       <section className="px-4 sm:px-6">
         <div className="mx-auto max-w-3xl pt-6 pb-6 text-center sm:pt-16 lg:pt-20">
           <span className="inline-flex items-center rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
-            For founders, operators & consultants
+            Practical AI Discovery
           </span>
           <h1 className="mt-4 text-[1.75rem] leading-tight font-semibold tracking-tight text-foreground sm:mt-5 sm:text-4xl lg:text-5xl">
             Find practical AI and automation opportunities for your business
