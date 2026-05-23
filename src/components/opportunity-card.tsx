@@ -8,6 +8,7 @@ import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-
 const LOCKED_SECTIONS = [
   "Deeper opportunity analysis",
   "Prioritization reasoning",
+  "Questions to validate internally",
   "Suggested next steps",
 ];
 
@@ -83,9 +84,9 @@ export function OpportunityCard({
       {locked ? (
         <>
           <dl className="mt-5 space-y-3 text-sm">
-            <Row label="Signal" value={o.signal} />
-            <Row label="Pain point" value={o.painPoint} />
-            <Row label="Improvement" value={o.improvement} />
+            <Row label="Public signal" value={o.signal} />
+            <Row label="Likely pain point" value={o.painPoint} />
+            <Row label="Suggested improvement" value={o.improvement} />
           </dl>
 
           <div className="relative mt-5">
@@ -127,9 +128,9 @@ export function OpportunityCard({
       ) : (
         <>
           <dl className="mt-5 space-y-3 text-sm">
-            <Row label="Signal" value={o.signal} />
-            <Row label="Pain point" value={o.painPoint} />
-            <Row label="Improvement" value={o.improvement} />
+            <Row label="Public signal" value={o.signal} />
+            <Row label="Likely pain point" value={o.painPoint} />
+            <Row label="Suggested improvement" value={o.improvement} />
           </dl>
 
           <dl className="mt-3 hidden space-y-1 text-[11px] leading-snug text-muted-foreground sm:block">

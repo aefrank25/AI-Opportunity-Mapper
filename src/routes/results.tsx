@@ -184,6 +184,9 @@ function Results() {
               ? "Balanced across impact, effort, and implementation readiness — the most likely areas for operational leverage."
               : `Gently weighted toward your selected goal: ${PRIORITY_LABELS[result.priority]}. Ranked by inferred impact, effort, and implementation readiness.`}
           </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Based on public website signals and likely workflow patterns. Use these as starting points to validate, not confirmed diagnoses of internal operations.
+          </p>
           <div className="mt-4 grid items-start gap-4 lg:grid-cols-2 xl:grid-cols-3">
             {result.opportunities.map((o, i) => (
               <OpportunityCard
