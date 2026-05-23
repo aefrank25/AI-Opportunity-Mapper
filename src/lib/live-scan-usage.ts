@@ -2,9 +2,46 @@
 // Demo and prototype runs are NOT counted here.
 
 const KEY = "aiom:live-scan-usage";
+const OWNER_KEY = "aiom:owner-bypass";
+const OWNER_TOKEN = "bypass-xy7q2k";
 const FREE_PER_DAY = 1;
 const EMAIL_BONUS = 2;
 const MAX_PER_DAY = FREE_PER_DAY + EMAIL_BONUS;
+
+/**
+ * Owner-only bypass: visit any page with ?owner=<token> once to flip the
+ * flag in localStorage. After that, this browser skips the daily limit and
+ * its scans are never counted. Clear with localStorage.removeItem("aiom:owner-bypass").
+ */
+export function isOwnerBypass(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(OWNER_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function maybeActivateOwnerBypassFromUrl(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("owner");
+    if (!token) return;
+    if (token === OWNER_TOKEN) {
+      localStorage.setItem(OWNER_KEY, "1");
+    } else if (token === "off") {
+      localStorage.removeItem(OWNER_KEY);
+    }
+    // Strip the param from the URL so it's not shared accidentally.
+    params.delete("owner");
+    const qs = params.toString();
+    const next = window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash;
+    window.history.replaceState(null, "", next);
+  } catch {
+    /* noop */
+  }
+}
 
 export interface LiveScanUsage {
   date: string; // YYYY-MM-DD
@@ -53,6 +90,9 @@ export type LiveScanGate =
   | { allowed: false; reason: "needs_email" | "limit_reached"; usage: LiveScanUsage };
 
 export function checkLiveScanGate(): LiveScanGate {
+  if (isOwnerBypass()) {
+    return { allowed: true, remaining: Number.POSITIVE_INFINITY };
+  }
   const u = getUsage();
   if (u.used < liveScanLimit(u)) {
     return { allowed: true, remaining: liveScanLimit(u) - u.used };
@@ -65,6 +105,7 @@ export function checkLiveScanGate(): LiveScanGate {
 
 export function recordLiveScanSuccess(): LiveScanUsage {
   const u = getUsage();
+  if (isOwnerBypass()) return u; // owner scans are never counted
   const next = { ...u, used: u.used + 1 };
   save(next);
   return next;
