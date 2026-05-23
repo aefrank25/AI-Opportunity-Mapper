@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border/60 bg-background mt-16">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+    <footer className="border-t border-border/60 bg-background mt-8 sm:mt-16">
+      <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
           <div className="space-y-1">
             <div className="text-sm font-semibold text-foreground">
               AI Opportunity Mapper
@@ -50,7 +50,7 @@ export function SiteFooter() {
           </nav>
         </div>
 
-        <div className="mt-6 border-t border-border/60 pt-4 space-y-2">
+        <div className="mt-4 border-t border-border/60 pt-3 space-y-2 sm:mt-6 sm:pt-4">
           <p className="text-[11px] leading-relaxed text-muted-foreground">
             Insights are generated from publicly visible website patterns
             and inferred workflow signals. Recommendations should be validated before
