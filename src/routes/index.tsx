@@ -280,7 +280,7 @@ function Index() {
 
       <NotifySection />
 
-      <section className="px-4 sm:px-6 mt-10 mb-6">
+      <section className="px-4 sm:px-6 mt-8 mb-3 sm:mt-10 sm:mb-6">
 
         <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-surface p-6 sm:p-8">
           <h2 className="text-lg font-semibold text-foreground">
