@@ -486,7 +486,9 @@ async function runLiveScanInner(
 
   // 4. Extract signals
   const signals = await aiToolCall<ExtractedSignals>(
-    "You are an operations analyst. Extract concrete operational signals from the website content. Be conservative — do not invent signals that aren't supported by the text. Evidence quotes must be short verbatim snippets actually present in the content.",
+    `You are an operations analyst. Extract concrete operational signals from the website content. Be conservative — do not invent signals that aren't supported by the text. Evidence quotes must be short verbatim snippets actually present in the content.
+
+AUDIENCE INFERENCE: Always populate the "audience" array with 2-4 likely buyer/audience groups, even when the site does not explicitly state an audience. Infer cautiously from product types, services, pricing/positioning cues, tone, calls to action, customer-facing pages, and location signals. Consider whether offerings suggest consumers, businesses, consultants, agencies, collectors, gift buyers, clients, patients, members, students, or other buyer types. Phrase each entry as a likely audience (e.g. "Individual art buyers and collectors", "Gift shoppers"), not as confirmed fact. Never leave audience empty.`,
     `Website pages content:\n\n${corpus}`,
     "extract_signals",
     SIGNALS_SCHEMA,
@@ -513,7 +515,8 @@ STRUCTURE:
 - Each opportunity has Impact, Effort, Confidence, Automation Risk scored as Low / Medium / High.
 - Keep names short. Keep firstStep concrete and small.
 - Return 3-5 quickWins (small, low-risk operational moves).
-- snapshot.summary should be 1-2 sentences describing the business, using "likely" for inferences.`;
+- snapshot.summary should be 1-2 sentences describing the business, using "likely" for inferences.
+- snapshot.audience MUST contain 2-4 likely audience groups inferred from product/service signals, tone, CTAs, and positioning even if the site does not explicitly name an audience. Phrase entries cautiously (e.g. "Likely individual art buyers and collectors", "Gift shoppers", "Clients interested in custom commissions"). Append a final entry "Confidence: low" or "Confidence: medium" reflecting how strong the audience signals were. Never leave audience empty.`;
 
   const userPrompt = `Selected priority: ${mapPriority}
 
