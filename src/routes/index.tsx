@@ -138,7 +138,7 @@ function Index() {
             Enter a business website and get a prioritized map of opportunities to explore first.
           </p>
           <p className="mt-2 text-xs text-muted-foreground/80 sm:text-sm">
-            Built for small businesses, consultants, and operators exploring practical AI use cases.
+            Built for consultants, agencies, founders, and operators exploring practical AI use cases.
           </p>
         </div>
 
