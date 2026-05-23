@@ -222,8 +222,11 @@ export function UrlInputCard() {
               </span>
             </Label>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Reads a small number of public pages to ground recommendations in actual website content. Does not access private data, accounts, analytics, or internal systems.
+              Reads a small number of public pages to ground recommendations in actual website content.
+              <br />
+              Does not access private data, accounts, analytics, or internal systems.
             </p>
+
             {liveScan && (
               <div className="mt-2 border-t border-border/60 pt-2 space-y-1">
                 <p className="text-[11px] leading-relaxed text-muted-foreground/90">
