@@ -506,7 +506,7 @@ async function runLiveScanInner(
   diag.discoveredCount = links.length;
 
   // 2. Pick pages
-  const pages = pickPages(home, links);
+  const pages = pickPages(home, links, diag);
   diag.selectedPages = pages.map((p) => p.url);
   if (pages.length === 0) {
     throw new LiveScanError("page_discovery_failed", "No pages discovered.", { ...diag, step: "pick" });
