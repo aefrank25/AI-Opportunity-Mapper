@@ -34,7 +34,7 @@ const PRIORITY_ORDER: Priority[] = [
   "not_sure",
 ];
 
-const LIVE_SCAN_KEY = "aiom:live-scan";
+
 
 type GateState =
   | { kind: "ok" }
