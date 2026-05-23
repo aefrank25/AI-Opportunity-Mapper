@@ -217,7 +217,7 @@ function Index() {
           <h2 className="text-lg font-semibold text-foreground">
             What the free scan includes
           </h2>
-          <ul className="mt-4 grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground list-disc pl-5">
+          <ul className="mt-4 grid gap-y-2 gap-x-10 sm:grid-cols-2 text-sm text-muted-foreground list-disc pl-5">
             <li>Business snapshot summarizing audience and workflow areas</li>
             <li>Top AI opportunity recommendation with rationale</li>
             <li>Prioritized list of practical AI and automation opportunities</li>
@@ -236,7 +236,7 @@ function Index() {
             Expanded analysis is a planned deeper version of the opportunity map. It is not
             yet available.
           </p>
-          <ul className="mt-4 grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground list-disc pl-5">
+          <ul className="mt-4 grid gap-y-2 gap-x-10 sm:grid-cols-2 text-sm text-muted-foreground list-disc pl-5">
             <li>Deeper prioritization across more opportunities</li>
             <li>Supporting signals behind each recommendation</li>
             <li>Suggested sequencing for what to tackle first</li>
