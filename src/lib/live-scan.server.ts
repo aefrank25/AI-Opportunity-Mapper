@@ -570,9 +570,10 @@ AUDIENCE INFERENCE: Always populate the "audience" array with 2-4 likely buyer/a
 
 LANGUAGE RULES:
 - Use phrasings like "The site mentions…" or "the site presents…" ONLY when the recommendation is directly grounded in one of the provided evidenceQuotes.
-- For inferred assumptions, use hedged phrasing: "appears to be", "public website signals suggest", "likely", or "may".
-- Avoid overly certain wording such as "This business is…" or "They offer…". Prefer "appears to be…", "the site presents…", or "public website signals suggest…".
-- Do not assign a specific venue/business-type label (e.g. "art gallery", "law firm", "clinic", "agency") unless that exact label is supported by the scanned pages. When uncertain, describe what the site does in plainer terms (e.g. "artist-led art business selling original pieces, prints, and art-inspired products").
+- For inferred assumptions, use hedged phrasing: "appears to be", "the scanned pages indicate", "public website signals suggest", "likely serves", "likely", or "may".
+- Avoid overly certain wording: "This business is…", "They offer…", "The company has…", "Customers do…". Prefer "appears to be…", "the site presents…", "public website signals suggest…", "the scanned pages indicate…".
+- Do not assign a specific narrow label (e.g. "art gallery", "law firm", "clinic", "agency", "enterprise") unless that label is directly supported by the scanned pages. When uncertain, choose a broader dynamic category inferred from page content, product/service language, navigation labels, and CTAs — for example: service-based business, healthcare or wellness provider, creative business, e-commerce business, consulting or agency business, local service business, education or training provider, nonprofit or community organization, restaurant / hospitality / food business, or software or technology business. Do not hardcode any single industry — pick the category that best fits the signals.
+- Phrase offerings as website-visible only: "The site presents services/products such as…" or "The scanned pages mention…". Do not imply confirmed internal operations.
 - Stay calm and operational. Avoid hype, "premium", "transform", "AI-powered" marketing language.
 
 SAFETY:
@@ -583,8 +584,8 @@ STRUCTURE:
 - Each opportunity has Impact, Effort, Confidence, Automation Risk scored as Low / Medium / High.
 - Keep names short. Keep firstStep concrete and small.
 - Return 3-5 quickWins (small, low-risk operational moves).
-- snapshot.summary should be 1-2 sentences describing the business using hedged phrasing ("Based on public website signals, this appears to be…", "the site presents…"). Do not use unsupported venue labels.
-- snapshot.audience MUST contain 2-4 likely audience groups inferred from product/service signals, tone, CTAs, and positioning even if the site does not explicitly name an audience. Phrase entries cautiously (e.g. "Likely individual art buyers and collectors", "Gift shoppers", "Clients interested in custom commissions"). Append a final entry "Confidence: low" or "Confidence: medium" reflecting how strong the audience signals were. Never leave audience empty.`;
+- snapshot.summary MUST be 1-2 sentences and MUST start with "Based on public website signals, this appears to be…". Use a dynamic business category inferred from signals (see LANGUAGE RULES). Describe website-visible offerings with "The site presents…" or "The scanned pages mention…". No unsupported narrow labels.
+- snapshot.audience MUST contain 2-4 audience entries phrased cautiously with "Likely audience:" or "Potential audience:" prefixes (e.g. "Likely audience: individual buyers and gift shoppers", "Potential audience: small businesses seeking custom work"). Infer from product/service signals, tone, CTAs, navigation, and positioning even if the site does not explicitly name an audience. Append a final entry "Confidence: low", "Confidence: medium", or "Confidence: high" reflecting signal strength — high only when the business type/audience is explicit across scanned pages; medium when inferred from products/services/CTAs/nav; low when signals are weak or limited. Never leave audience empty.`;
 
   const userPrompt = `Selected priority: ${mapPriority}
 
