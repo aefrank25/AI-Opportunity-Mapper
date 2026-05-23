@@ -167,8 +167,8 @@ export function UrlInputCard() {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-card-lg sm:p-8">
-      <form onSubmit={submit} className="space-y-6">
+    <div className="rounded-2xl border border-border bg-card p-7 shadow-card-lg sm:p-8">
+      <form onSubmit={submit} className="space-y-7 sm:space-y-6">
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="url" className="text-sm font-medium text-foreground">
@@ -352,7 +352,7 @@ export function UrlInputCard() {
       )}
 
 
-      <div className="mt-6 border-t border-border pt-5">
+      <div className="mt-7 border-t border-border pt-6 sm:mt-6 sm:pt-5">
         <div className="text-sm font-medium text-foreground">
           Want to see how it works? Try a sample business:
         </div>

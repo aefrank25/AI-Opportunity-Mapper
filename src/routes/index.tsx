@@ -168,7 +168,7 @@ function Index() {
           </ul>
         </div>
 
-        <div className="mx-auto max-w-3xl pb-10 sm:pt-2">
+        <div className="mx-auto max-w-3xl pb-10 pt-3 sm:pt-2">
           <div className="rounded-[1.25rem] border border-primary/15 bg-gradient-to-b from-primary/20 to-transparent p-px shadow-[0_40px_90px_-35px_color-mix(in_oklab,var(--primary)_55%,transparent),0_10px_28px_-12px_color-mix(in_oklab,var(--primary)_25%,transparent)]">
             <div className="rounded-[1.2rem] bg-background">
               <UrlInputCard />
@@ -206,7 +206,7 @@ function Index() {
             <Step
               icon={<ListChecks className="h-4 w-4" />}
               title="Get a prioritized map"
-              desc="Three ranked opportunities, quick wins, and a 30-day starter roadmap."
+              desc="Three ranked opportunities, quick wins, and a starter roadmap preview."
             />
           </div>
         </div>
