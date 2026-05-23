@@ -144,7 +144,7 @@ function Index() {
           <h1 className="mt-4 text-[1.75rem] leading-tight font-semibold tracking-tight text-foreground sm:mt-5 sm:text-4xl lg:text-5xl">
             Find practical AI and automation opportunities for your business
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:mt-5 sm:text-lg">
+          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:mt-5 sm:max-w-none sm:text-lg sm:whitespace-nowrap">
             Enter a business website and get a prioritized map of opportunities to explore first.
           </p>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground/90 sm:mt-5">
