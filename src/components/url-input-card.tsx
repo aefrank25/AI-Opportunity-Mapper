@@ -216,7 +216,7 @@ export function UrlInputCard() {
                 </span>
                 {remaining !== null && (
                   <span className="ml-1 font-medium text-foreground">
-                    ({remaining} left today)
+                    {remaining} {remaining === 1 ? "scan" : "scans"} left today.
                   </span>
                 )}
               </p>
