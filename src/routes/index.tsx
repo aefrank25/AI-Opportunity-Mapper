@@ -240,7 +240,7 @@ function Index() {
             <li>Deeper prioritization across more opportunities</li>
             <li>Supporting signals behind each recommendation</li>
             <li>Suggested sequencing for what to tackle first</li>
-            <li>Expanded roadmap detail beyond 30 days</li>
+            <li>Expanded roadmap detail beyond the free preview</li>
             <li>Exportable reports to share with your team</li>
           </ul>
         </div>
