@@ -136,7 +136,7 @@ function Index() {
               "radial-gradient(60% 55% at 50% 0%, color-mix(in oklab, var(--primary) 14%, transparent) 0%, transparent 70%)",
           }}
         />
-        <div className="mx-auto max-w-3xl pt-6 pb-8 text-center sm:pt-16 lg:pt-20">
+        <div className="mx-auto max-w-3xl pt-4 pb-8 text-center sm:pt-10 lg:pt-12">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
             <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
             Practical AI Discovery
@@ -147,7 +147,7 @@ function Index() {
           <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:mt-5 sm:max-w-none sm:text-lg sm:whitespace-nowrap">
             Enter a business website and get a prioritized map of opportunities to explore first.
           </p>
-          <p className="mx-auto mt-4 max-w-2xl text-[15px] text-foreground/70 sm:mt-5 sm:max-w-none sm:text-base sm:whitespace-nowrap">
+          <p className="mx-auto mt-4 max-w-2xl text-[15px] text-foreground/80 sm:mt-5 sm:max-w-none sm:text-base sm:whitespace-nowrap">
             Built for consultants, agencies, and operators exploring practical AI use cases.
           </p>
 
@@ -159,7 +159,7 @@ function Index() {
             ].map(({ icon: Icon, label }) => (
               <li
                 key={label}
-                className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/[0.06] px-3 py-1 text-xs font-medium text-foreground/85 shadow-[0_1px_2px_color-mix(in_oklab,var(--primary)_10%,transparent)]"
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/35 bg-primary/[0.08] px-3 py-1 text-xs font-medium text-foreground/90 shadow-[0_1px_2px_color-mix(in_oklab,var(--primary)_12%,transparent)]"
               >
                 <Icon className="h-3.5 w-3.5 text-primary" aria-hidden />
                 {label}
@@ -169,7 +169,7 @@ function Index() {
         </div>
 
         <div className="mx-auto max-w-3xl pb-10 sm:pt-2">
-          <div className="rounded-[1.25rem] bg-gradient-to-b from-primary/15 to-transparent p-px shadow-[0_30px_80px_-35px_color-mix(in_oklab,var(--primary)_45%,transparent),0_8px_24px_-12px_color-mix(in_oklab,var(--primary)_20%,transparent)]">
+          <div className="rounded-[1.25rem] border border-primary/15 bg-gradient-to-b from-primary/20 to-transparent p-px shadow-[0_40px_90px_-35px_color-mix(in_oklab,var(--primary)_55%,transparent),0_10px_28px_-12px_color-mix(in_oklab,var(--primary)_25%,transparent)]">
             <div className="rounded-[1.2rem] bg-background">
               <UrlInputCard />
             </div>
