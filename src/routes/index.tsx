@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { UrlInputCard } from "@/components/url-input-card";
+import { NotifySection } from "@/components/notify-section";
 import { Compass, Layers, ListChecks } from "lucide-react";
+
 import {
   Accordion,
   AccordionContent,
