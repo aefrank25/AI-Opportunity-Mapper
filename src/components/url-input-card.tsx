@@ -21,7 +21,9 @@ import {
   type LiveScanUsage,
 } from "@/lib/live-scan-usage";
 import { claimScanBonusEmail } from "@/lib/scan-bonus.functions";
+import { Link } from "@tanstack/react-router";
 import { Sparkles, Info, ArrowRight } from "lucide-react";
+
 
 
 const PRIORITY_ORDER: Priority[] = [
@@ -49,7 +51,10 @@ export function UrlInputCard() {
   const [gate, setGate] = useState<GateState>({ kind: "ok" });
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
+
 
   useEffect(() => {
     setRemaining(liveScansRemaining());
@@ -106,13 +111,17 @@ export function UrlInputCard() {
   function handleEmailUnlock(e: React.FormEvent) {
     e.preventDefault();
     setEmailError(null);
+    setConsentError(null);
     const trimmed = email.trim();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(trimmed)) {
       setEmailError("Please enter a valid email address.");
       return;
     }
+    if (!consent) {
+      setConsentError("Please confirm you'd like to receive these updates.");
+      return;
+    }
     unlockEmailBonus(trimmed);
-    // Fire-and-forget: persist email + sync to Resend. UI stays snappy either way.
     const parsedUrl = urlSchema.safeParse(url);
     claimScanBonusEmail({
       data: {
@@ -122,17 +131,25 @@ export function UrlInputCard() {
     }).catch((err) => {
       console.error("[scan-bonus] claim failed:", err);
     });
-    toast("You're on the beta list. 2 more Live Scans are available today.");
+    toast("You're on the list. You have 2 more Live Scans today.");
     setGate({ kind: "ok" });
     setRemaining(liveScansRemaining());
 
     if (parsedUrl.success) startLive(parsedUrl.data, priority || "not_sure");
   }
 
-  function handleFullReport() {
-    // No checkout implemented yet — surface placeholder, same pattern as expanded map CTA.
-    toast("Full Report checkout is planned for the next version.");
+  function scrollToNotify() {
+    setGate({ kind: "ok" });
+    if (typeof window !== "undefined") {
+      const el = document.getElementById("notify");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        const input = el.querySelector("input[type='email']") as HTMLInputElement | null;
+        input?.focus({ preventScroll: true });
+      }
+    }
   }
+
 
   function runDemo(id: DemoId) {
     navigate({ to: "/analyzing", search: { demo: id } });
@@ -243,35 +260,65 @@ export function UrlInputCard() {
             You've used today's free Live Scan
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Enter your email to get 2 more beta scans today, or run a prototype recommendation instead.
+            Enter your email to get 2 more Live Scans today.
           </p>
-          <form onSubmit={handleEmailUnlock} className="mt-3 flex flex-col gap-2 sm:flex-row">
-            <Input
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="you@company.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-10"
-              required
-            />
-            <Button type="submit" className="h-10 sm:w-auto">
-              Get 2 more scans
-            </Button>
+          <form onSubmit={handleEmailUnlock} className="mt-3 space-y-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Input
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="you@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-10"
+                required
+              />
+              <Button type="submit" className="h-10 sm:w-auto">
+                Get 2 more scans
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Enter your email to get 2 more Live Scans today and receive updates when expanded analysis is available. No account required.
+            </p>
+            <div className="flex items-start gap-2 pt-1">
+              <input
+                type="checkbox"
+                id="scan-bonus-consent"
+                checked={consent}
+                onChange={(e) => {
+                  setConsent(e.currentTarget.checked);
+                  if (e.currentTarget.checked) setConsentError(null);
+                }}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded-sm border border-primary accent-primary"
+              />
+              <Label
+                htmlFor="scan-bonus-consent"
+                className="text-xs font-normal leading-snug text-muted-foreground"
+              >
+                Yes, email me when expanded analysis is available. I can unsubscribe at any time.
+              </Label>
+            </div>
+            {(emailError || consentError) && (
+              <p className="text-xs text-destructive">{emailError ?? consentError}</p>
+            )}
+            <p className="text-[11px] text-muted-foreground">
+              See our{" "}
+              <Link to="/privacy" className="font-medium text-primary underline-offset-4 hover:underline">
+                Privacy Policy
+              </Link>{" "}
+              and{" "}
+              <Link to="/terms" className="font-medium text-primary underline-offset-4 hover:underline">
+                Terms
+              </Link>{" "}
+              for how your email is used.
+            </p>
           </form>
-          {emailError && (
-            <p className="mt-2 text-xs text-destructive">{emailError}</p>
-          )}
           <div className="mt-3 flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={runPrototypeFromGate}>
               Run prototype instead
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => runDemo("clinic")}
-            >
+            <Button variant="ghost" size="sm" onClick={() => runDemo("clinic")}>
               Try a demo
             </Button>
           </div>
@@ -281,25 +328,29 @@ export function UrlInputCard() {
       {gate.kind === "limit_reached" && (
         <div className="mt-5 rounded-xl border border-primary/30 bg-accent p-4 sm:p-5">
           <div className="text-sm font-semibold text-foreground">
-            You've used all 3 free Live Scans available today
+            {gate.usage.capturedEmail
+              ? "You're already on the list"
+              : "You've used all 3 Live Scans available today"}
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            You can run a prototype recommendation, try a demo, or get the full report for one of your scanned websites.
-          </p>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Full Report: get the expanded opportunity map with deeper prioritization, supporting signals, suggested sequencing, expanded next steps, and exportable report access. One-time upgrade per website.
+            {gate.usage.capturedEmail
+              ? "You've used all Live Scans available today. You can run a prototype recommendation, try a demo, or come back tomorrow."
+              : "You can run a prototype recommendation now, try a demo, or get notified when expanded analysis is available."}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <Button onClick={handleFullReport}>Get Full Report</Button>
             <Button variant="outline" onClick={runPrototypeFromGate}>
               Run prototype instead
             </Button>
             <Button variant="ghost" onClick={() => runDemo("clinic")}>
               Try a demo
             </Button>
+            {!gate.usage.capturedEmail && (
+              <Button onClick={scrollToNotify}>Notify me when available</Button>
+            )}
           </div>
         </div>
       )}
+
 
       <div className="mt-6 border-t border-border pt-5">
         <div className="text-sm font-medium text-foreground">
