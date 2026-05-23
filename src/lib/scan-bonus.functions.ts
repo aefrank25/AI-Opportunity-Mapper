@@ -35,9 +35,20 @@ export const claimScanBonusEmail = createServerFn({ method: "POST" })
       source_url: data.sourceUrl ?? null,
     });
 
-    if (error && error.code !== "23505") {
+    const isDuplicate = error?.code === "23505";
+    if (error && !isDuplicate) {
       console.error("[scan-bonus] insert failed:", error);
       throw new Error("Could not save your email. Please try again.");
+    }
+
+    // 2b. Fire-and-forget owner notification for genuinely new captures.
+    if (!isDuplicate) {
+      void notifyOwnerOfScanBonus({
+        email: data.email,
+        sourceUrl: data.sourceUrl ?? null,
+      }).catch((err: unknown) =>
+        console.error("[scan-bonus] owner notify failed:", err),
+      );
     }
 
     // 3. Best-effort sync to Resend Audience (same shape as brief-waitlist).
@@ -112,3 +123,53 @@ export const claimScanBonusEmail = createServerFn({ method: "POST" })
 
     return { ok: true as const, suppressed: false as const };
   });
+
+// ============================================================================
+// Owner notifications
+// ============================================================================
+
+const OWNER_EMAIL = "sonorandatastrategy@gmail.com";
+const FROM_ADDRESS = "AI Opportunity Mapper <onboarding@resend.dev>";
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+async function notifyOwnerOfScanBonus(input: {
+  email: string;
+  sourceUrl: string | null;
+}): Promise<void> {
+  const lovableApiKey = process.env.LOVABLE_API_KEY;
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!lovableApiKey || !resendApiKey) {
+    console.warn("[scan-bonus] owner email skipped: missing LOVABLE_API_KEY or RESEND_API_KEY");
+    return;
+  }
+  const rows = [`<p><strong>Email:</strong> ${escapeHtml(input.email)}</p>`];
+  if (input.sourceUrl) {
+    rows.push(`<p><strong>Source URL:</strong> ${escapeHtml(input.sourceUrl)}</p>`);
+  }
+  const res = await fetch("https://connector-gateway.lovable.dev/resend/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${lovableApiKey}`,
+      "X-Connection-Api-Key": resendApiKey,
+    },
+    body: JSON.stringify({
+      from: FROM_ADDRESS,
+      to: [OWNER_EMAIL],
+      subject: `New scan-bonus email: ${input.email}`,
+      html: `<h2>New scan-bonus email captured</h2>${rows.join("")}<p style="color:#666;font-size:12px">AI Opportunity Mapper</p>`,
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    console.error(`[scan-bonus] owner email send failed [${res.status}]: ${body}`);
+  }
+}
