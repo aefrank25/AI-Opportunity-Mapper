@@ -51,7 +51,10 @@ export function UrlInputCard() {
   const [gate, setGate] = useState<GateState>({ kind: "ok" });
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
+
 
   useEffect(() => {
     setRemaining(liveScansRemaining());
