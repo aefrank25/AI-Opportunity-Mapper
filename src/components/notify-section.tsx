@@ -49,7 +49,7 @@ export function NotifySection() {
         className="scroll-mt-20 mx-auto max-w-3xl rounded-2xl border border-border bg-surface p-6 sm:p-8"
       >
         <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Stay in the loop
+          EXPANDED ANALYSIS
         </div>
         <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground">
           Expanded analysis is coming soon
