@@ -52,7 +52,7 @@ export function NotifySection() {
           EXPANDED ANALYSIS
         </div>
         <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground">
-          Expanded analysis is coming soon
+          Get notified when expanded analysis is available
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Get notified when deeper prioritization, supporting signals, sequencing, and exportable
