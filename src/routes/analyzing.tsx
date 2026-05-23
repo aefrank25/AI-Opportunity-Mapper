@@ -112,7 +112,7 @@ function Analyzing() {
 
 const LIVE_STEPS = [
   "Mapping site pages",
-  "Reading homepage, services & FAQ",
+  "Reading public website pages",
   "Extracting operational signals",
   "Generating opportunity map",
 ];
