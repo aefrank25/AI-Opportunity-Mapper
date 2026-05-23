@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { PRIORITY_LABELS, type Priority } from "@/lib/types";
 import { urlSchema } from "@/lib/url";
 import { DEMO_META, type DemoId } from "@/lib/demos";
@@ -23,6 +22,7 @@ import {
 } from "@/lib/live-scan-usage";
 import { claimScanBonusEmail } from "@/lib/scan-bonus.functions";
 import { Sparkles, Info, ArrowRight } from "lucide-react";
+
 
 const PRIORITY_ORDER: Priority[] = [
   "save_time",
