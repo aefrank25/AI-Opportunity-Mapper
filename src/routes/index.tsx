@@ -136,22 +136,22 @@ function Index() {
               "radial-gradient(60% 55% at 50% 0%, color-mix(in oklab, var(--primary) 14%, transparent) 0%, transparent 70%)",
           }}
         />
-        <div className="mx-auto max-w-3xl pt-4 pb-8 text-center sm:pt-10 lg:pt-12">
+        <div className="mx-auto max-w-3xl pt-3 pb-5 text-center sm:pt-10 sm:pb-8 lg:pt-12">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
             <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
             Practical AI Discovery
           </span>
-          <h1 className="mt-4 text-[1.75rem] leading-tight font-semibold tracking-tight text-foreground sm:mt-5 sm:text-4xl lg:text-5xl">
+          <h1 className="mt-3 text-[1.6rem] leading-[1.15] font-semibold tracking-tight text-foreground sm:mt-5 sm:text-4xl sm:leading-tight lg:text-5xl">
             Find practical AI and automation opportunities for your business
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:mt-5 sm:max-w-none sm:text-lg sm:whitespace-nowrap">
+          <p className="mx-auto mt-3 max-w-2xl text-[15px] text-muted-foreground sm:mt-5 sm:max-w-none sm:text-lg sm:whitespace-nowrap">
             Enter a business website and get a prioritized map of opportunities to explore first.
           </p>
-          <p className="mx-auto mt-4 max-w-2xl text-[15px] text-foreground/80 sm:mt-5 sm:max-w-none sm:text-base sm:whitespace-nowrap">
+          <p className="mx-auto mt-2.5 max-w-2xl text-sm text-foreground/80 sm:mt-5 sm:max-w-none sm:text-base sm:whitespace-nowrap">
             Built for consultants, agencies, and operators exploring practical AI use cases.
           </p>
 
-          <ul className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+          <ul className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:mt-8 sm:gap-2.5">
             {[
               { icon: Compass, label: "Public website scan" },
               { icon: ListChecks, label: "Prioritized opportunities" },
