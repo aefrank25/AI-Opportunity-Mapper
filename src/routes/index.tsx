@@ -230,7 +230,7 @@ function Index() {
       <section className="px-4 sm:px-6 mt-10">
         <div className="mx-auto max-w-5xl rounded-2xl border border-border bg-surface p-6 sm:p-8">
           <h2 className="text-lg font-semibold text-foreground">
-            What expanded analysis adds
+            What expanded analysis will add
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Expanded analysis is a planned deeper version of the opportunity map. It is not
