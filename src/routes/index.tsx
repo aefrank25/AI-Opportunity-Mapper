@@ -147,11 +147,11 @@ function Index() {
           <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:mt-5 sm:max-w-none sm:text-lg sm:whitespace-nowrap">
             Enter a business website and get a prioritized map of opportunities to explore first.
           </p>
-          <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground/90 sm:mt-5">
+          <p className="mx-auto mt-4 max-w-2xl text-[15px] text-foreground/70 sm:mt-5 sm:max-w-none sm:text-base sm:whitespace-nowrap">
             Built for consultants, agencies, and operators exploring practical AI use cases.
           </p>
 
-          <ul className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+          <ul className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
             {[
               { icon: Compass, label: "Public website scan" },
               { icon: ListChecks, label: "Prioritized opportunities" },
@@ -159,7 +159,7 @@ function Index() {
             ].map(({ icon: Icon, label }) => (
               <li
                 key={label}
-                className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary/[0.04] px-3 py-1 text-xs font-medium text-foreground/80"
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/[0.06] px-3 py-1 text-xs font-medium text-foreground/85 shadow-[0_1px_2px_color-mix(in_oklab,var(--primary)_10%,transparent)]"
               >
                 <Icon className="h-3.5 w-3.5 text-primary" aria-hidden />
                 {label}
@@ -168,8 +168,8 @@ function Index() {
           </ul>
         </div>
 
-        <div className="mx-auto max-w-3xl pb-10">
-          <div className="rounded-[1.25rem] bg-gradient-to-b from-primary/10 to-transparent p-px shadow-[0_20px_60px_-30px_color-mix(in_oklab,var(--primary)_35%,transparent)]">
+        <div className="mx-auto max-w-3xl pb-10 sm:pt-2">
+          <div className="rounded-[1.25rem] bg-gradient-to-b from-primary/15 to-transparent p-px shadow-[0_30px_80px_-35px_color-mix(in_oklab,var(--primary)_45%,transparent),0_8px_24px_-12px_color-mix(in_oklab,var(--primary)_20%,transparent)]">
             <div className="rounded-[1.2rem] bg-background">
               <UrlInputCard />
             </div>
