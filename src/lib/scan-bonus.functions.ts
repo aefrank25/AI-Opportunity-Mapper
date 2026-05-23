@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { notifyOwnerOfScanBonus } from "./scan-bonus.server";
 
 const inputSchema = z.object({
   email: z.string().trim().toLowerCase().email().max(320),
