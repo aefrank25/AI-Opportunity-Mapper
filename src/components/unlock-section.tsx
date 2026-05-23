@@ -35,7 +35,7 @@ const FREE_INCLUDES = [
   "Top recommendation",
   "Prioritized opportunities",
   "Quick wins",
-  "Basic roadmap",
+  "Starter roadmap preview",
 ];
 
 const emailSchema = z
