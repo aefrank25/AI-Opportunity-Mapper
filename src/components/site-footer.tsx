@@ -10,7 +10,7 @@ export function SiteFooter() {
               AI Opportunity Mapper
             </div>
             <p className="text-xs text-muted-foreground">
-              A practical AI opportunity tool for consultants, founders, and operators.
+              A practical AI opportunity tool for consultants, agencies, and operators.
             </p>
           </div>
 
