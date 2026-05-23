@@ -5,6 +5,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { CookieBanner } from "@/components/cookie-banner";
 import { Toaster } from "@/components/ui/sonner";
 import { usePageviewTracking } from "@/lib/analytics";
+import { maybeActivateOwnerBypassFromUrl } from "@/lib/live-scan-usage";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -100,6 +102,9 @@ function RootComponent() {
 
 function AppShell() {
   usePageviewTracking();
+  useEffect(() => {
+    maybeActivateOwnerBypassFromUrl();
+  }, []);
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
