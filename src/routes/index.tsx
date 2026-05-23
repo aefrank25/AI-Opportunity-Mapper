@@ -126,26 +126,57 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <>
-      <section className="px-4 sm:px-6">
-        <div className="mx-auto max-w-3xl pt-6 pb-6 text-center sm:pt-16 lg:pt-20">
-          <span className="inline-flex items-center rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
+      <section className="relative px-4 sm:px-6 overflow-hidden">
+        {/* Subtle hero background glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 mx-auto h-[520px] max-w-5xl"
+          style={{
+            background:
+              "radial-gradient(60% 55% at 50% 0%, color-mix(in oklab, var(--primary) 14%, transparent) 0%, transparent 70%)",
+          }}
+        />
+        <div className="mx-auto max-w-3xl pt-6 pb-8 text-center sm:pt-16 lg:pt-20">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
             Practical AI Discovery
           </span>
           <h1 className="mt-4 text-[1.75rem] leading-tight font-semibold tracking-tight text-foreground sm:mt-5 sm:text-4xl lg:text-5xl">
             Find practical AI and automation opportunities for your business
           </h1>
-          <p className="mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg">
+          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:mt-5 sm:text-lg">
             Enter a business website and get a prioritized map of opportunities to explore first.
           </p>
-          <p className="mt-2 text-xs text-muted-foreground/80 sm:text-sm">
-            Built for consultants, agencies, founders, and operators exploring practical AI use cases.
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground/90 sm:mt-5">
+            Built for consultants, agencies, and operators exploring practical AI use cases.
           </p>
+
+          <ul className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+            {[
+              { icon: Compass, label: "Public website scan" },
+              { icon: ListChecks, label: "Prioritized opportunities" },
+              { icon: Layers, label: "Validation-ready next steps" },
+            ].map(({ icon: Icon, label }) => (
+              <li
+                key={label}
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary/[0.04] px-3 py-1 text-xs font-medium text-foreground/80"
+              >
+                <Icon className="h-3.5 w-3.5 text-primary" aria-hidden />
+                {label}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="mx-auto max-w-3xl pb-10">
-          <UrlInputCard />
+          <div className="rounded-[1.25rem] bg-gradient-to-b from-primary/10 to-transparent p-px shadow-[0_20px_60px_-30px_color-mix(in_oklab,var(--primary)_35%,transparent)]">
+            <div className="rounded-[1.2rem] bg-background">
+              <UrlInputCard />
+            </div>
+          </div>
         </div>
       </section>
+
 
       <section className="px-4 sm:px-6">
         <div id="how-it-works" className="mx-auto max-w-5xl scroll-mt-20 rounded-2xl border border-border bg-surface p-6 sm:p-8">
