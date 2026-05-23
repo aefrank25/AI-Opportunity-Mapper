@@ -21,7 +21,9 @@ import {
   type LiveScanUsage,
 } from "@/lib/live-scan-usage";
 import { claimScanBonusEmail } from "@/lib/scan-bonus.functions";
+import { Link } from "@tanstack/react-router";
 import { Sparkles, Info, ArrowRight } from "lucide-react";
+
 
 
 const PRIORITY_ORDER: Priority[] = [
