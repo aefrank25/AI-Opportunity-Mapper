@@ -133,7 +133,7 @@ function Index() {
             Find practical AI and automation opportunities for your business
           </h1>
           <p className="mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg">
-            Paste a business website and get a prioritized map of practical AI and automation
+            Enter a business website and get a prioritized map of practical AI and automation
             opportunities to explore first.
           </p>
         </div>
