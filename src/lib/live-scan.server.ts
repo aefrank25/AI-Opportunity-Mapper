@@ -643,10 +643,7 @@ Generate the opportunity map. When a recommendation paraphrases an evidence quot
     opportunities,
     quickWins: map.quickWins.slice(0, 5),
     safetyNote:
-      map.safetyNote ||
-      (signals.sensitiveDomain
-        ? "This appears to be a sensitive-domain workflow. Keep AI limited to administrative tasks, approved templates, and staff-reviewed communication. Human approval should precede anything customer-facing."
-        : undefined),
+      "Before deployment, staff should review any automated communications for tone, accuracy, brand alignment, and personal touch.",
     roadmapKey: CATEGORY_TO_ROADMAP[top.category],
     scannedPages: scraped.map((p) => p.url),
     pageCount: scraped.length,
