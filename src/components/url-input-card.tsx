@@ -46,15 +46,12 @@ export function UrlInputCard() {
   const [url, setUrl] = useState("");
   const [priority, setPriority] = useState<Priority | "">("");
   const [error, setError] = useState<string | null>(null);
-  const [liveScan, setLiveScan] = useState<boolean>(true);
   const [gate, setGate] = useState<GateState>({ kind: "ok" });
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? localStorage.getItem(LIVE_SCAN_KEY) : null;
-    if (stored === "0") setLiveScan(false);
     setRemaining(liveScansRemaining());
 
     const refresh = () => setRemaining(liveScansRemaining());
@@ -77,12 +74,6 @@ export function UrlInputCard() {
   }, []);
 
 
-  function toggleLive(v: boolean) {
-    setLiveScan(v);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(LIVE_SCAN_KEY, v ? "1" : "0");
-    }
-  }
 
   function startLive(validUrl: string, p: Priority) {
     navigate({ to: "/analyzing", search: { url: validUrl, priority: p, live: 1 } });
