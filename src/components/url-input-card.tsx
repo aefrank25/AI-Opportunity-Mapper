@@ -203,24 +203,21 @@ export function UrlInputCard() {
               </span>
             </Label>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Read a few real pages from the site to ground recommendations in actual content. Falls
-              back to prototype mode if the site can't be reached.
+              Reads a small number of public pages to ground recommendations in actual website content. Does not access private data, accounts, analytics, or internal systems.
             </p>
             {liveScan && (
-              <p className="mt-1.5 text-xs text-muted-foreground">
-                <span className="hidden sm:inline">
-                  Free beta includes 1 Live Scan per day. After your first scan, enter your email to get 2 more. Demo scans are unlimited.
-                </span>
-                <span className="sm:hidden">
-                  1 free Live Scan daily. Get 2 more with email. Demos are unlimited.
-                </span>
+              <div className="mt-2 border-t border-border/60 pt-2 space-y-1">
+                <p className="text-[11px] leading-relaxed text-muted-foreground/90">
+                  Free beta: 1 Live Scan per day. Enter your email after your first scan to get 2 more. Demo scans are unlimited.
+                </p>
                 {remaining !== null && (
-                  <span className="ml-1 font-medium text-foreground">
+                  <p className="text-[11px] font-medium text-foreground">
                     {remaining} {remaining === 1 ? "scan" : "scans"} left today.
-                  </span>
+                  </p>
                 )}
-              </p>
+              </div>
             )}
+
           </div>
         </div>
 
