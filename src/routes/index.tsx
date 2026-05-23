@@ -222,7 +222,6 @@ function Index() {
             <li>Top AI opportunity recommendation with rationale</li>
             <li>Prioritized list of practical AI and automation opportunities</li>
             <li>Quick wins you can act on this week</li>
-            <li>Starter 30-day roadmap aligned to your priority</li>
             <li>Plain-language next steps for non-technical teams</li>
           </ul>
         </div>
