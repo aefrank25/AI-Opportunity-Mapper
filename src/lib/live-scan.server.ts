@@ -15,14 +15,31 @@ const FIRECRAWL_API = "https://api.firecrawl.dev/v2";
 const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const AI_MODEL = "google/gemini-2.5-flash";
 
-type PageCategory = "home" | "about" | "services" | "faq" | "contact";
+type PageCategory =
+  | "home"
+  | "services"
+  | "products"
+  | "pricing"
+  | "about"
+  | "portfolio"
+  | "faq"
+  | "booking"
+  | "contact";
 
 const PAGE_PATTERNS: Array<{ key: Exclude<PageCategory, "home">; rx: RegExp }> = [
+  { key: "services", rx: /\/(services?|solutions|offerings|menu)(\/|$)/i },
+  { key: "products", rx: /\/(products?|shop|store|collections?)(\/|$)/i },
+  { key: "pricing", rx: /\/(pricing|plans|rates)(\/|$)/i },
   { key: "about", rx: /\/(about|company|team|story|who-we-are)(\/|$)/i },
-  { key: "services", rx: /\/(services?|products?|pricing|plans|solutions|offerings|menu|shop)(\/|$)/i },
+  { key: "portfolio", rx: /\/(portfolio|work|projects|case-studies|gallery)(\/|$)/i },
   { key: "faq", rx: /\/(faqs?|help|support|knowledge|questions)(\/|$)/i },
-  { key: "contact", rx: /\/(contact|book(ing)?|appointments?|quote|inquiry|enquiry|consult(ation)?|get-started|schedule)(\/|$)/i },
+  { key: "booking", rx: /\/(book(ing)?|appointments?|schedule|consult(ation)?|get-started)(\/|$)/i },
+  { key: "contact", rx: /\/(contact|quote|inquiry|enquiry)(\/|$)/i },
 ];
+
+const EXCLUDE_PATH_RX =
+  /\/(cart|checkout|payment|billing|orders?|account|profile|login|signin|signup|register|auth|admin|dashboard|wp-admin|wp-login|my-account|customer|members?-only|private)(\/|$)/i;
+const EXCLUDE_EXT_RX = /\.(pdf|zip|jpe?g|png|gif|webp|css|js)(\?|#|$)/i;
 
 const MAP_LIMIT = 25;
 const MAX_PAGES = 5;
@@ -144,7 +161,10 @@ function pickPages(home: string, links: string[]): Array<{ url: string; category
     try {
       const u = new URL(l);
       if (u.host !== homeHost) return false;
-      const norm = `${u.origin}${u.pathname.replace(/\/$/, "")}`;
+      const path = u.pathname;
+      if (EXCLUDE_PATH_RX.test(path)) return false;
+      if (EXCLUDE_EXT_RX.test(path)) return false;
+      const norm = `${u.origin}${path.replace(/\/$/, "")}`;
       if (norm === homeNorm || seen.has(norm)) return false;
       seen.add(norm);
       return true;
