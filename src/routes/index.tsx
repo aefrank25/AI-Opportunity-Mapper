@@ -147,7 +147,7 @@ function Index() {
         <div id="how-it-works" className="mx-auto max-w-5xl scroll-mt-20 rounded-2xl border border-border bg-surface p-6 sm:p-8">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              How AI Opportunity Mapper works
+              How It Works
             </h2>
             <Link
               to="/analyzing"
