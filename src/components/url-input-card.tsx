@@ -111,13 +111,17 @@ export function UrlInputCard() {
   function handleEmailUnlock(e: React.FormEvent) {
     e.preventDefault();
     setEmailError(null);
+    setConsentError(null);
     const trimmed = email.trim();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(trimmed)) {
       setEmailError("Please enter a valid email address.");
       return;
     }
+    if (!consent) {
+      setConsentError("Please confirm you'd like to receive these updates.");
+      return;
+    }
     unlockEmailBonus(trimmed);
-    // Fire-and-forget: persist email + sync to Resend. UI stays snappy either way.
     const parsedUrl = urlSchema.safeParse(url);
     claimScanBonusEmail({
       data: {
@@ -127,17 +131,25 @@ export function UrlInputCard() {
     }).catch((err) => {
       console.error("[scan-bonus] claim failed:", err);
     });
-    toast("You're on the beta list. 2 more Live Scans are available today.");
+    toast("You're on the list. You have 2 more Live Scans today.");
     setGate({ kind: "ok" });
     setRemaining(liveScansRemaining());
 
     if (parsedUrl.success) startLive(parsedUrl.data, priority || "not_sure");
   }
 
-  function handleFullReport() {
-    // No checkout implemented yet — surface placeholder, same pattern as expanded map CTA.
-    toast("Full Report checkout is planned for the next version.");
+  function scrollToNotify() {
+    setGate({ kind: "ok" });
+    if (typeof window !== "undefined") {
+      const el = document.getElementById("notify");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        const input = el.querySelector("input[type='email']") as HTMLInputElement | null;
+        input?.focus({ preventScroll: true });
+      }
+    }
   }
+
 
   function runDemo(id: DemoId) {
     navigate({ to: "/analyzing", search: { demo: id } });
