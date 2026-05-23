@@ -178,8 +178,7 @@ export function OpportunityHeatmap({ opportunities }: { opportunities: Opportuni
           AI Opportunity Heatmap
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          A visual read on what likely matters most based on the website experience. Inferred from
-          public signals — internal data may shift these positions.
+          A visual estimate of which opportunities may matter most based on public website signals. Internal data may shift these positions.
         </p>
       </div>
 
