@@ -41,7 +41,7 @@ const EXCLUDE_PATH_RX =
   /\/(cart|checkout|payment|billing|orders?|account|profile|login|signin|signup|register|auth|admin|dashboard|wp-admin|wp-login|my-account|customer|members?-only|private)(\/|$)/i;
 const EXCLUDE_EXT_RX = /\.(pdf|zip|jpe?g|png|gif|webp|css|js)(\?|#|$)/i;
 
-const MAP_LIMIT = 25;
+const MAP_LIMIT = 150;
 const MAX_PAGES = 5;
 const PER_PAGE_CHARS = 6000;
 const TOTAL_CHARS_CAP = 30000;
