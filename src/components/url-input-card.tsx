@@ -21,6 +21,7 @@ import {
   liveScansRemaining,
   type LiveScanUsage,
 } from "@/lib/live-scan-usage";
+import { claimScanBonusEmail } from "@/lib/scan-bonus.functions";
 import { Sparkles, Info, ArrowRight } from "lucide-react";
 
 const PRIORITY_ORDER: Priority[] = [
@@ -105,12 +106,21 @@ export function UrlInputCard() {
       return;
     }
     unlockEmailBonus(trimmed);
+    // Fire-and-forget: persist email + sync to Resend. UI stays snappy either way.
+    const parsedUrl = urlSchema.safeParse(url);
+    claimScanBonusEmail({
+      data: {
+        email: trimmed,
+        sourceUrl: parsedUrl.success ? parsedUrl.data : null,
+      },
+    }).catch((err) => {
+      console.error("[scan-bonus] claim failed:", err);
+    });
     toast("You're on the beta list. 2 more Live Scans are available today.");
     setGate({ kind: "ok" });
     setRemaining(liveScansRemaining());
 
-    const parsed = urlSchema.safeParse(url);
-    if (parsed.success) startLive(parsed.data, priority);
+    if (parsedUrl.success) startLive(parsedUrl.data, priority);
   }
 
   function handleFullReport() {
