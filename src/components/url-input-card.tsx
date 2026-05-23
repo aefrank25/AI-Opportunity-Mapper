@@ -222,9 +222,9 @@ export function UrlInputCard() {
             </span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Reads a few public pages to ground recommendations.
+            Uses public website content only.
             <br />
-            No private data or internal systems accessed.
+            Private data and internal systems are not accessed.
           </p>
           <div className="mt-2 border-t border-border/60 pt-2 space-y-1">
             <p className="text-[11px] leading-relaxed text-muted-foreground/90">
