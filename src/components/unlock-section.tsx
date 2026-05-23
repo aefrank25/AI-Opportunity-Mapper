@@ -26,7 +26,7 @@ const UNLOCKS = [
   "Deeper prioritization across all opportunities",
   "Supporting evidence and signals behind each recommendation",
   "Suggested sequencing for the highest-leverage areas",
-  "Expanded roadmap with more detail per phase",
+  "Expanded roadmap detail beyond the free preview",
   "Exportable report (coming soon)",
 ];
 

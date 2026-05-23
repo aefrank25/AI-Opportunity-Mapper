@@ -184,6 +184,9 @@ function Results() {
               ? "Ranked by inferred impact, effort, and readiness based on public website signals. These are starting points to validate, not confirmed diagnoses of internal operations."
               : `Weighted toward your selected goal: ${PRIORITY_LABELS[result.priority]}. Ranked by inferred impact, effort, and readiness. These are starting points to validate, not confirmed diagnoses of internal operations.`}
           </p>
+          <p className="mt-1 text-[12px] text-muted-foreground">
+            Based on public website signals. No access to private data, analytics, internal systems, staffing, or actual customer behavior.
+          </p>
           <div className="mt-4 grid items-start gap-4 lg:grid-cols-2 xl:grid-cols-3">
             {result.opportunities.map((o, i) => (
               <OpportunityCard

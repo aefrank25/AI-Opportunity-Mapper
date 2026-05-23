@@ -58,7 +58,7 @@ export function Roadmap({
                 <div className="mt-4 space-y-2 border-t border-dashed border-border pt-3">
                   <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
                     <Lock className="h-3.5 w-3.5" aria-hidden />
-                    <span>Expanded roadmap details</span>
+                    <span>Expanded roadmap detail beyond the free preview</span>
                   </div>
                   {i === 1 && (
                     <span className="inline-flex items-center gap-1 text-[12px] font-medium text-primary">
