@@ -515,7 +515,8 @@ STRUCTURE:
 - Each opportunity has Impact, Effort, Confidence, Automation Risk scored as Low / Medium / High.
 - Keep names short. Keep firstStep concrete and small.
 - Return 3-5 quickWins (small, low-risk operational moves).
-- snapshot.summary should be 1-2 sentences describing the business, using "likely" for inferences.`;
+- snapshot.summary should be 1-2 sentences describing the business, using "likely" for inferences.
+- snapshot.audience MUST contain 2-4 likely audience groups inferred from product/service signals, tone, CTAs, and positioning even if the site does not explicitly name an audience. Phrase entries cautiously (e.g. "Likely individual art buyers and collectors", "Gift shoppers", "Clients interested in custom commissions"). Append a final entry "Confidence: low" or "Confidence: medium" reflecting how strong the audience signals were. Never leave audience empty.`;
 
   const userPrompt = `Selected priority: ${mapPriority}
 
