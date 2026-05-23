@@ -9,6 +9,9 @@ export function SnapshotCard({ snapshot }: { snapshot: BusinessSnapshot }) {
           Inferred
         </span>
       </div>
+      <p className="mt-1 text-[11px] text-muted-foreground">
+        Based on public website signals. Items below appear if mentioned or implied on the website and may not reflect the full business.
+      </p>
       <p className="mt-3 text-sm text-foreground">{snapshot.summary}</p>
 
       {/* Mobile: collapsible details */}

@@ -309,8 +309,7 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
 
           {!error && (
             <p className="mt-6 text-xs text-muted-foreground">
-              Live scan reads a small number of public pages (homepage, about, services, FAQ,
-              contact) and grounds recommendations in what was actually found.
+              Live Scan uses a small set of public website pages to ground recommendations in what was found.
             </p>
           )}
         </div>
