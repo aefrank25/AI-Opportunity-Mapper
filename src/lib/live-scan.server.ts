@@ -33,8 +33,8 @@ const PAGE_PATTERNS: Array<{ key: Exclude<PageCategory, "home">; rx: RegExp }> =
   { key: "about", rx: /\/(about|company|team|story|who-we-are)(\/|$)/i },
   { key: "portfolio", rx: /\/(portfolio|work|projects|case-studies|gallery)(\/|$)/i },
   { key: "faq", rx: /\/(faqs?|help|support|knowledge|questions)(\/|$)/i },
-  { key: "booking", rx: /\/(book(ing)?|appointments?|schedule|consult(ation)?|get-started)(\/|$)/i },
-  { key: "contact", rx: /\/(contact|quote|inquiry|enquiry)(\/|$)/i },
+  { key: "booking", rx: /\/(book(ing)?|appointments?|schedule|consult(ation)?|get-started|commission(-request)?|request-a-quote)(\/|$)/i },
+  { key: "contact", rx: /\/(contact(-?us|me)?|connect|quote|inquiry|enquiry|get-in-touch|reach-us)(\/|$)/i },
 ];
 
 const EXCLUDE_PATH_RX =
