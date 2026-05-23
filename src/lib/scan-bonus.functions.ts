@@ -35,9 +35,20 @@ export const claimScanBonusEmail = createServerFn({ method: "POST" })
       source_url: data.sourceUrl ?? null,
     });
 
-    if (error && error.code !== "23505") {
+    const isDuplicate = error?.code === "23505";
+    if (error && !isDuplicate) {
       console.error("[scan-bonus] insert failed:", error);
       throw new Error("Could not save your email. Please try again.");
+    }
+
+    // 2b. Fire-and-forget owner notification for genuinely new captures.
+    if (!isDuplicate) {
+      void notifyOwnerOfScanBonus({
+        email: data.email,
+        sourceUrl: data.sourceUrl ?? null,
+      }).catch((err: unknown) =>
+        console.error("[scan-bonus] owner notify failed:", err),
+      );
     }
 
     // 3. Best-effort sync to Resend Audience (same shape as brief-waitlist).
