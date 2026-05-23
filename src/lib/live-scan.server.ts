@@ -569,8 +569,10 @@ AUDIENCE INFERENCE: Always populate the "audience" array with 2-4 likely buyer/a
   const systemPrompt = `You are a practical AI opportunity strategist for SMBs. Generate a grounded opportunity map from extracted website signals and a selected business priority.
 
 LANGUAGE RULES:
-- Use phrasings like "The site mentions…" or "The website includes…" ONLY when the recommendation is directly grounded in one of the provided evidenceQuotes.
-- For inferred assumptions, use "likely" or "may".
+- Use phrasings like "The site mentions…" or "the site presents…" ONLY when the recommendation is directly grounded in one of the provided evidenceQuotes.
+- For inferred assumptions, use hedged phrasing: "appears to be", "public website signals suggest", "likely", or "may".
+- Avoid overly certain wording such as "This business is…" or "They offer…". Prefer "appears to be…", "the site presents…", or "public website signals suggest…".
+- Do not assign a specific venue/business-type label (e.g. "art gallery", "law firm", "clinic", "agency") unless that exact label is supported by the scanned pages. When uncertain, describe what the site does in plainer terms (e.g. "artist-led art business selling original pieces, prints, and art-inspired products").
 - Stay calm and operational. Avoid hype, "premium", "transform", "AI-powered" marketing language.
 
 SAFETY:
@@ -581,7 +583,7 @@ STRUCTURE:
 - Each opportunity has Impact, Effort, Confidence, Automation Risk scored as Low / Medium / High.
 - Keep names short. Keep firstStep concrete and small.
 - Return 3-5 quickWins (small, low-risk operational moves).
-- snapshot.summary should be 1-2 sentences describing the business, using "likely" for inferences.
+- snapshot.summary should be 1-2 sentences describing the business using hedged phrasing ("Based on public website signals, this appears to be…", "the site presents…"). Do not use unsupported venue labels.
 - snapshot.audience MUST contain 2-4 likely audience groups inferred from product/service signals, tone, CTAs, and positioning even if the site does not explicitly name an audience. Phrase entries cautiously (e.g. "Likely individual art buyers and collectors", "Gift shoppers", "Clients interested in custom commissions"). Append a final entry "Confidence: low" or "Confidence: medium" reflecting how strong the audience signals were. Never leave audience empty.`;
 
   const userPrompt = `Selected priority: ${mapPriority}
