@@ -57,7 +57,7 @@ export const joinBriefWaitlist = createServerFn({ method: "POST" })
         email: data.email,
         sourceUrl: data.sourceUrl ?? null,
         topOpportunity: data.topOpportunity ?? null,
-      }).catch((err) => console.error("[brief-waitlist] owner notify failed:", err));
+      }).catch((err: unknown) => console.error("[brief-waitlist] owner notify failed:", err));
     }
 
     // 3. Best-effort sync to Resend Audience. Before adding, we also re-check Resend's
