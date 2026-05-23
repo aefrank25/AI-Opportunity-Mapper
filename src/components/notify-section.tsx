@@ -55,8 +55,7 @@ export function NotifySection() {
           Get notified when expanded analysis is available
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Get notified when deeper prioritization, supporting signals, sequencing, and exportable
-          reports are available.
+          Includes deeper prioritization, supporting signals, sequencing, and exportable reports.
         </p>
 
         {mutation.isSuccess ? (
