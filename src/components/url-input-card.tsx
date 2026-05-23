@@ -231,9 +231,15 @@ export function UrlInputCard() {
 
         <p className="flex items-start gap-2 text-xs text-muted-foreground">
           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          {liveScan
-            ? "Live scan reads a small number of public pages (homepage, about, services, FAQ, contact). Recommendations should be validated before implementation."
-            : "Prototype mode uses business-type patterns and inferred workflow signals. Recommendations should be validated before implementation."}
+          {liveScan ? (
+            <span>
+              Live Scan reads a small number of public pages, such as home, about, services, FAQ, and contact pages.
+              <br />
+              Recommendations should be validated before implementation.
+            </span>
+          ) : (
+            "Prototype mode uses business-type patterns and inferred workflow signals. Recommendations should be validated before implementation."
+          )}
         </p>
       </form>
 
