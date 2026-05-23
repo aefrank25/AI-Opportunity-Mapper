@@ -45,9 +45,19 @@ export const joinBriefWaitlist = createServerFn({ method: "POST" })
         is_demo: data.isDemo ?? false,
       });
 
-    if (error && error.code !== "23505") {
+    const isDuplicate = error?.code === "23505";
+    if (error && !isDuplicate) {
       console.error("[brief-waitlist] insert failed:", error);
       throw new Error("Could not join the waitlist. Please try again.");
+    }
+
+    // 2b. Fire-and-forget owner notification for genuinely new signups (skip duplicates / demo).
+    if (!isDuplicate && !data.isDemo) {
+      void notifyOwnerOfSignup({
+        email: data.email,
+        sourceUrl: data.sourceUrl ?? null,
+        topOpportunity: data.topOpportunity ?? null,
+      }).catch((err) => console.error("[brief-waitlist] owner notify failed:", err));
     }
 
     // 3. Best-effort sync to Resend Audience. Before adding, we also re-check Resend's
