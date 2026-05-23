@@ -194,61 +194,47 @@ export function UrlInputCard() {
           </div>
         )}
 
-        <div className="flex items-start gap-3 rounded-xl border border-border bg-surface px-3.5 py-3">
-          <Switch
-            id="live-scan"
-            checked={liveScan}
-            onCheckedChange={toggleLive}
-            className="mt-0.5"
-          />
-          <div className="min-w-0 flex-1">
-            <Label htmlFor="live-scan" className="text-sm font-medium text-foreground cursor-pointer">
+        <div className="rounded-xl border border-border bg-surface px-3.5 py-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium text-foreground">
               Live Scan{" "}
               <span className="ml-1 inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
                 Beta
               </span>
-            </Label>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              Reads a small number of public pages to ground recommendations in actual website content.
-              <br />
-              Does not access private data, accounts, analytics, or internal systems.
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Reads a small number of public pages to ground recommendations in actual website content.
+            <br />
+            Does not access private data, accounts, analytics, or internal systems.
+          </p>
+          <div className="mt-2 border-t border-border/60 pt-2 space-y-1">
+            <p className="text-[11px] leading-relaxed text-muted-foreground/90">
+              Free beta: 1 Live Scan per day. Enter your email after your first scan to get 2 more. Demo scans are unlimited.
             </p>
-
-            {liveScan && (
-              <div className="mt-2 border-t border-border/60 pt-2 space-y-1">
-                <p className="text-[11px] leading-relaxed text-muted-foreground/90">
-                  Free beta: 1 Live Scan per day. Enter your email after your first scan to get 2 more. Demo scans are unlimited.
-                </p>
-                {remaining !== null && (
-                  <p className="text-[11px] font-medium text-foreground">
-                    {remaining} {remaining === 1 ? "scan" : "scans"} left today.
-                  </p>
-                )}
-              </div>
+            {remaining !== null && (
+              <p className="text-[11px] font-medium text-foreground">
+                {remaining} {remaining === 1 ? "scan" : "scans"} left today.
+              </p>
             )}
-
           </div>
         </div>
 
         <Button type="submit" size="lg" className="h-11 w-full">
           <Sparkles className="h-4 w-4" />
-          {liveScan ? "Run Live Scan" : "Map opportunities"}
+          Run Live Scan
         </Button>
 
         <p className="flex items-start gap-2 text-xs text-muted-foreground">
           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          {liveScan ? (
-            <span>
-              If the site can't be reached, AI Opportunity Mapper falls back to prototype mode.
-              <br />
-              Recommendations should be validated before implementation.
-            </span>
-
-
-          ) : (
-            "Prototype mode uses business-type patterns and inferred workflow signals. Recommendations should be validated before implementation."
-          )}
+          <span>
+            If the site can't be reached, AI Opportunity Mapper falls back to prototype mode.
+            <br />
+            Recommendations should be validated before implementation.
+          </span>
         </p>
+
       </form>
 
       {gate.kind === "needs_email" && (
