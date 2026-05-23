@@ -126,24 +126,15 @@ export function NotifySection() {
               </p>
             )}
             <p className="text-[12px] text-muted-foreground">
-              No spam. Just updates when expanded analysis is available.
-            </p>
-            <p className="text-[12px] leading-relaxed text-muted-foreground">
-              <span className="font-medium text-foreground">What to expect:</span> Expanded
-              analysis is coming soon. Join the list to be notified when deeper prioritization,
-              supporting signals, sequencing, and exportable reports are available. There is no
-              charge to join the notification list.
-            </p>
-            <p className="text-[12px] text-muted-foreground">
-              See our{" "}
+              No spam. Updates only. See our{" "}
               <Link to="/privacy" className="font-medium text-primary underline-offset-4 hover:underline">
                 Privacy Policy
               </Link>{" "}
               and{" "}
               <Link to="/terms" className="font-medium text-primary underline-offset-4 hover:underline">
                 Terms
-              </Link>{" "}
-              for how your email is used.
+              </Link>
+              .
             </p>
           </form>
         )}
