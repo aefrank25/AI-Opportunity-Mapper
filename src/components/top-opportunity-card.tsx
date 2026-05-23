@@ -24,12 +24,15 @@ export function TopOpportunityCard({
           {o.name}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground sm:text-base">{o.description}</p>
+        <p className="mt-3 text-xs text-muted-foreground sm:text-sm">
+          Treat this as a starting hypothesis to validate against the business's actual workflow, tools, staffing, and customer context.
+        </p>
 
         <div className="mt-5 grid grid-cols-1 gap-4 sm:mt-6 sm:grid-cols-2 sm:gap-5">
           <Block label="Why this matters" value={o.whyItMatters} />
-          <Block label="Signal" value={o.signal} />
-          <Block label="Pain point" value={o.painPoint} />
-          <Block label="Improvement" value={o.improvement} />
+          <Block label="Public signal" value={o.signal} />
+          <Block label="Likely pain point" value={o.painPoint} />
+          <Block label="Suggested improvement" value={o.improvement} />
         </div>
 
         <div className="mt-5 flex items-start gap-3 rounded-xl border border-border bg-surface p-3 sm:mt-6 sm:p-4">
