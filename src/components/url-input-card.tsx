@@ -56,7 +56,26 @@ export function UrlInputCard() {
     const stored = typeof window !== "undefined" ? localStorage.getItem(LIVE_SCAN_KEY) : null;
     if (stored === "0") setLiveScan(false);
     setRemaining(liveScansRemaining());
+
+    const refresh = () => setRemaining(liveScansRemaining());
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === null || e.key === "aiom:live-scan-usage") refresh();
+    };
+    window.addEventListener("focus", refresh);
+    window.addEventListener("pageshow", refresh);
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("pageshow", refresh);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("storage", onStorage);
+    };
   }, []);
+
 
   function toggleLive(v: boolean) {
     setLiveScan(v);
