@@ -92,11 +92,6 @@ export function UrlInputCard() {
     }
     setError(null);
 
-    if (!liveScan) {
-      startPrototype(result.data, priority || "not_sure");
-      return;
-    }
-
     const g = checkLiveScanGate();
     if (g.allowed) {
       startLive(result.data, priority || "not_sure");
@@ -106,6 +101,7 @@ export function UrlInputCard() {
       setGate({ kind: "limit_reached", usage: g.usage });
     }
   }
+
 
   function handleEmailUnlock(e: React.FormEvent) {
     e.preventDefault();
