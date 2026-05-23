@@ -83,13 +83,13 @@ export function UrlInputCard() {
     setError(null);
 
     if (!liveScan) {
-      startPrototype(result.data, priority);
+      startPrototype(result.data, priority || "not_sure");
       return;
     }
 
     const g = checkLiveScanGate();
     if (g.allowed) {
-      startLive(result.data, priority);
+      startLive(result.data, priority || "not_sure");
     } else if (g.reason === "needs_email") {
       setGate({ kind: "needs_email", usage: g.usage });
     } else {
@@ -120,7 +120,7 @@ export function UrlInputCard() {
     setGate({ kind: "ok" });
     setRemaining(liveScansRemaining());
 
-    if (parsedUrl.success) startLive(parsedUrl.data, priority);
+    if (parsedUrl.success) startLive(parsedUrl.data, priority || "not_sure");
   }
 
   function handleFullReport() {
@@ -140,7 +140,7 @@ export function UrlInputCard() {
       return;
     }
     setGate({ kind: "ok" });
-    startPrototype(parsed.data, priority);
+    startPrototype(parsed.data, priority || "not_sure");
   }
 
   return (
