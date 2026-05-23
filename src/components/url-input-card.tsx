@@ -44,7 +44,7 @@ type GateState =
 export function UrlInputCard() {
   const navigate = useNavigate();
   const [url, setUrl] = useState("");
-  const [priority, setPriority] = useState<Priority>("not_sure");
+  const [priority, setPriority] = useState<Priority | "">("");
   const [error, setError] = useState<string | null>(null);
   const [liveScan, setLiveScan] = useState<boolean>(true);
   const [gate, setGate] = useState<GateState>({ kind: "ok" });
@@ -83,13 +83,13 @@ export function UrlInputCard() {
     setError(null);
 
     if (!liveScan) {
-      startPrototype(result.data, priority);
+      startPrototype(result.data, priority || "not_sure");
       return;
     }
 
     const g = checkLiveScanGate();
     if (g.allowed) {
-      startLive(result.data, priority);
+      startLive(result.data, priority || "not_sure");
     } else if (g.reason === "needs_email") {
       setGate({ kind: "needs_email", usage: g.usage });
     } else {
@@ -120,7 +120,7 @@ export function UrlInputCard() {
     setGate({ kind: "ok" });
     setRemaining(liveScansRemaining());
 
-    if (parsedUrl.success) startLive(parsedUrl.data, priority);
+    if (parsedUrl.success) startLive(parsedUrl.data, priority || "not_sure");
   }
 
   function handleFullReport() {
@@ -140,7 +140,7 @@ export function UrlInputCard() {
       return;
     }
     setGate({ kind: "ok" });
-    startPrototype(parsed.data, priority);
+    startPrototype(parsed.data, priority || "not_sure");
   }
 
   return (
@@ -169,7 +169,7 @@ export function UrlInputCard() {
             </Label>
             <Select value={priority} onValueChange={(v) => setPriority(v as Priority)}>
               <SelectTrigger id="priority" className="h-11 w-full">
-                <SelectValue />
+                <SelectValue placeholder="Choose a priority" />
               </SelectTrigger>
               <SelectContent>
                 {PRIORITY_ORDER.map((p) => (
