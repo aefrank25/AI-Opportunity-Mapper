@@ -57,9 +57,20 @@ export function UrlInputCard() {
 
 
   useEffect(() => {
-    setRemaining(liveScansRemaining());
+    const refresh = () => {
+      setRemaining(liveScansRemaining());
+      const g = checkLiveScanGate();
+      if (g.allowed) {
+        // Re-allowed (e.g. new day, email bonus unlocked, owner bypass) — clear any gate prompt.
+        setGate((prev) => (prev.kind === "ok" ? prev : { kind: "ok" }));
+      } else if (g.reason === "needs_email") {
+        setGate((prev) => (prev.kind === "needs_email" ? prev : { kind: "needs_email", usage: g.usage }));
+      } else {
+        setGate((prev) => (prev.kind === "limit_reached" ? prev : { kind: "limit_reached", usage: g.usage }));
+      }
+    };
+    refresh();
 
-    const refresh = () => setRemaining(liveScansRemaining());
     const onVisibility = () => {
       if (document.visibilityState === "visible") refresh();
     };
