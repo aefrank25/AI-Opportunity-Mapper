@@ -148,37 +148,83 @@ async function firecrawlMap(url: string, diag: LiveScanDiagnostics): Promise<str
     .filter((u): u is string => typeof u === "string");
 }
 
-function pickPages(home: string, links: string[]): Array<{ url: string; category: PageCategory }> {
+function normalizeHost(h: string): string {
+  return h.toLowerCase().replace(/^www\./, "");
+}
+
+function pickPages(
+  home: string,
+  links: string[],
+  diag: LiveScanDiagnostics,
+): Array<{ url: string; category: PageCategory }> {
   const homeNorm = home.replace(/\/$/, "");
   let homeHost: string;
   try {
-    homeHost = new URL(home).host;
+    homeHost = normalizeHost(new URL(home).host);
   } catch {
     return [{ url: home, category: "home" }];
   }
+
+  let rejectedHost = 0;
+  let rejectedExclude = 0;
   const seen = new Set<string>();
-  const sameHost = links.filter((l) => {
+  const sameHost: string[] = [];
+  for (const l of links) {
     try {
       const u = new URL(l);
-      if (u.host !== homeHost) return false;
+      if (normalizeHost(u.host) !== homeHost) {
+        rejectedHost++;
+        continue;
+      }
       const path = u.pathname;
-      if (EXCLUDE_PATH_RX.test(path)) return false;
-      if (EXCLUDE_EXT_RX.test(path)) return false;
+      if (EXCLUDE_PATH_RX.test(path) || EXCLUDE_EXT_RX.test(path)) {
+        rejectedExclude++;
+        continue;
+      }
       const norm = `${u.origin}${path.replace(/\/$/, "")}`;
-      if (norm === homeNorm || seen.has(norm)) return false;
+      if (norm === homeNorm || seen.has(norm)) continue;
       seen.add(norm);
-      return true;
+      sameHost.push(l);
     } catch {
-      return false;
+      // skip unparseable
     }
-  });
+  }
+
   const picked: Array<{ url: string; category: PageCategory }> = [{ url: home, category: "home" }];
+  const usedKeys = new Set<PageCategory>(["home"]);
   for (const { key, rx } of PAGE_PATTERNS) {
     if (picked.length >= MAX_PAGES) break;
-    const match = sameHost.find((l) => rx.test(l));
-    if (match) picked.push({ url: match, category: key });
+    if (usedKeys.has(key)) continue;
+    const match = sameHost.find((l) => {
+      try {
+        return rx.test(new URL(l).pathname);
+      } catch {
+        return false;
+      }
+    });
+    if (match) {
+      picked.push({ url: match, category: key });
+      usedKeys.add(key);
+    }
   }
-  return picked.slice(0, MAX_PAGES);
+  const finalPicked = picked.slice(0, MAX_PAGES);
+
+  if (process.env.LIVE_SCAN_DEBUG === "1") {
+    const matchedCount = finalPicked.length - 1; // exclude home
+    const rejectedPattern = sameHost.length - matchedCount;
+    // eslint-disable-next-line no-console
+    console.log("[live-scan:debug]", {
+      homeHost,
+      mappedCount: links.length,
+      firstLinks: links.slice(0, 30),
+      rejectedHost,
+      rejectedExclude,
+      rejectedPattern,
+      selectedPages: finalPicked.map((p) => p.url),
+    });
+  }
+
+  return finalPicked;
 }
 
 async function firecrawlScrape(
