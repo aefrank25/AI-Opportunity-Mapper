@@ -8,6 +8,7 @@ import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-
 const LOCKED_SECTIONS = [
   "Deeper opportunity analysis",
   "Prioritization reasoning",
+  "Questions to validate internally",
   "Suggested next steps",
 ];
 
