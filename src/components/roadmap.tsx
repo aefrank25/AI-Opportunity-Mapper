@@ -20,7 +20,7 @@ export function Roadmap({
 
   return (
     <div>
-      <h2 className="text-lg font-semibold tracking-tight text-foreground">30-day starter roadmap</h2>
+      <h2 className="text-lg font-semibold tracking-tight text-foreground">Starter roadmap preview</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         A simple cadence to take the top opportunity from idea to validated prototype.
       </p>
