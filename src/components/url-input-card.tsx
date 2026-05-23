@@ -224,7 +224,7 @@ export function UrlInputCard() {
           <p className="mt-1 text-xs text-muted-foreground">
             Reads a few public pages to ground recommendations.
             <br />
-            Does not access private data or internal systems.
+            No private data or internal systems accessed.
           </p>
           <div className="mt-2 border-t border-border/60 pt-2 space-y-1">
             <p className="text-[11px] leading-relaxed text-muted-foreground/90">
