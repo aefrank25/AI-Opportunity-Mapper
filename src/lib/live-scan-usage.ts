@@ -81,8 +81,21 @@ export function unlockEmailBonus(email: string): LiveScanUsage {
   return next;
 }
 
+export function hasSubmittedEmail(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw) as LiveScanUsage;
+    return !!parsed.capturedEmail || parsed.emailBonusUnlocked === true;
+  } catch {
+    return false;
+  }
+}
+
 export const LIVE_SCAN_LIMITS = {
   FREE_PER_DAY,
   EMAIL_BONUS,
   MAX_PER_DAY,
 };
+
