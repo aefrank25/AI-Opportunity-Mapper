@@ -226,7 +226,7 @@ export function UrlInputCard() {
 
         <Button type="submit" size="lg" className="h-11 w-full">
           <Sparkles className="h-4 w-4" />
-          {liveScan ? "Run live scan" : "Map opportunities"}
+          {liveScan ? "Run Live Scan" : "Map opportunities"}
         </Button>
 
         <p className="flex items-start gap-2 text-xs text-muted-foreground">
