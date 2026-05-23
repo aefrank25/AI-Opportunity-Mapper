@@ -209,7 +209,7 @@ export function UrlInputCard() {
             {liveScan && (
               <p className="mt-1.5 text-xs text-muted-foreground">
                 <span className="hidden sm:inline">
-                  Free beta includes 1 Live Scan per day. Enter your email after your first scan to get 2 more. Demo scans are unlimited.
+                  Free beta includes 1 Live Scan per day. After your first scan, enter your email to get 2 more. Demo scans are unlimited.
                 </span>
                 <span className="sm:hidden">
                   1 free Live Scan daily. Get 2 more with email. Demos are unlimited.
