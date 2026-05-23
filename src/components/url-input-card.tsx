@@ -230,10 +230,9 @@ export function UrlInputCard() {
           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           {liveScan ? (
             <span>
-              Live Scan reads a small number of public pages, such as home, about, services, FAQ, and contact pages.
-              <br />
-              Recommendations should be validated before implementation.
+              If the site can't be reached, AI Opportunity Mapper falls back to prototype mode. Recommendations should be validated before implementation.
             </span>
+
           ) : (
             "Prototype mode uses business-type patterns and inferred workflow signals. Recommendations should be validated before implementation."
           )}
