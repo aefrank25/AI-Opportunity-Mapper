@@ -140,6 +140,9 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
     if (startedRef.current) return;
     startedRef.current = true;
 
+    const host = displayHost(url);
+    trackEvent("live_scan_started", { host, priority });
+
     const interval = setInterval(() => {
       setStep((s) => Math.min(s + 1, LIVE_STEPS.length - 1));
     }, 1400);
