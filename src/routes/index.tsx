@@ -213,15 +213,15 @@ function Index() {
       </section>
 
       <section className="px-4 sm:px-6 mt-10">
-        <div className="mx-auto max-w-5xl rounded-2xl border border-border bg-surface p-6 sm:p-8">
-          <div className="flex flex-col gap-1 text-center sm:text-left">
-            <h2 className="text-lg font-semibold text-foreground">See it in action</h2>
+        <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-surface p-5 sm:p-6">
+          <div className="flex flex-col gap-1 text-center">
+            <h2 className="text-base font-semibold text-foreground sm:text-lg">See it in action</h2>
             <p className="text-sm text-muted-foreground">
               Watch a quick sample scan before running your own.
             </p>
           </div>
-          <div className="mt-5 flex flex-col gap-5">
-            <div className="overflow-hidden rounded-xl border border-border bg-background shadow-card-lg">
+          <div className="mt-4 flex flex-col items-center gap-4">
+            <div className="w-full max-w-xl overflow-hidden rounded-lg border border-border bg-background shadow-card">
               <video
                 src="/ai-opp-mapper-demo.mp4"
                 controls
@@ -230,19 +230,17 @@ function Index() {
                 className="block aspect-video w-full"
               />
             </div>
-            <div className="flex justify-center">
-              <button
-                type="button"
-                onClick={() => {
-                  if (typeof document === "undefined") return;
-                  document.getElementById("top-url-input")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
-              >
-                Run your own scan
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof document === "undefined") return;
+                document.getElementById("top-url-input")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="inline-flex items-center justify-center rounded-md border border-border bg-background px-5 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              Run your own scan
+            </button>
           </div>
         </div>
       </section>
