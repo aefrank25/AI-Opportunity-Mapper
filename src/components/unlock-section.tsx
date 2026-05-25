@@ -199,7 +199,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
             Continue deeper
           </div>
           <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
-            Want the expanded opportunity map?
+            Want a deeper, exportable opportunity map?
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Get notified when expanded analysis is available, including deeper prioritization,
