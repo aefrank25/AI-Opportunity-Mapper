@@ -190,6 +190,7 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
         clearInterval(interval);
         const message = e instanceof Error ? e.message : String(e);
         console.error("[live-scan] threw", { message, error: e });
+        trackEvent("live_scan_failed", { host: displayHost(url), priority, code: "threw" });
         setFailure({
           code: "unknown",
           message,
