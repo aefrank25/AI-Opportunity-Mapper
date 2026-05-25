@@ -144,14 +144,11 @@ function Index() {
           <h1 className="mt-3 text-[1.6rem] leading-[1.15] font-semibold tracking-tight text-foreground sm:mt-5 sm:text-4xl sm:leading-tight lg:text-5xl">
             Find practical AI and automation opportunities for your business
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-[15px] text-muted-foreground sm:mt-5 sm:max-w-none sm:text-lg sm:whitespace-nowrap">
+          <p className="mx-auto mt-4 max-w-2xl text-[16px] text-foreground sm:mt-6 sm:max-w-none sm:text-lg sm:whitespace-nowrap">
             Enter a business website and get a prioritized map of opportunities to explore first.
           </p>
-          <p className="mx-auto mt-2.5 max-w-2xl text-sm text-foreground/80 sm:mt-5 sm:max-w-none sm:text-base sm:whitespace-nowrap">
-            Built for consultants, agencies, and operators exploring practical AI use cases.
-          </p>
 
-          <ul className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:mt-8 sm:gap-2.5">
+          <ul className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:mt-7 sm:gap-2.5">
             {[
               { icon: Compass, label: "Public website scan" },
               { icon: ListChecks, label: "Prioritized opportunities" },
@@ -166,6 +163,10 @@ function Index() {
               </li>
             ))}
           </ul>
+
+          <p className="mx-auto mt-5 max-w-2xl text-xs text-muted-foreground sm:mt-6 sm:text-sm">
+            For consultants, agencies, and operators exploring practical AI use cases.
+          </p>
         </div>
 
         <div className="mx-auto max-w-3xl pb-10 pt-7 sm:pt-2">
