@@ -246,12 +246,12 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                       <>
                         We've added{" "}
                         <span className="font-medium text-foreground">{submittedEmail}</span> to the
-                        early access list. We'll email you the moment expanded analysis is available
+                        early access list. We'll email you the moment expanded reports are ready
                         — usually no more than once or twice a month.
                       </>
                     ) : (
                       <>
-                        We'll email you the moment expanded analysis is available — usually no more
+                        We'll email you the moment expanded reports are ready — usually no more
                         than once or twice a month.
                       </>
                     )}
@@ -323,7 +323,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                   </p>
                 ) : (
                   <p id="unlock-email-hint" className="text-[12px] text-muted-foreground">
-                    Use the email where you’d like to receive updates about expanded analysis.
+                    Use the email where you’d like to receive updates about expanded reports.
                   </p>
                 )}
               </div>
@@ -350,7 +350,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                     htmlFor="unlock-consent"
                     className="text-[12px] font-normal leading-snug text-muted-foreground"
                   >
-                    Yes, email me when expanded analysis is available. I can unsubscribe at any
+                    Yes, email me when expanded reports are ready. I can unsubscribe at any
                     time.
                   </Label>
                 </div>
@@ -372,16 +372,16 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                     Submitting…
                   </>
                 ) : (
-                  "Notify me when available"
+                  "Notify me when expanded reports are ready"
                 )}
               </Button>
               <p className="pt-3 sm:pt-2 text-[12px] leading-relaxed text-muted-foreground">
-                No spam. Just updates when expanded analysis is available.
+                No spam. Just updates when expanded reports are ready.
               </p>
               <p className="pt-4 sm:pt-3 text-[12px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">What to expect:</span> Expanded
-                analysis is coming soon. Join the list to be notified when deeper prioritization,
-                supporting signals, sequencing, and exportable reports are available. There is no
+                reports are coming soon. Join the list to be notified when deeper prioritization,
+                validation questions, supporting signals, roadmap detail, and exportable summaries are available. There is no
                 charge to join the notification list.
               </p>
               <p className="pt-3 sm:pt-2 text-[12px] leading-relaxed text-muted-foreground">
