@@ -291,10 +291,13 @@ function ScanEventStats({ enabled }: { enabled: boolean }) {
   });
 
   const LABELS: Record<string, string> = {
-    live_scan_started: "Live scans started",
-    live_scan_completed: "Live scans completed",
-    live_scan_failed: "Live scans failed",
-    prototype_scan_started: "Prototype runs",
+    live_scan_started_server: "Live scans started (server, all visitors)",
+    live_scan_completed_server: "Live scans completed (server, all visitors)",
+    live_scan_failed_server: "Live scans failed (server, all visitors)",
+    live_scan_started: "Live scans started (consented only)",
+    live_scan_completed: "Live scans completed (consented only)",
+    live_scan_failed: "Live scans failed (consented only)",
+    prototype_scan_started: "Prototype runs (consented only)",
   };
   const KEYS = Object.keys(LABELS);
 
