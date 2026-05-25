@@ -165,11 +165,17 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
             label: FAILURE_LABELS[details.code] ?? details.code,
             ...details,
           });
+          trackEvent("live_scan_failed", {
+            host: displayHost(url),
+            priority,
+            code: details.code,
+          });
           setFailure(details);
           setError(FALLBACK_MSG);
           return;
         }
         setStep(LIVE_STEPS.length);
+        trackEvent("live_scan_completed", { host: displayHost(url), priority });
         if (typeof window !== "undefined") {
           sessionStorage.setItem(liveCacheKey(url, priority), JSON.stringify(res.result));
           recordLiveScanSuccess();
