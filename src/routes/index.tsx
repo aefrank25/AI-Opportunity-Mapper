@@ -164,12 +164,13 @@ function Index() {
             ))}
           </ul>
 
-          <p className="mx-auto mt-5 max-w-2xl text-xs text-muted-foreground sm:mt-6 sm:text-sm">
+          <p className="mx-auto mt-5 max-w-2xl text-[13px] font-normal text-muted-foreground sm:mt-6 sm:text-sm">
             For consultants, agencies, and operators exploring practical AI use cases.
           </p>
         </div>
 
-        <div className="mx-auto max-w-3xl pb-10 pt-7 sm:pt-2">
+        <div className="mx-auto max-w-3xl pb-10 pt-3 sm:pt-1">
+
           <div className="rounded-[1.25rem] border border-primary/15 bg-gradient-to-b from-primary/20 to-transparent p-px shadow-[0_40px_90px_-35px_color-mix(in_oklab,var(--primary)_55%,transparent),0_10px_28px_-12px_color-mix(in_oklab,var(--primary)_25%,transparent)]">
             <div className="rounded-[1.2rem] bg-background">
               <UrlInputCard />
