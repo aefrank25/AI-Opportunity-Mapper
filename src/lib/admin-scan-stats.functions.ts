@@ -19,6 +19,9 @@ const SCAN_EVENT_NAMES = [
   "live_scan_completed",
   "live_scan_failed",
   "prototype_scan_started",
+  "live_scan_started_server",
+  "live_scan_completed_server",
+  "live_scan_failed_server",
 ] as const;
 
 export const getScanEventStats = createServerFn({ method: "GET" })
