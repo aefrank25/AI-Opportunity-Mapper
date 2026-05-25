@@ -372,7 +372,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                     Submitting…
                   </>
                 ) : (
-                  "Notify me when available"
+                  "Notify me when expanded reports are ready"
                 )}
               </Button>
               <p className="pt-3 sm:pt-2 text-[12px] leading-relaxed text-muted-foreground">
