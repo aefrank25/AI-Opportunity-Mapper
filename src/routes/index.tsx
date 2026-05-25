@@ -136,7 +136,7 @@ function Index() {
               "radial-gradient(60% 55% at 50% 0%, color-mix(in oklab, var(--primary) 14%, transparent) 0%, transparent 70%)",
           }}
         />
-        <div className="mx-auto max-w-3xl pt-8 pb-6 text-center sm:pt-10 sm:pb-8 lg:pt-12">
+        <div className="mx-auto max-w-3xl pt-8 pb-3 text-center sm:pt-10 sm:pb-4 lg:pt-12">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
             <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
             Practical AI Discovery
@@ -164,12 +164,13 @@ function Index() {
             ))}
           </ul>
 
-          <p className="mx-auto mt-5 max-w-2xl text-xs text-muted-foreground sm:mt-6 sm:text-sm">
+          <p className="mx-auto mt-5 max-w-2xl text-[13px] font-normal text-muted-foreground sm:mt-6 sm:text-sm">
             For consultants, agencies, and operators exploring practical AI use cases.
           </p>
         </div>
 
-        <div className="mx-auto max-w-3xl pb-10 pt-7 sm:pt-2">
+        <div className="mx-auto max-w-3xl pb-10 pt-3 sm:pt-1">
+
           <div className="rounded-[1.25rem] border border-primary/15 bg-gradient-to-b from-primary/20 to-transparent p-px shadow-[0_40px_90px_-35px_color-mix(in_oklab,var(--primary)_55%,transparent),0_10px_28px_-12px_color-mix(in_oklab,var(--primary)_25%,transparent)]">
             <div className="rounded-[1.2rem] bg-background">
               <UrlInputCard />
