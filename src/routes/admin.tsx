@@ -384,14 +384,14 @@ function GrowthChart({
             <AreaChart data={formatted} margin={{ top: 8, right: 16, left: -12, bottom: 0 }}>
               <defs>
                 <linearGradient id="gSignups" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
               <XAxis
                 dataKey="label"
-                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 interval="preserveStartEnd"
                 minTickGap={24}
                 axisLine={false}
@@ -400,7 +400,7 @@ function GrowthChart({
               <YAxis
                 yAxisId="left"
                 allowDecimals={false}
-                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 axisLine={false}
                 tickLine={false}
                 width={32}
@@ -409,26 +409,26 @@ function GrowthChart({
                 yAxisId="right"
                 orientation="right"
                 allowDecimals={false}
-                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 axisLine={false}
                 tickLine={false}
                 width={32}
               />
               <Tooltip
                 contentStyle={{
-                  background: "hsl(var(--surface))",
-                  border: "1px solid hsl(var(--border))",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
                   borderRadius: 12,
                   fontSize: 12,
                 }}
-                labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 600 }}
+                labelStyle={{ color: "var(--foreground)", fontWeight: 600 }}
               />
               <Area
                 yAxisId="left"
                 type="monotone"
                 dataKey="count"
                 name="Per day"
-                stroke="hsl(var(--primary))"
+                stroke="var(--primary)"
                 strokeWidth={2}
                 fill="url(#gSignups)"
               />
@@ -437,7 +437,7 @@ function GrowthChart({
                 type="monotone"
                 dataKey="cumulative"
                 name="Cumulative"
-                stroke="hsl(var(--foreground))"
+                stroke="var(--foreground)"
                 strokeOpacity={0.6}
                 strokeWidth={1.5}
                 dot={false}
