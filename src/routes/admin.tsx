@@ -19,6 +19,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, Download, LogOut, RefreshCcw } from "lucide-react";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Waitlist" }, { name: "robots", content: "noindex" }] }),
@@ -294,6 +304,8 @@ function StatsBlock({
         ))}
       </div>
 
+      <GrowthChart data={stats?.dailySignups ?? []} loading={loading} />
+
       <div className="rounded-2xl border border-border bg-surface p-4 shadow-card sm:p-5">
         <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           Top opportunities requested
@@ -318,6 +330,120 @@ function StatsBlock({
               );
             })}
           </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function GrowthChart({
+  data,
+  loading,
+}: {
+  data: { date: string; count: number; cumulative: number }[];
+  loading: boolean;
+}) {
+  const formatted = useMemo(
+    () =>
+      data.map((d) => ({
+        ...d,
+        label: new Date(d.date).toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+        }),
+      })),
+    [data],
+  );
+
+  return (
+    <div className="rounded-2xl border border-border bg-surface p-4 shadow-card sm:p-5">
+      <div className="flex items-center justify-between">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+          Signups — last 30 days
+        </div>
+        <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-primary" /> Per day
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-foreground/60" /> Cumulative
+          </span>
+        </div>
+      </div>
+      <div className="mt-4 h-64 w-full">
+        {loading ? (
+          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+            Loading…
+          </div>
+        ) : !formatted.length ? (
+          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+            No data yet.
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={formatted} margin={{ top: 8, right: 16, left: -12, bottom: 0 }}>
+              <defs>
+                <linearGradient id="gSignups" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+              <XAxis
+                dataKey="label"
+                tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                interval="preserveStartEnd"
+                minTickGap={24}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                yAxisId="left"
+                allowDecimals={false}
+                tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                axisLine={false}
+                tickLine={false}
+                width={32}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                allowDecimals={false}
+                tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                axisLine={false}
+                tickLine={false}
+                width={32}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 12,
+                  fontSize: 12,
+                }}
+                labelStyle={{ color: "var(--foreground)", fontWeight: 600 }}
+              />
+              <Area
+                yAxisId="left"
+                type="monotone"
+                dataKey="count"
+                name="Per day"
+                stroke="var(--primary)"
+                strokeWidth={2}
+                fill="url(#gSignups)"
+              />
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="cumulative"
+                name="Cumulative"
+                stroke="var(--foreground)"
+                strokeOpacity={0.6}
+                strokeWidth={1.5}
+                dot={false}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         )}
       </div>
     </div>
