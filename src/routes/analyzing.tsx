@@ -71,6 +71,15 @@ function Analyzing() {
   const navigate = useNavigate();
   const isLive = !!search.live && !!search.url;
 
+  useEffect(() => {
+    if (isLive) return;
+    trackEvent("prototype_scan_started", {
+      demo: search.demo ?? null,
+      host: search.url ? displayHost(search.url) : null,
+      priority: search.priority ?? null,
+    });
+  }, [isLive, search.demo, search.url, search.priority]);
+
   if (isLive) {
     return <LiveAnalyzing url={search.url!} priority={search.priority ?? "not_sure"} />;
   }
