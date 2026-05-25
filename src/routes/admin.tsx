@@ -272,10 +272,80 @@ function AdminPage() {
           </div>
         </div>
 
+        {/* Scan counts */}
+        <ScanEventStats enabled={authState === "ok"} />
+
         {/* Scan bonus emails */}
         <ScanBonusSection enabled={authState === "ok"} />
       </div>
     </section>
+  );
+}
+
+function ScanEventStats({ enabled }: { enabled: boolean }) {
+  const statsFn = useServerFn(getScanEventStats);
+  const stats = useQuery({
+    queryKey: ["admin-scan-event-stats"],
+    queryFn: () => statsFn(),
+    enabled,
+  });
+
+  const LABELS: Record<string, string> = {
+    live_scan_started: "Live scans started",
+    live_scan_completed: "Live scans completed",
+    live_scan_failed: "Live scans failed",
+    prototype_scan_started: "Prototype runs",
+  };
+  const KEYS = Object.keys(LABELS);
+
+  const cell = (n: number | undefined) => (stats.isLoading ? "…" : (n ?? 0));
+
+  return (
+    <div className="space-y-4 pt-4">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Usage
+          </div>
+          <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+            Scan counts
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            How many people kicked off a scan. Only counts visitors who accepted analytics cookies.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => stats.refetch()}>
+          <RefreshCcw className="h-3.5 w-3.5" /> Refresh
+        </Button>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-surface shadow-card overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-surface-muted text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <tr>
+                <th className="px-4 py-2.5">Event</th>
+                <th className="px-4 py-2.5 text-right">Last 24h</th>
+                <th className="px-4 py-2.5 text-right">Last 7d</th>
+                <th className="px-4 py-2.5 text-right">Last 30d</th>
+                <th className="px-4 py-2.5 text-right">All-time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {KEYS.map((k) => (
+                <tr key={k} className="border-t border-border">
+                  <td className="px-4 py-2.5 font-medium text-foreground">{LABELS[k]}</td>
+                  <td className="px-4 py-2.5 text-right text-muted-foreground">{cell(stats.data?.last24h[k])}</td>
+                  <td className="px-4 py-2.5 text-right text-muted-foreground">{cell(stats.data?.last7d[k])}</td>
+                  <td className="px-4 py-2.5 text-right text-muted-foreground">{cell(stats.data?.last30d[k])}</td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-foreground">{cell(stats.data?.total[k])}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   );
 }
 
