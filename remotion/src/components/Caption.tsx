@@ -21,8 +21,8 @@ export const Caption: React.FC<{ step?: string; text: string }> = ({
     <div
       style={{
         position: "absolute",
-        top: 70,
-        left: 100,
+        top: 120,
+        left: 80,
         display: "flex",
         alignItems: "center",
         gap: 16,
