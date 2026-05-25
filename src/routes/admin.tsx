@@ -449,9 +449,6 @@ function GrowthChart({
     </div>
   );
 }
-    </div>
-  );
-}
 
 function csvEscape(v: unknown): string {
   const s = v === null || v === undefined ? "" : String(v);
