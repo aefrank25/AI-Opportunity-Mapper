@@ -350,7 +350,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                     htmlFor="unlock-consent"
                     className="text-[12px] font-normal leading-snug text-muted-foreground"
                   >
-                    Yes, email me when expanded analysis is available. I can unsubscribe at any
+                    Yes, email me when expanded reports are ready. I can unsubscribe at any
                     time.
                   </Label>
                 </div>
