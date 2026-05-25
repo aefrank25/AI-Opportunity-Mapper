@@ -246,12 +246,12 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                       <>
                         We've added{" "}
                         <span className="font-medium text-foreground">{submittedEmail}</span> to the
-                        early access list. We'll email you the moment expanded analysis is available
+                        early access list. We'll email you the moment expanded reports are ready
                         — usually no more than once or twice a month.
                       </>
                     ) : (
                       <>
-                        We'll email you the moment expanded analysis is available — usually no more
+                        We'll email you the moment expanded reports are ready — usually no more
                         than once or twice a month.
                       </>
                     )}
