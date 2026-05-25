@@ -5,7 +5,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 async function logScanEvent(name: string, props: Record<string, unknown>) {
   try {
-    await supabaseAdmin.from("analytics_events").insert({ name, props });
+    await supabaseAdmin.from("analytics_events").insert({ name, props: props as never });
   } catch (err) {
     console.error("[liveScan] analytics insert failed", err);
   }
