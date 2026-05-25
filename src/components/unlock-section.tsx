@@ -380,8 +380,8 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
               </p>
               <p className="pt-4 sm:pt-3 text-[12px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">What to expect:</span> Expanded
-                analysis is coming soon. Join the list to be notified when deeper prioritization,
-                supporting signals, sequencing, and exportable reports are available. There is no
+                reports are coming soon. Join the list to be notified when deeper prioritization,
+                validation questions, supporting signals, roadmap detail, and exportable summaries are available. There is no
                 charge to join the notification list.
               </p>
               <p className="pt-3 sm:pt-2 text-[12px] leading-relaxed text-muted-foreground">
