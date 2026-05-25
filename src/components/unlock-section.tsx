@@ -28,7 +28,7 @@ const UNLOCKS = [
   "Supporting signals behind each recommendation",
   "Suggested sequencing for high-leverage areas",
   "Expanded roadmap detail beyond the free preview",
-  "Exportable report summaries",
+  "Exportable summary/report",
 ];
 
 const FREE_INCLUDES = [
