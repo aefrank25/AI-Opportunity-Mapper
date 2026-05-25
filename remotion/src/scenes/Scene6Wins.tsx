@@ -25,10 +25,10 @@ const WINS = [
 ];
 
 const WEEKS = [
-  { week: "Week 1", title: "Gather proposal examples" },
-  { week: "Week 2", title: "Define the draft structure" },
-  { week: "Week 3", title: "Test a proposal draft workflow" },
-  { week: "Week 4", title: "Review quality and risks" },
+  { week: "Week 1", title: "Gather proposal examples", tag: "Start here" },
+  { week: "Week 2", title: "Define the draft structure", tag: "Shape" },
+  { week: "Week 3", title: "Test a proposal draft workflow", tag: "Pilot" },
+  { week: "Week 4", title: "Review quality and risks", tag: "Validate" },
 ];
 
 export const Scene6Quickwins: React.FC = () => {
