@@ -18,7 +18,7 @@ import { Scene6Quickwins } from "./scenes/Scene6Wins";
 import { Scene7Close } from "./scenes/Scene6Close";
 
 // 7 scenes, ~45s @ 30fps. Transitions overlap 15f each (6 transitions = 90f).
-const SCENES = [105, 270, 240, 270, 240, 210, 105];
+const SCENES = [150, 180, 165, 270, 240, 210, 105];
 const TRANSITION = 15;
 export const TOTAL_FRAMES =
   SCENES.reduce((a, b) => a + b, 0) - TRANSITION * (SCENES.length - 1);
