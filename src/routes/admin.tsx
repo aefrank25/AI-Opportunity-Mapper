@@ -19,6 +19,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, Download, LogOut, RefreshCcw } from "lucide-react";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Waitlist" }, { name: "robots", content: "noindex" }] }),
@@ -294,8 +304,12 @@ function StatsBlock({
         ))}
       </div>
 
+      <GrowthChart data={stats?.dailySignups ?? []} loading={loading} />
+
       <div className="rounded-2xl border border-border bg-surface p-4 shadow-card sm:p-5">
         <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+          Top opportunities requested
+        </div>
           Top opportunities requested
         </div>
         {loading ? (
