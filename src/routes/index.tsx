@@ -239,7 +239,7 @@ function Index() {
               }}
               className="inline-flex items-center justify-center rounded-md border border-border bg-background px-5 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
             >
-              Run your own scan
+              Try your own website
             </button>
           </div>
         </div>
