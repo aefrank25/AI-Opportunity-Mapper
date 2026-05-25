@@ -220,7 +220,7 @@ function Index() {
               Watch a quick sample scan before running your own.
             </p>
           </div>
-          <div className="mt-5 grid gap-5 sm:grid-cols-[1fr_auto] sm:items-center">
+          <div className="mt-5 flex flex-col gap-5">
             <div className="overflow-hidden rounded-xl border border-border bg-background shadow-card-lg">
               <video
                 src="/ai-opp-mapper-demo.mp4"
@@ -230,7 +230,7 @@ function Index() {
                 className="block aspect-video w-full"
               />
             </div>
-            <div className="sm:max-w-[180px]">
+            <div className="flex justify-center">
               <button
                 type="button"
                 onClick={() => {
@@ -238,7 +238,7 @@ function Index() {
                   document.getElementById("top-url-input")?.scrollIntoView({ behavior: "smooth", block: "start" });
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
-                className="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+                className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
               >
                 Run your own scan
               </button>
