@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { sendWaitlistDigest } from "@/lib/brief-waitlist.functions";
+import { sendWaitlistDigest } from "@/lib/brief-waitlist-digest.server";
 
 function timingSafeEqualStr(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
