@@ -305,7 +305,7 @@ function ScanEventStats({ enabled }: { enabled: boolean }) {
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Usage
+            Usage (Since 5/25/26, 12:00 pm)
           </div>
           <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
             Scan counts
