@@ -376,7 +376,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
                 )}
               </Button>
               <p className="pt-3 sm:pt-2 text-[12px] leading-relaxed text-muted-foreground">
-                No spam. Just updates when expanded analysis is available.
+                No spam. Just updates when expanded reports are ready.
               </p>
               <p className="pt-4 sm:pt-3 text-[12px] leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">What to expect:</span> Expanded
