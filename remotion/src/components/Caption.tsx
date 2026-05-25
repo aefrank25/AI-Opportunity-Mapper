@@ -1,7 +1,6 @@
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { COLORS } from "../theme";
 
-
 export const Caption: React.FC<{ step?: string; text: string }> = ({
   step,
   text,
@@ -22,7 +21,7 @@ export const Caption: React.FC<{ step?: string; text: string }> = ({
     <div
       style={{
         position: "absolute",
-        top: 80,
+        top: 70,
         left: 100,
         display: "flex",
         alignItems: "center",
@@ -38,10 +37,10 @@ export const Caption: React.FC<{ step?: string; text: string }> = ({
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
-            width: 36,
-            height: 36,
+            width: 38,
+            height: 38,
             borderRadius: 999,
-            background: COLORS.accent,
+            background: COLORS.primary,
             color: "white",
             fontSize: 18,
             fontWeight: 700,
@@ -53,9 +52,9 @@ export const Caption: React.FC<{ step?: string; text: string }> = ({
       <span
         style={{
           color: COLORS.fg,
-          fontSize: 28,
-          fontWeight: 600,
-          letterSpacing: -0.3,
+          fontSize: 30,
+          fontWeight: 700,
+          letterSpacing: -0.4,
         }}
       >
         {text}
