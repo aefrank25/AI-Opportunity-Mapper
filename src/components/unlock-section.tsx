@@ -215,7 +215,7 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
 
           <div className="mt-5">
             <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              The Expanded Opportunity Map adds
+              THE EXPANDED REPORT ADDS
             </div>
             <ul className="mt-2 space-y-1.5 text-sm text-foreground">
               {UNLOCKS.map((u) => (
