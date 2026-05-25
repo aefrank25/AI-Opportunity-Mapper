@@ -9,6 +9,7 @@ import { DEMO_META, type DemoId } from "@/lib/demos";
 import { liveScan } from "@/lib/live-scan.functions";
 import { LIVE_SCAN_FALLBACK_MESSAGE } from "@/lib/live-scan-messages";
 import { recordLiveScanSuccess } from "@/lib/live-scan-usage";
+import { trackEvent } from "@/lib/analytics";
 import { Loader2, AlertCircle } from "lucide-react";
 
 const FAILURE_LABELS: Record<string, string> = {
@@ -70,6 +71,15 @@ function Analyzing() {
   const navigate = useNavigate();
   const isLive = !!search.live && !!search.url;
 
+  useEffect(() => {
+    if (isLive) return;
+    trackEvent("prototype_scan_started", {
+      demo: search.demo ?? null,
+      host: search.url ? displayHost(search.url) : null,
+      priority: search.priority ?? null,
+    });
+  }, [isLive, search.demo, search.url, search.priority]);
+
   if (isLive) {
     return <LiveAnalyzing url={search.url!} priority={search.priority ?? "not_sure"} />;
   }
@@ -130,6 +140,9 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
     if (startedRef.current) return;
     startedRef.current = true;
 
+    const host = displayHost(url);
+    trackEvent("live_scan_started", { host, priority });
+
     const interval = setInterval(() => {
       setStep((s) => Math.min(s + 1, LIVE_STEPS.length - 1));
     }, 1400);
@@ -152,11 +165,17 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
             label: FAILURE_LABELS[details.code] ?? details.code,
             ...details,
           });
+          trackEvent("live_scan_failed", {
+            host: displayHost(url),
+            priority,
+            code: details.code,
+          });
           setFailure(details);
           setError(FALLBACK_MSG);
           return;
         }
         setStep(LIVE_STEPS.length);
+        trackEvent("live_scan_completed", { host: displayHost(url), priority });
         if (typeof window !== "undefined") {
           sessionStorage.setItem(liveCacheKey(url, priority), JSON.stringify(res.result));
           recordLiveScanSuccess();
@@ -171,6 +190,7 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
         clearInterval(interval);
         const message = e instanceof Error ? e.message : String(e);
         console.error("[live-scan] threw", { message, error: e });
+        trackEvent("live_scan_failed", { host: displayHost(url), priority, code: "threw" });
         setFailure({
           code: "unknown",
           message,
