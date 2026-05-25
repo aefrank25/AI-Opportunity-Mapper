@@ -270,10 +270,163 @@ function AdminPage() {
             </table>
           </div>
         </div>
+
+        {/* Scan bonus emails */}
+        <ScanBonusSection enabled={authState === "ok"} />
       </div>
     </section>
   );
 }
+
+function ScanBonusSection({ enabled }: { enabled: boolean }) {
+  const statsFn = useServerFn(getScanBonusStats);
+  const listFn = useServerFn(listScanBonusEmails);
+  const [search, setSearch] = useState("");
+  const [range, setRange] = useState<"all" | "7d" | "30d" | "90d">("all");
+
+  const stats = useQuery({
+    queryKey: ["admin-scan-bonus-stats"],
+    queryFn: () => statsFn(),
+    enabled,
+  });
+  const entries = useQuery({
+    queryKey: ["admin-scan-bonus", search, range],
+    queryFn: () => listFn({ data: { search, range } }),
+    enabled,
+  });
+  const rows = entries.data?.rows ?? [];
+
+  const handleExport = () => {
+    const headers = ["created_at", "email", "source_url"];
+    const csv = [
+      headers.join(","),
+      ...rows.map((r) =>
+        [r.created_at, r.email, r.source_url ?? ""].map(csvEscape).join(","),
+      ),
+    ].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `scan-bonus-emails-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const tiles = [
+    { label: "Total captures", value: stats.data?.total ?? 0 },
+    { label: "Unique emails", value: stats.data?.uniqueEmails ?? 0 },
+    { label: "Duplicate attempts", value: stats.data?.duplicates ?? 0 },
+    { label: "Last 7 days", value: stats.data?.last7d ?? 0 },
+    { label: "Last 30 days", value: stats.data?.last30d ?? 0 },
+  ];
+
+  return (
+    <div className="space-y-4 pt-4">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Free scan limit
+          </div>
+          <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+            Scan-bonus emails
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Emails captured when visitors hit the daily Live Scan limit and unlocked 2 more scans. Not on the waitlist.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => { stats.refetch(); entries.refetch(); }}
+        >
+          <RefreshCcw className="h-3.5 w-3.5" /> Refresh
+        </Button>
+      </div>
+
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+        {tiles.map((t) => (
+          <div key={t.label} className="rounded-2xl border border-border bg-surface p-4 shadow-card">
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {t.label}
+            </div>
+            <div className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+              {stats.isLoading ? "…" : t.value}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-2xl border border-border bg-surface p-4 shadow-card sm:p-5">
+        <div className="grid gap-3 sm:grid-cols-[1fr_180px_auto] sm:items-end">
+          <div className="space-y-1.5">
+            <Label htmlFor="sb-search">Search</Label>
+            <Input
+              id="sb-search"
+              placeholder="email or URL"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Time range</Label>
+            <Select value={range} onValueChange={(v) => setRange(v as typeof range)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All time</SelectItem>
+                <SelectItem value="7d">Last 7 days</SelectItem>
+                <SelectItem value="30d">Last 30 days</SelectItem>
+                <SelectItem value="90d">Last 90 days</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button onClick={handleExport} disabled={!rows.length} className="sm:h-10">
+            <Download className="h-4 w-4" /> Export CSV
+          </Button>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-surface shadow-card overflow-hidden">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <div className="text-sm font-medium text-foreground">
+            {entries.isLoading ? "Loading…" : `${rows.length} ${rows.length === 1 ? "entry" : "entries"}`}
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-surface-muted text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <tr>
+                <th className="px-4 py-2.5">Date</th>
+                <th className="px-4 py-2.5">Email</th>
+                <th className="px-4 py-2.5">Source URL</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entries.isLoading && (
+                <tr><td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">Loading…</td></tr>
+              )}
+              {!entries.isLoading && rows.length === 0 && (
+                <tr><td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">No scan-bonus emails captured yet.</td></tr>
+              )}
+              {rows.map((r) => (
+                <tr key={r.id} className="border-t border-border">
+                  <td className="px-4 py-2.5 whitespace-nowrap text-muted-foreground">
+                    {new Date(r.created_at).toLocaleString()}
+                  </td>
+                  <td className="px-4 py-2.5 font-medium text-foreground">{r.email}</td>
+                  <td className="px-4 py-2.5 text-muted-foreground max-w-[260px] truncate" title={r.source_url ?? ""}>
+                    {r.source_url || "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 function StatsBlock({
   stats,
