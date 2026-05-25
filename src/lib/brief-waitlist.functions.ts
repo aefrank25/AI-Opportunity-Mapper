@@ -228,7 +228,17 @@ export const sendWaitlistDigest = createServerFn({ method: "POST" })
       .map((s) => {
         const parts = [`<strong>${escapeHtml(s.email)}</strong>`];
         if (s.top_opportunity) parts.push(escapeHtml(s.top_opportunity));
-        if (s.source_url) parts.push(`<a href="${escapeHtml(s.source_url)}">${escapeHtml(s.source_url)}</a>`);
+        if (s.source_url) {
+          // Only render as a clickable link if the URL uses http(s). Other schemes
+          // (javascript:, data:, etc.) are shown as plain escaped text to prevent
+          // unsafe links in the owner's inbox.
+          const isSafeHttpUrl = /^https?:\/\//i.test(s.source_url);
+          parts.push(
+            isSafeHttpUrl
+              ? `<a href="${escapeHtml(s.source_url)}">${escapeHtml(s.source_url)}</a>`
+              : escapeHtml(s.source_url),
+          );
+        }
         parts.push(`<span style="color:#666">${new Date(s.created_at).toUTCString()}</span>`);
         return `<li style="margin-bottom:8px">${parts.join(" — ")}</li>`;
       })
