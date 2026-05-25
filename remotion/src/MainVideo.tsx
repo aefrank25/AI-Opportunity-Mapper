@@ -13,13 +13,31 @@ import { Scene1Brand } from "./scenes/Scene1Brand";
 import { Scene2Paste } from "./scenes/Scene2Paste";
 import { Scene3Analyzing } from "./scenes/Scene3Analyzing";
 import { Scene4Map } from "./scenes/Scene4Map";
-import { Scene5Wins } from "./scenes/Scene5Wins";
-import { Scene6Close } from "./scenes/Scene6Close";
+import { Scene5Heatmap } from "./scenes/Scene5Wins";
+import { Scene6Quickwins } from "./scenes/Scene6Wins";
+import { Scene7Close } from "./scenes/Scene6Close";
 
-const SCENES = [90, 135, 165, 195, 135, 105];
+// 7 scenes, ~45s @ 30fps. Transitions overlap 15f each (6 transitions = 90f).
+const SCENES = [105, 270, 240, 270, 240, 210, 105];
 const TRANSITION = 15;
 export const TOTAL_FRAMES =
   SCENES.reduce((a, b) => a + b, 0) - TRANSITION * (SCENES.length - 1);
+
+const slideT = (
+  <TransitionSeries.Transition
+    presentation={slide({ direction: "from-right" })}
+    timing={springTiming({
+      config: { damping: 200 },
+      durationInFrames: TRANSITION,
+    })}
+  />
+);
+const fadeT = (
+  <TransitionSeries.Transition
+    presentation={fade()}
+    timing={linearTiming({ durationInFrames: TRANSITION })}
+  />
+);
 
 export const MainVideo: React.FC = () => {
   return (
@@ -29,49 +47,29 @@ export const MainVideo: React.FC = () => {
         <TransitionSeries.Sequence durationInFrames={SCENES[0]}>
           <Scene1Brand />
         </TransitionSeries.Sequence>
-        <TransitionSeries.Transition
-          presentation={fade()}
-          timing={linearTiming({ durationInFrames: TRANSITION })}
-        />
+        {fadeT}
         <TransitionSeries.Sequence durationInFrames={SCENES[1]}>
           <Scene2Paste />
         </TransitionSeries.Sequence>
-        <TransitionSeries.Transition
-          presentation={slide({ direction: "from-right" })}
-          timing={springTiming({
-            config: { damping: 200 },
-            durationInFrames: TRANSITION,
-          })}
-        />
+        {slideT}
         <TransitionSeries.Sequence durationInFrames={SCENES[2]}>
           <Scene3Analyzing />
         </TransitionSeries.Sequence>
-        <TransitionSeries.Transition
-          presentation={slide({ direction: "from-right" })}
-          timing={springTiming({
-            config: { damping: 200 },
-            durationInFrames: TRANSITION,
-          })}
-        />
+        {slideT}
         <TransitionSeries.Sequence durationInFrames={SCENES[3]}>
           <Scene4Map />
         </TransitionSeries.Sequence>
-        <TransitionSeries.Transition
-          presentation={slide({ direction: "from-right" })}
-          timing={springTiming({
-            config: { damping: 200 },
-            durationInFrames: TRANSITION,
-          })}
-        />
+        {slideT}
         <TransitionSeries.Sequence durationInFrames={SCENES[4]}>
-          <Scene5Wins />
+          <Scene5Heatmap />
         </TransitionSeries.Sequence>
-        <TransitionSeries.Transition
-          presentation={fade()}
-          timing={linearTiming({ durationInFrames: TRANSITION })}
-        />
+        {slideT}
         <TransitionSeries.Sequence durationInFrames={SCENES[5]}>
-          <Scene6Close />
+          <Scene6Quickwins />
+        </TransitionSeries.Sequence>
+        {fadeT}
+        <TransitionSeries.Sequence durationInFrames={SCENES[6]}>
+          <Scene7Close />
         </TransitionSeries.Sequence>
       </TransitionSeries>
     </AbsoluteFill>
