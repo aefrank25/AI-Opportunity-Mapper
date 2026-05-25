@@ -136,7 +136,7 @@ function Index() {
               "radial-gradient(60% 55% at 50% 0%, color-mix(in oklab, var(--primary) 14%, transparent) 0%, transparent 70%)",
           }}
         />
-        <div className="mx-auto max-w-3xl pt-8 pb-6 text-center sm:pt-10 sm:pb-8 lg:pt-12">
+        <div className="mx-auto max-w-3xl pt-8 pb-3 text-center sm:pt-10 sm:pb-4 lg:pt-12">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
             <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
             Practical AI Discovery
