@@ -97,6 +97,26 @@ export const getWaitlistStats = createServerFn({ method: "GET" })
       .slice(0, 8)
       .map(([name, count]) => ({ name, count }));
 
+    // Daily growth — last 30 days
+    const days = 30;
+    const buckets = new Map<string, number>();
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now - i * 86400000);
+      buckets.set(d.toISOString().slice(0, 10), 0);
+    }
+    for (const r of all) {
+      const key = new Date(r.created_at).toISOString().slice(0, 10);
+      if (buckets.has(key)) buckets.set(key, (buckets.get(key) ?? 0) + 1);
+    }
+    const baseline = all.filter(
+      (r) => new Date(r.created_at).getTime() < now - (days - 1) * 86400000,
+    ).length;
+    let running = baseline;
+    const dailySignups = [...buckets.entries()].map(([date, count]) => {
+      running += count;
+      return { date, count, cumulative: running };
+    });
+
     return {
       total: all.length,
       uniqueEmails,
@@ -106,5 +126,6 @@ export const getWaitlistStats = createServerFn({ method: "GET" })
       demoCount,
       realCount,
       topOpportunities,
+      dailySignups,
     };
   });
