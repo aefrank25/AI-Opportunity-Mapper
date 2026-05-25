@@ -8,6 +8,11 @@ import {
   getWaitlistStats,
   listWaitlistEntries,
 } from "@/lib/admin-waitlist.functions";
+import {
+  getScanBonusStats,
+  listScanBonusEmails,
+} from "@/lib/admin-scan-bonus.functions";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
