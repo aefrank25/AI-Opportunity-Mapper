@@ -202,8 +202,8 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
             Want a deeper, exportable opportunity map?
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Get notified when expanded analysis is available, including deeper prioritization,
-            supporting signals, suggested sequencing, and exportable reports.
+            Get notified when expanded reports are ready, including deeper prioritization,
+            validation questions, supporting signals, roadmap detail, and exportable summaries.
           </p>
 
           <div className="mt-5 rounded-lg border border-border bg-surface-muted/40 p-3">
