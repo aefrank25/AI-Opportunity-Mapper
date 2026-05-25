@@ -1,6 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { runLiveScan, LiveScanError } from "./live-scan.server";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+async function logScanEvent(name: string, props: Record<string, unknown>) {
+  try {
+    await supabaseAdmin.from("analytics_events").insert({ name, props });
+  } catch (err) {
+    console.error("[liveScan] analytics insert failed", err);
+  }
+}
 
 const PRIORITY_VALUES = [
   "save_time",
