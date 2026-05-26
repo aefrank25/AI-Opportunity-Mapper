@@ -147,9 +147,9 @@ The current focus is:
 
 ## Why This Exists
 
-Small businesses often know something feels inefficient, but lack the time, visibility, or structure to identify what to improve first.
+AI and automation advice often skips the hardest part: figuring out which operational problem is actually worth solving first.
 
-AI Opportunity Mapper is designed to bridge that gap through lightweight operational analysis and practical strategic guidance.
+AI Opportunity Mapper was built to make that first step easier by translating public business signals into a clearer set of possible workflow improvements, implementation priorities, and next-step recommendations.
 
 ## Feedback
 
