@@ -207,8 +207,8 @@ This project is actively evolving based on:
 
 Built by Amy Frank.
 
-LinkedIn:
-[https://www.linkedin.com/in/amy-e-f94/]
+[LinkedIn]:
+(https://www.linkedin.com/in/amy-e-f94/)
 
 ---
 
