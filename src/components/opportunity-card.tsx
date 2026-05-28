@@ -116,6 +116,8 @@ export function OpportunityCard({
                       opportunity_id: o.id,
                     });
                   }
+                  // expanded_analysis_interest — standardized demand signal (backend capture).
+                  trackExpandedAnalysisInterest();
                   focusUnlockEmail();
                 }}
                 className="mt-3 inline-flex items-center gap-1 text-[12px] font-medium text-primary underline-offset-4 hover:underline"
