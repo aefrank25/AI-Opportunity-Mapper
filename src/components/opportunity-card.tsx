@@ -4,6 +4,7 @@ import type { Opportunity, Priority } from "@/lib/types";
 import { ArrowRight, ChevronDown, Lock, Radar } from "lucide-react";
 import { focusUnlockEmail } from "@/lib/focus-unlock-email";
 import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
+import { trackExpandedAnalysisInterest } from "@/lib/product-analytics";
 
 const LOCKED_SECTIONS = [
   "Deeper opportunity analysis",
