@@ -156,6 +156,7 @@ export function UrlInputCard() {
       return;
     }
     unlockEmailBonus(trimmed);
+    trackEmailUnlockCompleted();
     const parsedUrl = urlSchema.safeParse(url);
     claimScanBonusEmail({
       data: {
