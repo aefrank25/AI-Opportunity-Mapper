@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { trackResultsViewed } from "@/lib/product-analytics";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { analyze } from "@/lib/analyzer";
