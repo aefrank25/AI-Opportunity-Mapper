@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { submitRecommendationFeedback } from "@/lib/feedback.functions";
+import { trackFeedbackSubmitted } from "@/lib/product-analytics";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageSquare, Star, Check, Loader2 } from "lucide-react";
@@ -33,6 +34,9 @@ export function FeedbackWidget({ sourceUrl, topOpportunity, isDemo }: Props) {
           isDemo,
         },
       }),
+    // feedback_submitted — backend capture only, fires after a successful save.
+    onSuccess: (_res, vars) =>
+      trackFeedbackSubmitted({ feedbackLength: vars.notes.length, websiteDomain: sourceUrl ?? null }),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
