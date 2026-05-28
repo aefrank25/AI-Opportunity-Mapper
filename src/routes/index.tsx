@@ -136,6 +136,20 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  // Fire-once guards so backend interest/video events are captured at most once per mount.
+  const videoPlayedRef = useRef(false);
+  const firedFaqSignals = useRef<Set<string>>(new Set());
+
+  const handleFaqOpen = (value: string) => {
+    if (!value) return; // collapsed (single-mode emits "" when closed)
+    const index = Number(value.replace("faq-", ""));
+    const signal = FAQS[index]?.signal;
+    if (!signal || firedFaqSignals.current.has(signal)) return;
+    firedFaqSignals.current.add(signal);
+    if (signal === "export") trackExportInterest();
+    else if (signal === "client_use") trackClientUseInterest();
+  };
+
   return (
     <>
       <section className="relative px-4 sm:px-6 overflow-hidden">
