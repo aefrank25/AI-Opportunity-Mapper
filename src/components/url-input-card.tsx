@@ -60,6 +60,24 @@ export function UrlInputCard() {
   const [consentError, setConsentError] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
 
+  // Fire-once guards for the gate analytics events (backend capture only).
+  const emailUnlockShownFired = useRef(false);
+  const limitReachedFired = useRef(false);
+
+  // Track when the email-unlock prompt or the daily-limit message first appears.
+  useEffect(() => {
+    if (gate.kind === "needs_email" && !emailUnlockShownFired.current) {
+      emailUnlockShownFired.current = true;
+      trackEmailUnlockShown();
+    }
+    if (gate.kind === "limit_reached" && !limitReachedFired.current) {
+      limitReachedFired.current = true;
+      trackScanLimitReached({ scansUsedToday: gate.usage.used });
+    }
+  }, [gate]);
+
+
+
 
   useEffect(() => {
     const refresh = () => {
