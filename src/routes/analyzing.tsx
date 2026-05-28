@@ -10,6 +10,11 @@ import { liveScan } from "@/lib/live-scan.functions";
 import { LIVE_SCAN_FALLBACK_MESSAGE } from "@/lib/live-scan-messages";
 import { recordLiveScanSuccess } from "@/lib/live-scan-usage";
 import { trackEvent } from "@/lib/analytics";
+import {
+  trackScanStarted,
+  trackScanCompleted,
+  trackScanFailed,
+} from "@/lib/product-analytics";
 import { Loader2, AlertCircle } from "lucide-react";
 
 const FAILURE_LABELS: Record<string, string> = {
