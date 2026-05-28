@@ -78,10 +78,16 @@ function Analyzing() {
 
   useEffect(() => {
     if (isLive) return;
+    // Keep the legacy event (existing dashboard) + the standardized scan_started.
     trackEvent("prototype_scan_started", {
       demo: search.demo ?? null,
       host: search.url ? displayHost(search.url) : null,
       priority: search.priority ?? null,
+    });
+    trackScanStarted({
+      websiteDomain: search.url ? displayHost(search.url) : search.demo ?? null,
+      selectedPriority: search.priority ?? null,
+      scanType: search.demo ? "demo" : "prototype",
     });
   }, [isLive, search.demo, search.url, search.priority]);
 
