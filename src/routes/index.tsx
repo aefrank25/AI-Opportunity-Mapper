@@ -256,7 +256,15 @@ function Index() {
                 playsInline
                 preload="metadata"
                 className="block aspect-video w-full"
+                onPlay={() => {
+                  // Fire video_played once per mount (onPlay also fires on resume).
+                  if (videoPlayedRef.current) return;
+                  videoPlayedRef.current = true;
+                  trackVideoPlayed({ videoName: "homepage_demo" });
+                }}
+                onEnded={() => trackVideoCompleted({ videoName: "homepage_demo" })}
               />
+
             </div>
             <button
               type="button"
@@ -347,7 +355,7 @@ function Index() {
           <h2 className="text-lg font-semibold text-foreground">
             Frequently asked questions
           </h2>
-          <Accordion type="single" collapsible className="mt-2">
+          <Accordion type="single" collapsible className="mt-2" onValueChange={handleFaqOpen}>
             {FAQS.map((f, i) => (
               <AccordionItem key={i} value={`faq-${i}`}>
                 <AccordionTrigger>{f.q}</AccordionTrigger>
