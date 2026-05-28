@@ -22,7 +22,10 @@ const CANONICAL = "https://ai-opp-mapper.lovable.app/";
 const OG_IMAGE =
   "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0b608a2a-83dd-48ce-81af-7f7c33f82451";
 
-const FAQS: { q: string; a: string }[] = [
+// `signal` maps an FAQ to a backend interest event fired once when first opened:
+//   - "export" → export_interest (mentions exportable reports)
+//   - "client_use" → client_use_interest (consultant / client-facing language)
+const FAQS: { q: string; a: string; signal?: "export" | "client_use" }[] = [
   {
     q: "What is an AI opportunity map?",
     a: "An AI opportunity map identifies practical places where AI or automation may help a business reduce manual work, improve follow-up, support customers, or make workflows more consistent.",
@@ -38,6 +41,7 @@ const FAQS: { q: string; a: string }[] = [
   {
     q: "What is expanded analysis?",
     a: "Expanded analysis is a planned deeper version with more prioritization, supporting signals, suggested sequencing, expanded roadmap detail, and exportable reports.",
+    signal: "export",
   },
   {
     q: "Is this an AI readiness assessment?",
@@ -46,6 +50,7 @@ const FAQS: { q: string; a: string }[] = [
   {
     q: "Who is this for?",
     a: "It is designed for founders, operators, consultants, and small teams who want practical ideas for where AI could help first.",
+    signal: "client_use",
   },
   {
     q: "Do I need technical knowledge to use it?",
