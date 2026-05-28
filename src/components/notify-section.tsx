@@ -24,12 +24,12 @@ export function NotifySection() {
   const join = useServerFn(joinBriefWaitlist);
 
   const mutation = useMutation({
-  const mutation = useMutation({
     mutationFn: (vars: { email: string }) =>
       join({ data: { email: vars.email, sourceUrl: null, topOpportunity: null, isDemo: false } }),
     // Demand signal for the paid/expanded report (homepage notify submitted).
     onSuccess: () => trackExpandedAnalysisInterest(),
   });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
