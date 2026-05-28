@@ -21,6 +21,11 @@ import {
   type LiveScanUsage,
 } from "@/lib/live-scan-usage";
 import { claimScanBonusEmail } from "@/lib/scan-bonus.functions";
+import {
+  trackEmailUnlockShown,
+  trackEmailUnlockCompleted,
+  trackScanLimitReached,
+} from "@/lib/product-analytics";
 import { Link } from "@tanstack/react-router";
 import { Sparkles, Info, ArrowRight } from "lucide-react";
 
