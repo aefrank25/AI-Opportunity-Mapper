@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { trackResultsViewed } from "@/lib/product-analytics";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { analyze } from "@/lib/analyzer";
@@ -103,6 +104,17 @@ function Results() {
     inferred_business_type: result.roadmapKey ?? "unknown",
     pages_scanned: result.pageCount ?? result.scannedPages?.length ?? null,
   };
+
+  // Fire results_viewed once per rendered map.
+  const websiteDomain = result.displayUrl;
+  useEffect(() => {
+    trackResultsViewed({
+      websiteDomain,
+      selectedPriority: result.priority,
+      scanType: mode === "live" ? "live_scan" : mode,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [websiteDomain, mode, result.priority]);
 
   return (
     <section className="px-4 sm:px-6">

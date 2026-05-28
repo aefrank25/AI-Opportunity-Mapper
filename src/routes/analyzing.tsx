@@ -10,6 +10,11 @@ import { liveScan } from "@/lib/live-scan.functions";
 import { LIVE_SCAN_FALLBACK_MESSAGE } from "@/lib/live-scan-messages";
 import { recordLiveScanSuccess } from "@/lib/live-scan-usage";
 import { trackEvent } from "@/lib/analytics";
+import {
+  trackScanStarted,
+  trackScanCompleted,
+  trackScanFailed,
+} from "@/lib/product-analytics";
 import { Loader2, AlertCircle } from "lucide-react";
 
 const FAILURE_LABELS: Record<string, string> = {
@@ -73,10 +78,16 @@ function Analyzing() {
 
   useEffect(() => {
     if (isLive) return;
+    // Keep the legacy event (existing dashboard) + the standardized scan_started.
     trackEvent("prototype_scan_started", {
       demo: search.demo ?? null,
       host: search.url ? displayHost(search.url) : null,
       priority: search.priority ?? null,
+    });
+    trackScanStarted({
+      websiteDomain: search.url ? displayHost(search.url) : search.demo ?? null,
+      selectedPriority: search.priority ?? null,
+      scanType: search.demo ? "demo" : "prototype",
     });
   }, [isLive, search.demo, search.url, search.priority]);
 
@@ -141,7 +152,9 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
     startedRef.current = true;
 
     const host = displayHost(url);
+    const startedAt = Date.now();
     trackEvent("live_scan_started", { host, priority });
+    trackScanStarted({ websiteDomain: host, selectedPriority: priority, scanType: "live_scan" });
 
     const interval = setInterval(() => {
       setStep((s) => Math.min(s + 1, LIVE_STEPS.length - 1));
@@ -170,12 +183,24 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
             priority,
             code: details.code,
           });
+          trackScanFailed({ websiteDomain: host, scanType: "live_scan", failureReason: details.code });
           setFailure(details);
           setError(FALLBACK_MSG);
           return;
         }
         setStep(LIVE_STEPS.length);
+        const pagesScanned =
+          (res.result as { pageCount?: number; scannedPages?: unknown[] }).pageCount ??
+          (res.result as { scannedPages?: unknown[] }).scannedPages?.length ??
+          null;
         trackEvent("live_scan_completed", { host: displayHost(url), priority });
+        trackScanCompleted({
+          websiteDomain: host,
+          selectedPriority: priority,
+          scanType: "live_scan",
+          pagesScanned,
+          scanDurationSeconds: Math.round((Date.now() - startedAt) / 1000),
+        });
         if (typeof window !== "undefined") {
           sessionStorage.setItem(liveCacheKey(url, priority), JSON.stringify(res.result));
           recordLiveScanSuccess();
@@ -191,6 +216,7 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
         const message = e instanceof Error ? e.message : String(e);
         console.error("[live-scan] threw", { message, error: e });
         trackEvent("live_scan_failed", { host: displayHost(url), priority, code: "threw" });
+        trackScanFailed({ websiteDomain: host, scanType: "live_scan", failureReason: "threw" });
         setFailure({
           code: "unknown",
           message,

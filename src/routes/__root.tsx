@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CookieBanner } from "@/components/cookie-banner";
 import { Toaster } from "@/components/ui/sonner";
-import { usePageviewTracking } from "@/lib/analytics";
+import { useProductPageviewTracking } from "@/lib/product-analytics";
 import { maybeActivateOwnerBypassFromUrl } from "@/lib/live-scan-usage";
 import { useEffect } from "react";
 
@@ -103,7 +103,7 @@ function RootComponent() {
 }
 
 function AppShell() {
-  usePageviewTracking();
+  useProductPageviewTracking();
   useEffect(() => {
     maybeActivateOwnerBypassFromUrl();
   }, []);
