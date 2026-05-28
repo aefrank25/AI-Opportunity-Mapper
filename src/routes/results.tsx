@@ -104,6 +104,17 @@ function Results() {
     pages_scanned: result.pageCount ?? result.scannedPages?.length ?? null,
   };
 
+  // Fire results_viewed once per rendered map.
+  const websiteDomain = result.displayUrl;
+  useEffect(() => {
+    trackResultsViewed({
+      websiteDomain,
+      selectedPriority: result.priority,
+      scanType: mode === "live" ? "live_scan" : mode,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [websiteDomain, mode, result.priority]);
+
   return (
     <section className="px-4 sm:px-6">
       <div className="mx-auto max-w-6xl py-5 space-y-5 sm:py-12 sm:space-y-8">
