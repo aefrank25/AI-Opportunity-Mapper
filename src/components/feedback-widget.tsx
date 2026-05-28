@@ -34,6 +34,9 @@ export function FeedbackWidget({ sourceUrl, topOpportunity, isDemo }: Props) {
           isDemo,
         },
       }),
+    // feedback_submitted — backend capture only, fires after a successful save.
+    onSuccess: (_res, vars) =>
+      trackFeedbackSubmitted({ feedbackLength: vars.notes.length, websiteDomain: sourceUrl ?? null }),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
