@@ -152,7 +152,9 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
     startedRef.current = true;
 
     const host = displayHost(url);
+    const startedAt = Date.now();
     trackEvent("live_scan_started", { host, priority });
+    trackScanStarted({ websiteDomain: host, selectedPriority: priority, scanType: "live_scan" });
 
     const interval = setInterval(() => {
       setStep((s) => Math.min(s + 1, LIVE_STEPS.length - 1));
@@ -181,12 +183,24 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
             priority,
             code: details.code,
           });
+          trackScanFailed({ websiteDomain: host, scanType: "live_scan", failureReason: details.code });
           setFailure(details);
           setError(FALLBACK_MSG);
           return;
         }
         setStep(LIVE_STEPS.length);
+        const pagesScanned =
+          (res.result as { pageCount?: number; scannedPages?: unknown[] }).pageCount ??
+          (res.result as { scannedPages?: unknown[] }).scannedPages?.length ??
+          null;
         trackEvent("live_scan_completed", { host: displayHost(url), priority });
+        trackScanCompleted({
+          websiteDomain: host,
+          selectedPriority: priority,
+          scanType: "live_scan",
+          pagesScanned,
+          scanDurationSeconds: Math.round((Date.now() - startedAt) / 1000),
+        });
         if (typeof window !== "undefined") {
           sessionStorage.setItem(liveCacheKey(url, priority), JSON.stringify(res.result));
           recordLiveScanSuccess();
@@ -202,6 +216,7 @@ function LiveAnalyzing({ url, priority }: { url: string; priority: string }) {
         const message = e instanceof Error ? e.message : String(e);
         console.error("[live-scan] threw", { message, error: e });
         trackEvent("live_scan_failed", { host: displayHost(url), priority, code: "threw" });
+        trackScanFailed({ websiteDomain: host, scanType: "live_scan", failureReason: "threw" });
         setFailure({
           code: "unknown",
           message,
