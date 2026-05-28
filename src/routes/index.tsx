@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useRef } from "react";
 import { UrlInputCard } from "@/components/url-input-card";
 import { NotifySection } from "@/components/notify-section";
 import { Compass, Layers, ListChecks } from "lucide-react";
@@ -10,12 +11,21 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { DEMO_META, type DemoId } from "@/lib/demos";
+import {
+  trackExportInterest,
+  trackClientUseInterest,
+  trackVideoPlayed,
+  trackVideoCompleted,
+} from "@/lib/product-analytics";
 
 const CANONICAL = "https://ai-opp-mapper.lovable.app/";
 const OG_IMAGE =
   "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0b608a2a-83dd-48ce-81af-7f7c33f82451";
 
-const FAQS: { q: string; a: string }[] = [
+// `signal` maps an FAQ to a backend interest event fired once when first opened:
+//   - "export" → export_interest (mentions exportable reports)
+//   - "client_use" → client_use_interest (consultant / client-facing language)
+const FAQS: { q: string; a: string; signal?: "export" | "client_use" }[] = [
   {
     q: "What is an AI opportunity map?",
     a: "An AI opportunity map identifies practical places where AI or automation may help a business reduce manual work, improve follow-up, support customers, or make workflows more consistent.",
@@ -31,6 +41,7 @@ const FAQS: { q: string; a: string }[] = [
   {
     q: "What is expanded analysis?",
     a: "Expanded analysis is a planned deeper version with more prioritization, supporting signals, suggested sequencing, expanded roadmap detail, and exportable reports.",
+    signal: "export",
   },
   {
     q: "Is this an AI readiness assessment?",
@@ -39,6 +50,7 @@ const FAQS: { q: string; a: string }[] = [
   {
     q: "Who is this for?",
     a: "It is designed for founders, operators, consultants, and small teams who want practical ideas for where AI could help first.",
+    signal: "client_use",
   },
   {
     q: "Do I need technical knowledge to use it?",
@@ -124,6 +136,20 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  // Fire-once guards so backend interest/video events are captured at most once per mount.
+  const videoPlayedRef = useRef(false);
+  const firedFaqSignals = useRef<Set<string>>(new Set());
+
+  const handleFaqOpen = (value: string) => {
+    if (!value) return; // collapsed (single-mode emits "" when closed)
+    const index = Number(value.replace("faq-", ""));
+    const signal = FAQS[index]?.signal;
+    if (!signal || firedFaqSignals.current.has(signal)) return;
+    firedFaqSignals.current.add(signal);
+    if (signal === "export") trackExportInterest();
+    else if (signal === "client_use") trackClientUseInterest();
+  };
+
   return (
     <>
       <section className="relative px-4 sm:px-6 overflow-hidden">
@@ -230,7 +256,15 @@ function Index() {
                 playsInline
                 preload="metadata"
                 className="block aspect-video w-full"
+                onPlay={() => {
+                  // Fire video_played once per mount (onPlay also fires on resume).
+                  if (videoPlayedRef.current) return;
+                  videoPlayedRef.current = true;
+                  trackVideoPlayed({ videoName: "homepage_demo" });
+                }}
+                onEnded={() => trackVideoCompleted({ videoName: "homepage_demo" })}
               />
+
             </div>
             <button
               type="button"
@@ -321,7 +355,7 @@ function Index() {
           <h2 className="text-lg font-semibold text-foreground">
             Frequently asked questions
           </h2>
-          <Accordion type="single" collapsible className="mt-2">
+          <Accordion type="single" collapsible className="mt-2" onValueChange={handleFaqOpen}>
             {FAQS.map((f, i) => (
               <AccordionItem key={i} value={`faq-${i}`}>
                 <AccordionTrigger>{f.q}</AccordionTrigger>

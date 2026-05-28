@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { joinBriefWaitlist } from "@/lib/brief-waitlist.functions";
 import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
+import { trackExpandedAnalysisInterest } from "@/lib/product-analytics";
 
 function emailDomain(email: string): string {
   const at = email.lastIndexOf("@");
@@ -162,6 +163,8 @@ export function UnlockSection({ isDemo, sourceUrl, topOpportunity, funnelContext
             email_domain: emailDomain(trimmed),
             top_opportunity: topOpportunity ?? null,
           });
+          // Demand signal for the paid/expanded report (unlock email submitted).
+          trackExpandedAnalysisInterest({ websiteDomain: sourceUrl ?? null });
         },
         onError: (err) => {
           const message = err instanceof Error ? err.message : "";

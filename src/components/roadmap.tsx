@@ -3,6 +3,7 @@ import { roadmapFor } from "@/lib/roadmaps";
 import { Lock } from "lucide-react";
 import { focusUnlockEmail } from "@/lib/focus-unlock-email";
 import { trackExpandedMap, type ExpandedMapFunnelContext } from "@/lib/expanded-map-analytics";
+import { trackExpandedAnalysisInterest } from "@/lib/product-analytics";
 
 function truncate(text: string, max = 140) {
   if (text.length <= max) return text;
@@ -78,6 +79,8 @@ export function Roadmap({
                         roadmap_week_index: i,
                       });
                     }
+                    // Demand signal for the paid/expanded report (roadmap CTA).
+                    trackExpandedAnalysisInterest();
                     focusUnlockEmail();
                   }}
                   aria-label="Request expanded roadmap details"

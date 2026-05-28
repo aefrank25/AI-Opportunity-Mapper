@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { joinBriefWaitlist } from "@/lib/brief-waitlist.functions";
+import { trackExpandedAnalysisInterest } from "@/lib/product-analytics";
 
 const emailSchema = z
   .string()
@@ -25,6 +26,8 @@ export function NotifySection() {
   const mutation = useMutation({
     mutationFn: (vars: { email: string }) =>
       join({ data: { email: vars.email, sourceUrl: null, topOpportunity: null, isDemo: false } }),
+    // Demand signal for the paid/expanded report (homepage notify submitted).
+    onSuccess: () => trackExpandedAnalysisInterest(),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
