@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { submitRecommendationFeedback } from "@/lib/feedback.functions";
+import { trackFeedbackSubmitted } from "@/lib/product-analytics";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageSquare, Star, Check, Loader2 } from "lucide-react";
