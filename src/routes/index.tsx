@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useRef } from "react";
 import { UrlInputCard } from "@/components/url-input-card";
 import { NotifySection } from "@/components/notify-section";
 import { Compass, Layers, ListChecks } from "lucide-react";
@@ -10,6 +11,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { DEMO_META, type DemoId } from "@/lib/demos";
+import {
+  trackExportInterest,
+  trackClientUseInterest,
+  trackVideoPlayed,
+  trackVideoCompleted,
+} from "@/lib/product-analytics";
 
 const CANONICAL = "https://ai-opp-mapper.lovable.app/";
 const OG_IMAGE =
