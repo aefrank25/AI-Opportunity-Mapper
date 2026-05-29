@@ -37,10 +37,24 @@ export function setConsent(analytics: boolean) {
   window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: prefs }));
 }
 
+// Personal opt-out: set `localStorage.setItem("aiom:dnt", "1")` in your
+// browser console once to permanently exclude this browser from analytics.
+// Clear with `localStorage.removeItem("aiom:dnt")`.
+function isSelfExcluded(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem("aiom:dnt") === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function trackEvent(name: string, props?: Record<string, unknown>) {
   if (typeof window === "undefined") return;
+  if (isSelfExcluded()) return;
   const { analytics } = getConsent();
   if (!analytics) return;
+
 
   const payload = {
     name,
