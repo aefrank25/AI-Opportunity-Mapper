@@ -356,6 +356,79 @@ function ScanEventStats({ enabled }: { enabled: boolean }) {
   );
 }
 
+function ProductEventStats({ enabled }: { enabled: boolean }) {
+  const statsFn = useServerFn(getProductEventStats);
+  const stats = useQuery({
+    queryKey: ["admin-product-event-stats"],
+    queryFn: () => statsFn(),
+    enabled,
+  });
+
+  const LABELS: Record<string, string> = {
+    expanded_analysis_interest: "Expanded analysis interest",
+    export_interest: "Export interest",
+    client_use_interest: "Client / consultant interest",
+    feedback_submitted: "Feedback submitted",
+    video_played: "Demo video played",
+    video_completed: "Demo video completed",
+    scan_limit_reached: "Scan limit reached",
+    email_unlock_shown: "Email unlock shown",
+    email_unlock_completed: "Email unlock completed",
+    repeat_scan: "Repeat scan (same browser)",
+    returning_user: "Returning user (new session)",
+  };
+  const KEYS = Object.keys(LABELS);
+  const cell = (n: number | undefined) => (stats.isLoading ? "…" : (n ?? 0));
+
+  return (
+    <div className="space-y-4 pt-4">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Product validation
+          </div>
+          <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+            Demand & engagement signals
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Monetization, retention, and content signals. Consented visitors only.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => stats.refetch()}>
+          <RefreshCcw className="h-3.5 w-3.5" /> Refresh
+        </Button>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-surface shadow-card overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-surface-muted text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <tr>
+                <th className="px-4 py-2.5">Event</th>
+                <th className="px-4 py-2.5 text-right">Last 24h</th>
+                <th className="px-4 py-2.5 text-right">Last 7d</th>
+                <th className="px-4 py-2.5 text-right">Last 30d</th>
+                <th className="px-4 py-2.5 text-right">All-time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {KEYS.map((k) => (
+                <tr key={k} className="border-t border-border">
+                  <td className="px-4 py-2.5 font-medium text-foreground">{LABELS[k]}</td>
+                  <td className="px-4 py-2.5 text-right text-muted-foreground">{cell(stats.data?.last24h[k])}</td>
+                  <td className="px-4 py-2.5 text-right text-muted-foreground">{cell(stats.data?.last7d[k])}</td>
+                  <td className="px-4 py-2.5 text-right text-muted-foreground">{cell(stats.data?.last30d[k])}</td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-foreground">{cell(stats.data?.total[k])}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ScanBonusSection({ enabled }: { enabled: boolean }) {
   const statsFn = useServerFn(getScanBonusStats);
   const listFn = useServerFn(listScanBonusEmails);
