@@ -12,7 +12,7 @@ import {
   getScanBonusStats,
   listScanBonusEmails,
 } from "@/lib/admin-scan-bonus.functions";
-import { getScanEventStats } from "@/lib/admin-scan-stats.functions";
+import { getScanEventStats, getProductEventStats } from "@/lib/admin-scan-stats.functions";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
