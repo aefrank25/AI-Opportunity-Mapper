@@ -275,8 +275,12 @@ function AdminPage() {
         {/* Scan counts */}
         <ScanEventStats enabled={authState === "ok"} />
 
+        {/* Product validation metrics */}
+        <ProductEventStats enabled={authState === "ok"} />
+
         {/* Scan bonus emails */}
         <ScanBonusSection enabled={authState === "ok"} />
+
       </div>
     </section>
   );
