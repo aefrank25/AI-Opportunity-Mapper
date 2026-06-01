@@ -8,7 +8,7 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 const LOVABLE_CLOUD_URL = "https://mnpqcqhcjyutuwuznjzz.supabase.co";
 const LOVABLE_CLOUD_PUBLISHABLE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6Im1ucHFjcWhjanl1dHV3dXpuanp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzkxODIsImV4cCI6MjA5Mzc1NTE4Mn0.xEVW9vzev4SeVYKkyFzgjVfOZhlJnh9hiSUiQCpp1kc";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ucHFjcWhjanl1dHV3dXpuanp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzkxODIsImV4cCI6MjA5Mzc1NTE4Mn0.xEVW9vzev4SeVYKkyFzgjVfOZhlJnh9hiSUiQCpp1kc";
 
 export default defineConfig({
   vite: {
