@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Public read specific demo video" ON storage.objects;
