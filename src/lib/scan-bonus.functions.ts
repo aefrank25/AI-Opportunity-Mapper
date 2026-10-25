@@ -52,75 +52,8 @@ export const claimScanBonusEmail = createServerFn({ method: "POST" })
       );
     }
 
-    // 3. Best-effort sync to Resend Audience (same shape as brief-waitlist).
-    try {
-      const lovableApiKey = process.env.LOVABLE_API_KEY;
-      const resendApiKey = process.env.RESEND_API_KEY;
-      const audienceId = process.env.RESEND_AUDIENCE_ID;
-
-      if (!lovableApiKey || !resendApiKey || !audienceId) {
-        console.warn(
-          "[scan-bonus] Resend audience sync skipped: missing LOVABLE_API_KEY, RESEND_API_KEY, or RESEND_AUDIENCE_ID",
-        );
-        return { ok: true as const, suppressed: false as const };
-      }
-
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${lovableApiKey}`,
-        "X-Connection-Api-Key": resendApiKey,
-      };
-
-      const lookupRes = await fetch(
-        `https://connector-gateway.lovable.dev/resend/audiences/${audienceId}/contacts/${encodeURIComponent(
-          data.email,
-        )}`,
-        { method: "GET", headers },
-      );
-
-      if (lookupRes.ok) {
-        const existing = (await lookupRes.json().catch(() => null)) as
-          | { data?: { unsubscribed?: boolean } }
-          | { unsubscribed?: boolean }
-          | null;
-        const unsubscribed =
-          (existing && "data" in existing && existing.data?.unsubscribed === true) ||
-          (existing && "unsubscribed" in existing && existing.unsubscribed === true);
-
-        if (unsubscribed) {
-          await supabaseAdmin.from("email_suppressions").upsert(
-            {
-              email: data.email,
-              reason: "unsubscribed",
-              source: "resend",
-              metadata: { discovered_via: "scan_bonus_lookup" },
-            },
-            { onConflict: "email,reason" },
-          );
-          return { ok: true as const, suppressed: false as const };
-        }
-      }
-
-      const addRes = await fetch(
-        `https://connector-gateway.lovable.dev/resend/audiences/${audienceId}/contacts`,
-        {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ email: data.email, unsubscribed: false }),
-        },
-      );
-
-      if (!addRes.ok) {
-        const body = await addRes.text().catch(() => "");
-        if (!/already|exists|duplicate/i.test(body)) {
-          console.error(
-            `[scan-bonus] resend audience add failed [${addRes.status}]: ${body}`,
-          );
-        }
-      }
-    } catch (err) {
-      console.error("[scan-bonus] resend audience sync threw:", err);
-    }
+    // Scan-bonus emails are not synced to the marketing audience: the
+    // address is unverified, so adding it could subscribe a third party.
 
     return { ok: true as const, suppressed: false as const };
   });
