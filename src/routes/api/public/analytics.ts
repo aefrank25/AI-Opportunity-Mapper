@@ -149,7 +149,8 @@ export const Route = createFileRoute("/api/public/analytics")({
             path: path ?? null,
           });
           return new Response(null, { status: 204 });
-        } catch {
+        } catch (err) {
+          console.error("[analytics] failed:", err);
           return new Response("Error", { status: 500 });
         }
       },
