@@ -148,7 +148,7 @@ export const Route = createFileRoute("/api/public/analytics")({
             props: (props ?? {}) as never,
             path: path ?? null,
           });
-          return new Response("ok", { status: 204 });
+          return new Response(null, { status: 204 });
         } catch {
           return new Response("Error", { status: 500 });
         }
