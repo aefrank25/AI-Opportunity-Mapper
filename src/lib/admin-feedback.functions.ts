@@ -22,7 +22,7 @@ const filtersSchema = z.object({
 
 export const listRecommendationFeedback = createServerFn({ method: "POST" })
   .middleware([attachSupabaseAuth, requireSupabaseAuth])
-  .validator((input) => filtersSchema.parse(input))
+  .inputValidator((input) => filtersSchema.parse(input))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context.userId);
 
