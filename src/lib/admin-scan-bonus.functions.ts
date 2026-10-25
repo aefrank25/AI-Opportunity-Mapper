@@ -28,7 +28,7 @@ function rangeStart(range: "all" | "7d" | "30d" | "90d"): string | null {
 
 export const listScanBonusEmails = createServerFn({ method: "POST" })
   .middleware([attachSupabaseAuth, requireSupabaseAuth])
-  .inputValidator((input) => filtersSchema.parse(input))
+  .validator((input) => filtersSchema.parse(input))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context.userId);
 
