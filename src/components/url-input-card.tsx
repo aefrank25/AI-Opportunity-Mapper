@@ -179,7 +179,7 @@ export function UrlInputCard() {
         email: trimmed,
         sourceUrl: parsedUrl.success ? parsedUrl.data : null,
       },
-    }).catch((err) => {
+    }).catch((err: unknown) => {
       console.error("[scan-bonus] claim failed:", err);
     });
     toast("You're on the list. You have 2 more Live Scans today.");
