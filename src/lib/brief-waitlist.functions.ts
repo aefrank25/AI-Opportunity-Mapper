@@ -10,7 +10,7 @@ const inputSchema = z.object({
 });
 
 export const joinBriefWaitlist = createServerFn({ method: "POST" })
-  .inputValidator((input) => inputSchema.parse(input))
+  .validator((input) => inputSchema.parse(input))
   .handler(async ({ data }) => {
     // 1. Check if this email has previously opted out (unsubscribe / bounce / complaint).
     //    If so, we still acknowledge the form silently but do NOT add them back to the
