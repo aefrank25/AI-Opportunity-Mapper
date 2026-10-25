@@ -32,7 +32,7 @@ export const joinBriefWaitlist = createServerFn({ method: "POST" })
       console.info(
         `[brief-waitlist] suppressed signup for ${data.email} (${suppression.reason})`,
       );
-      return { ok: true as const, suppressed: true as const };
+      return { ok: true as const, suppressed: false as const };
     }
 
     // 2. Insert into the waitlist DB (unique-violation = already on the list).
@@ -112,7 +112,7 @@ export const joinBriefWaitlist = createServerFn({ method: "POST" })
               },
               { onConflict: "email,reason" },
             );
-          return { ok: true as const, suppressed: true as const };
+          return { ok: true as const, suppressed: false as const };
         }
       }
 
