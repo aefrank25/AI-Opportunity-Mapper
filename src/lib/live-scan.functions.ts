@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { runLiveScan, LiveScanError } from "./live-scan.server";
+import { attachSupabaseAuth } from "@/integrations/supabase/attach-auth";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 async function logScanEvent(name: string, props: Record<string, unknown>) {
@@ -27,6 +29,7 @@ const inputSchema = z.object({
 });
 
 export const liveScan = createServerFn({ method: "POST" })
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
     let host: string | null = null;

@@ -27,6 +27,8 @@ import {
   trackScanLimitReached,
 } from "@/lib/product-analytics";
 import { Link } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { Sparkles, Info, ArrowRight } from "lucide-react";
 
 
@@ -114,7 +116,21 @@ export function UrlInputCard() {
 
 
 
-  function startLive(validUrl: string, p: Priority) {
+  async function startLive(validUrl: string, p: Priority) {
+    // Live Scan requires sign-in (it uses paid scanning/AI services).
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) {
+      toast("Please sign in with Google to run a Live Scan.");
+      const qs = new URLSearchParams({ url: validUrl, priority: p, live: "1" });
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/analyzing?${qs.toString()}`,
+      });
+      if (result.redirected) return;
+      if (result.error) {
+        toast.error("Sign-in failed. Please try again.");
+        return;
+      }
+    }
     navigate({ to: "/analyzing", search: { url: validUrl, priority: p, live: 1 } });
   }
 
