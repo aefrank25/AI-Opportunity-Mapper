@@ -27,7 +27,7 @@ export const claimScanBonusEmail = createServerFn({ method: "POST" })
       console.info(
         `[scan-bonus] suppressed claim for ${data.email} (${suppression.reason})`,
       );
-      return { ok: true as const, suppressed: true as const };
+      return { ok: true as const, suppressed: false as const };
     }
 
     // 2. Insert (unique-violation = already captured, treat as success).
@@ -97,7 +97,7 @@ export const claimScanBonusEmail = createServerFn({ method: "POST" })
             },
             { onConflict: "email,reason" },
           );
-          return { ok: true as const, suppressed: true as const };
+          return { ok: true as const, suppressed: false as const };
         }
       }
 
