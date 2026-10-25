@@ -9,7 +9,7 @@ const inputSchema = z.object({
 });
 
 export const claimScanBonusEmail = createServerFn({ method: "POST" })
-  .validator((input) => inputSchema.parse(input))
+  .inputValidator((input) => inputSchema.parse(input))
   .handler(async ({ data }) => {
     // 1. Respect prior opt-outs.
     const { data: suppression, error: suppLookupError } = await supabaseAdmin

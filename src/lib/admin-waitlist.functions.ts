@@ -42,7 +42,7 @@ function rangeStart(range: "all" | "7d" | "30d" | "90d"): string | null {
 
 export const listWaitlistEntries = createServerFn({ method: "POST" })
   .middleware([attachSupabaseAuth, requireSupabaseAuth])
-  .validator((input) => filtersSchema.parse(input))
+  .inputValidator((input) => filtersSchema.parse(input))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context.userId);
 

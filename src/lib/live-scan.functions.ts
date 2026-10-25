@@ -30,7 +30,7 @@ const inputSchema = z.object({
 
 export const liveScan = createServerFn({ method: "POST" })
   .middleware([attachSupabaseAuth, requireSupabaseAuth])
-  .validator((input: unknown) => inputSchema.parse(input))
+  .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
     let host: string | null = null;
     try {

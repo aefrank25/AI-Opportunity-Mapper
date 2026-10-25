@@ -11,7 +11,7 @@ const feedbackSchema = z.object({
 });
 
 export const submitRecommendationFeedback = createServerFn({ method: "POST" })
-  .validator((input) => feedbackSchema.parse(input))
+  .inputValidator((input) => feedbackSchema.parse(input))
   .handler(async ({ data }) => {
     const { error } = await supabaseAdmin.from("recommendation_feedback").insert({
       rating: data.rating,
